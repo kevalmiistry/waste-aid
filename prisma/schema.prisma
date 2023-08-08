@@ -1,40 +1,68 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
     provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "sqlite"
-    // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-    // Further reading:
-    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
+    provider = "mysql"
     url      = env("DATABASE_URL")
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model Post {
+    uuid            String       @id @default(uuid())
+    title           String
+    description     String
+    address         String
+    hasTarget       Boolean      @default(false)
+    targetAmount    Int?
+    collectedAmount Int?
+    amountType      String?
+    hasDeadline     Boolean      @default(false)
+    startDate       DateTime?
+    endDate         DateTime?
+    createdAt       DateTime     @default(now())
+    updatedAt       DateTime     @updatedAt
+    aidman          Account      @relation(fields: [am_id], references: [id])
+    am_id           String
+    PostImages      PostImages[]
+    donations       Donations[]
+}
+
+model PostImages {
+    uuid     String @id @default(uuid())
+    imageURL String
+    post     Post   @relation(fields: [post_id], references: [uuid])
+    post_id  String
+}
+
+model Donations {
+    uuid         String   @id @default(uuid())
+    post         Post     @relation(fields: [post_id], references: [uuid])
+    post_id      String
+    donator      Account  @relation(fields: [donator_id], references: [id])
+    donator_id   String
+    donatedAmout Int?
+    reached      Boolean  @default(false)
+    createdAt    DateTime @default(now())
+    reachedDate  DateTime
 }
 
 // Necessary for Next auth
 model Account {
-    id                String  @id @default(cuid())
+    id                String      @id @default(cuid())
     userId            String
     type              String
     provider          String
     providerAccountId String
-    refresh_token     String? // @db.Text
-    access_token      String? // @db.Text
+    refresh_token     String?     @db.Text
+    access_token      String?     @db.Text
     expires_at        Int?
     token_type        String?
     scope             String?
-    id_token          String? // @db.Text
+    id_token          String?     @db.Text
     session_state     String?
-    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    user              User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+    Post              Post[]
+    donations         Donations[]
 
     @@unique([provider, providerAccountId])
 }
