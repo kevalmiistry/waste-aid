@@ -21,7 +21,7 @@ model Post {
     endDate         DateTime?
     createdAt       DateTime     @default(now())
     updatedAt       DateTime     @updatedAt
-    aidman          Account      @relation(fields: [am_id], references: [id])
+    aidman          Account      @relation(fields: [am_id], references: [id], onDelete: Cascade)
     am_id           String
     PostImages      PostImages[]
     donations       Donations[]
@@ -35,15 +35,15 @@ model PostImages {
 }
 
 model Donations {
-    uuid         String   @id @default(uuid())
-    post         Post     @relation(fields: [post_id], references: [uuid])
+    uuid         String    @id @default(uuid())
+    post         Post      @relation(fields: [post_id], references: [uuid], onDelete: Cascade)
     post_id      String
-    donator      Account  @relation(fields: [donator_id], references: [id])
+    donator      Account   @relation(fields: [donator_id], references: [id], onDelete: Cascade)
     donator_id   String
     donatedAmout Int?
-    reached      Boolean  @default(false)
-    createdAt    DateTime @default(now())
-    reachedDate  DateTime
+    reached      Boolean   @default(false)
+    createdAt    DateTime  @default(now())
+    reachedDate  DateTime?
 }
 
 // Necessary for Next auth
