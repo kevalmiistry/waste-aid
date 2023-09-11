@@ -1,11 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
-import Link from "next/link"
 import type { FC, ReactNode } from "react"
+import { useSession } from "next-auth/react"
+import Link from "next/link"
 
 interface ISidebarAndProfile {
     children: ReactNode
 }
+
 const SidebarAndProfile: FC<ISidebarAndProfile> = ({ children }) => {
+    const { data: session } = useSession()
+
     return (
         <>
             <div className="flex h-screen">
@@ -34,7 +38,9 @@ const SidebarAndProfile: FC<ISidebarAndProfile> = ({ children }) => {
                 >
                     <img
                         src={
-                            "https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250"
+                            session?.user?.image
+                                ? `//wsrv.nl/?url=${session?.user?.image}`
+                                : "https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250"
                         }
                         className="h-[100px] w-[100px] rounded-full border-2"
                         alt="profile-img"

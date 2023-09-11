@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+    .btn-primary {
+        @apply text-lg rounded-lg border-2 border-[#333] bg-primary px-4 py-2 text-center font-medium text-[#333] shadow-[4px_4px_0px_0px_#333]
+    }
+
+    .btn-primary2 {
+        @apply text-lg rounded-lg bg-primary px-4 py-2 text-center font-medium text-[#333] shadow-[4px_4px_0px_0px_#333]
+    }
+
+    .btn-secondary {
+        @apply text-lg bg-white rounded-lg border-2 border-[#333] px-4 py-2 text-center font-medium text-[#333] shadow-[4px_4px_0px_0px_#333]
+    }
+}

@@ -1,14 +1,26 @@
-import { signIn, signOut } from "next-auth/react"
+import { signOut, useSession } from "next-auth/react"
+import { ReactElement, useEffect } from "react"
+import { useRouter } from "next/router"
 import { api } from "~/utils/api"
 import Head from "next/head"
 
 // cll2mjbqh0007i3rsuhorsr3o
-export default function Home() {
+const Home = () => {
     const createPost = api.post.createPost.useMutation()
     const updatePost = api.post.updatePost.useMutation()
     const deletePost = api.post.deletePost.useMutation()
 
     const createDonation = api.post.createDonation.useMutation()
+    const { data: session, status } = useSession()
+    const router = useRouter()
+
+    if (status === "loading") {
+        return <main>Loading...</main>
+    }
+
+    if (!session?.user) {
+        router.push("/welcome")
+    }
 
     const handleCreatePost = () => {
         createPost.mutate(
@@ -82,12 +94,12 @@ export default function Home() {
         )
     }
 
-    const data = api.post.getAllPosts.useQuery()
+    // const data = api.post.getAllPosts.useQuery()
 
-    const handleFetchPosts = () => {
-        console.log("**************  Data  **************")
-        console.log(data.data)
-    }
+    // const handleFetchPosts = () => {
+    //     console.log("**************  Data  **************")
+    //     console.log(data.data)
+    // }
 
     return (
         <>
@@ -99,43 +111,37 @@ export default function Home() {
             <main>
                 <div className="flex flex-col items-center justify-center gap-3 pt-5">
                     <button
-                        className="rounded-lg border-[2px] border-black bg-green-400 px-3 py-2 font-medium text-black"
-                        onClick={() => void signIn()}
-                    >
-                        SignIn
-                    </button>
-                    <button
-                        className="rounded-lg border-[2px] border-black bg-green-400 px-3 py-2 font-medium text-black"
+                        className="btn-primary"
                         onClick={() => void signOut()}
                     >
                         SignOut
                     </button>
                     <button
-                        className="rounded-lg border-[2px] border-black bg-green-400 px-3 py-2 font-medium text-black"
+                        className="btn-primary"
                         onClick={handleCreatePost}
                     >
                         Create Post
                     </button>
                     <button
-                        className="rounded-lg border-[2px] border-black bg-green-400 px-3 py-2 font-medium text-black"
+                        className="btn-primary"
                         onClick={handleUpdatePost}
                     >
                         Update Post
                     </button>
                     <button
-                        className="rounded-lg border-[2px] border-black bg-green-400 px-3 py-2 font-medium text-black"
+                        className="btn-primary"
                         onClick={handleCreateDonation}
                     >
                         Create Donations
                     </button>
                     <button
-                        className="rounded-lg border-[2px] border-black bg-green-400 px-3 py-2 font-medium text-black"
-                        onClick={handleFetchPosts}
+                        className="btn-primary"
+                        // onClick={handleFetchPosts}
                     >
                         Fetch Posts
                     </button>
                     <button
-                        className="rounded-lg border-[2px] border-black bg-green-400 px-3 py-2 font-medium text-black"
+                        className="btn-primary"
                         onClick={handleDeletePost}
                     >
                         Delete Post
@@ -145,3 +151,5 @@ export default function Home() {
         </>
     )
 }
+
+export default Home
