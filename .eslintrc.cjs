@@ -12,6 +12,7 @@ const config = {
     ],
     rules: {
         "@typescript-eslint/no-empty-interface": "off",
+        "@next/next/no-img-element" : "off",
         "@typescript-eslint/consistent-type-imports": [
             "warn",
             {

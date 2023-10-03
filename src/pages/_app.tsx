@@ -3,6 +3,7 @@ import type { AppProps, AppType } from "next/app"
 import type { Session } from "next-auth"
 import type { NextPage } from "next"
 import { SessionProvider } from "next-auth/react"
+import { SkeletonTheme } from "react-loading-skeleton"
 import { api } from "~/utils/api"
 import SidebarAndProfile from "~/components/SidebarAndProfile"
 import "~/styles/globals.css"
@@ -25,13 +26,17 @@ const MyApp = ({
         Component.getLayout ??
         ((page) => (
             <SessionProvider session={session}>
-                <SidebarAndProfile>{page}</SidebarAndProfile>
+                <SkeletonTheme baseColor="#f2f2f2" highlightColor="#ebebeb">
+                    <SidebarAndProfile>{page}</SidebarAndProfile>
+                </SkeletonTheme>
             </SessionProvider>
         ))
 
     return getLayout(
         <SessionProvider session={session}>
-            <Component {...pageProps} />
+            <SkeletonTheme>
+                <Component {...pageProps} />
+            </SkeletonTheme>
         </SessionProvider>
     )
 }

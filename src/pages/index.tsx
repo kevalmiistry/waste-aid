@@ -1,5 +1,4 @@
 import { signOut, useSession } from "next-auth/react"
-import { ReactElement, useEffect } from "react"
 import { useRouter } from "next/router"
 import { api } from "~/utils/api"
 import Head from "next/head"
@@ -11,7 +10,9 @@ const Home = () => {
     const deletePost = api.post.deletePost.useMutation()
 
     const createDonation = api.post.createDonation.useMutation()
-    const { data: session, status } = useSession()
+    const { 
+        data: session, 
+        status } = useSession()
     const router = useRouter()
 
     if (status === "loading") {
@@ -19,7 +20,8 @@ const Home = () => {
     }
 
     if (!session?.user) {
-        router.push("/welcome")
+        /* eslint-disable @typescript-eslint/no-floating-promises */
+        router.push("/welcome").then((val) => null)
     }
 
     const handleCreatePost = () => {

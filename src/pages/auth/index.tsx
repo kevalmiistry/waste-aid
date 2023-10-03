@@ -1,6 +1,6 @@
 import { signIn } from "next-auth/react"
 import type { ReactElement } from "react"
-import { NextPageWithLayout } from "../_app"
+import type { NextPageWithLayout } from "../_app"
 
 interface IAuth {}
 const Auth: NextPageWithLayout<IAuth> = () => {

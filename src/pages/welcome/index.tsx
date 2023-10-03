@@ -2,6 +2,7 @@ import type { ReactElement } from "react"
 import type { NextPageWithLayout } from "../_app"
 import S from "./Welcome.module.scss"
 import { signIn } from "next-auth/react"
+import { MoreHorizontal } from "lucide-react"
 
 interface IWelcome {}
 const Welcome: NextPageWithLayout<IWelcome> = () => {
@@ -19,14 +20,17 @@ const Welcome: NextPageWithLayout<IWelcome> = () => {
                         Waste-Aid
                     </h1>
                     <p className="pl-4 text-2xl font-medium text-gray-800">
-                        B'coz someone's waste is someone's treasure!
+                        B&quot;coz someone&quot;s waste is someone&quot;s
+                        treasure!
                     </p>
-                    <div className="mt-3 flex gap-5">
+                    <div className="mt-3 flex flex-wrap gap-5">
                         <button className="btn-primary">Know More</button>
                         <button
-                            onClick={() => void signIn("google", {
-                                callbackUrl: "/"
-                            })}
+                            onClick={() =>
+                                void signIn("google", {
+                                    callbackUrl: "/",
+                                })
+                            }
                             className="btn-secondary flex gap-1"
                         >
                             <svg
@@ -87,6 +91,9 @@ const Welcome: NextPageWithLayout<IWelcome> = () => {
                                 ></path>
                             </svg>
                             SignIn With Google
+                        </button>
+                        <button className="btn-secondary rounded-full">
+                            <MoreHorizontal />
                         </button>
                     </div>
                 </div>
