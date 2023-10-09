@@ -2,6 +2,7 @@ import { signOut, useSession } from "next-auth/react"
 import { useRouter } from "next/router"
 import { api } from "~/utils/api"
 import Head from "next/head"
+import UploaderComp from "~/components/Uploader"
 
 // cll2mjbqh0007i3rsuhorsr3o
 const Home = () => {
@@ -10,9 +11,7 @@ const Home = () => {
     const deletePost = api.post.deletePost.useMutation()
 
     const createDonation = api.post.createDonation.useMutation()
-    const { 
-        data: session, 
-        status } = useSession()
+    const { data: session, status } = useSession()
     const router = useRouter()
 
     if (status === "loading") {
@@ -118,16 +117,10 @@ const Home = () => {
                     >
                         SignOut
                     </button>
-                    <button
-                        className="btn-primary"
-                        onClick={handleCreatePost}
-                    >
+                    <button className="btn-primary" onClick={handleCreatePost}>
                         Create Post
                     </button>
-                    <button
-                        className="btn-primary"
-                        onClick={handleUpdatePost}
-                    >
+                    <button className="btn-primary" onClick={handleUpdatePost}>
                         Update Post
                     </button>
                     <button
@@ -142,12 +135,10 @@ const Home = () => {
                     >
                         Fetch Posts
                     </button>
-                    <button
-                        className="btn-primary"
-                        onClick={handleDeletePost}
-                    >
+                    <button className="btn-primary" onClick={handleDeletePost}>
                         Delete Post
                     </button>
+                    <UploaderComp />
                 </div>
             </main>
         </>
