@@ -4,14 +4,28 @@
 
 @layer components {
     .btn-primary {
-        @apply text-lg rounded-lg border-2 border-[#333] bg-primary px-4 py-2 text-center font-medium text-[#333] shadow-[4px_4px_0px_0px_#333]
+        @apply rounded-lg border-2 border-[#333] bg-primary px-4 py-2 text-center text-lg font-medium text-[#333] shadow-[4px_4px_0px_0px_#333];
     }
 
     .btn-primary2 {
-        @apply text-lg rounded-lg bg-primary px-4 py-2 text-center font-medium text-[#333] shadow-[4px_4px_0px_0px_#333]
+        @apply rounded-lg bg-primary px-4 py-2 text-center text-lg font-medium text-[#333] shadow-[4px_4px_0px_0px_#333];
     }
 
     .btn-secondary {
-        @apply text-lg bg-white rounded-lg border-2 border-[#333] px-4 py-2 text-center font-medium text-[#333] shadow-[4px_4px_0px_0px_#333]
+        @apply rounded-lg border-2 border-[#333] bg-white px-4 py-2 text-center text-lg font-medium text-[#333] shadow-[4px_4px_0px_0px_#333];
     }
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 2px;
+    height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.35);
+    border-radius: 50vw;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.5);
 }

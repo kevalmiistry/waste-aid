@@ -1,6 +1,7 @@
-import { motion } from "framer-motion"
-import { Sparkles, X } from "lucide-react"
 import { useState, type FC } from "react"
+import { MultiUploader } from "~/components/MultiUploader"
+import { Sparkles, X } from "lucide-react"
+import { motion } from "framer-motion"
 import Modal from "~/components/Modal/Modal"
 
 interface AidManProps {}
@@ -18,12 +19,14 @@ const AidMan: FC<AidManProps> = () => {
                 Add Post <Sparkles size={"20px"} />
             </motion.button>
             <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
-                <div className="relative h-[85vh] w-[80vw] sm:w-[600px]">
+                <div className="relative h-[85vh] w-[80vw] overflow-hidden sm:w-[600px]">
+                    <h2 className="text-lg font-medium">Create New Post</h2>
                     <X
                         tabIndex={1}
                         className="absolute right-0 top-0 cursor-pointer"
                         onClick={() => setModalOpen(false)}
                     />
+                    <MultiUploader />
                 </div>
             </Modal>
         </div>
