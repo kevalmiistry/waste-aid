@@ -75,13 +75,13 @@ export const MultiUploader = () => {
                                   ease: cubicBezier,
                               }}
                               key={idx}
-                              className={`group sticky left-0 h-[120px] min-w-[120px] max-w-[120px] overflow-hidden`}
+                              className="group sticky left-0 h-[120px] min-w-[120px] max-w-[120px] overflow-hidden rounded-md"
                               style={{ translateX: `${idx * 10}px` }}
                           >
                               <img
                                   src={URL.createObjectURL(file)}
                                   alt="img"
-                                  className={`h-full rounded-md object-cover transition-all group-hover:scale-110`}
+                                  className="h-full w-full rounded-md object-cover transition-all group-hover:scale-110"
                               />
                               <X
                                   className="absolute left-1/2 top-1/2 z-[2] -translate-x-1/2 -translate-y-1/2 scale-0 cursor-pointer rounded-full bg-red-500 p-1 text-white transition-all group-hover:scale-100"
