@@ -25,18 +25,20 @@ model Post {
     am_id           String
     PostImages      PostImages[]
     donations       Donations[]
+    metaData        Json
+    status          Boolean      @default(true)
 }
 
 model PostImages {
     uuid     String @id @default(uuid())
     imageURL String
-    post     Post   @relation(fields: [post_id], references: [uuid])
+    post     Post   @relation(fields: [post_id], references: [uuid], onDelete: Cascade)
     post_id  String
 }
 
 model Donations {
     uuid         String    @id @default(uuid())
-    post         Post      @relation(fields: [post_id], references: [uuid], onDelete: Cascade)
+    post         Post      @relation(fields: [post_id], references: [uuid])
     post_id      String
     donator      Account   @relation(fields: [donator_id], references: [id], onDelete: Cascade)
     donator_id   String
