@@ -1,14 +1,15 @@
 // Note: `useUploadThing` is IMPORTED FROM YOUR CODEBASE using the `generateReactHelpers` function
 import type { FileWithPath } from "@uploadthing/react"
+import { forwardRef, useCallback, useImperativeHandle, useState } from "react"
 import { generateClientDropzoneAccept } from "uploadthing/client"
-import { useCallback, useState } from "react"
+import { TMultiUploaderHandle } from "~/pages/aid-man"
 import { useUploadThing } from "~/utils/uploadthing"
 import { UploadCloud, X } from "lucide-react"
 import { useDropzone } from "@uploadthing/react/hooks"
 import { cubicBezier } from "~/utils/constants"
 import { motion } from "framer-motion"
 
-export const MultiUploader = () => {
+export const MultiUploader = forwardRef<TMultiUploaderHandle, {}>((_, ref) => {
     const [files, setFiles] = useState<File[]>([])
 
     const onDrop = useCallback((acceptedFiles: FileWithPath[]) => {
@@ -43,6 +44,16 @@ export const MultiUploader = () => {
             return prev.filter((_, i) => i !== idx)
         })
     }
+
+    const uploadAll = () => {
+        startUpload(files)
+    }
+
+    useImperativeHandle(ref, () => {
+        return {
+            uploadAll: uploadAll,
+        }
+    })
 
     return (
         <>
@@ -103,4 +114,4 @@ export const MultiUploader = () => {
             </div> */}
         </>
     )
-}
+})

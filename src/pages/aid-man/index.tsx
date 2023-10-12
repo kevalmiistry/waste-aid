@@ -1,11 +1,16 @@
-import { useState, type FC } from "react"
+import { useState, type FC, useRef } from "react"
 import { MultiUploader } from "~/components/MultiUploader"
 import { Sparkles, X } from "lucide-react"
 import { motion } from "framer-motion"
 import Modal from "~/components/Modal/Modal"
 
+export type TMultiUploaderHandle = {
+    uploadAll: () => void
+}
+
 interface AidManProps {}
 const AidMan: FC<AidManProps> = () => {
+    const uploaderRef = useRef<TMultiUploaderHandle | null>(null)
     const [modalOpen, setModalOpen] = useState(false)
 
     return (
@@ -26,7 +31,13 @@ const AidMan: FC<AidManProps> = () => {
                         className="absolute right-0 top-0 cursor-pointer"
                         onClick={() => setModalOpen(false)}
                     />
-                    <MultiUploader />
+                    <MultiUploader ref={uploaderRef} />
+                    <button
+                        className="btn-secondary"
+                        onClick={() => uploaderRef.current?.uploadAll()}
+                    >
+                        Submit
+                    </button>
                 </div>
             </Modal>
         </div>
