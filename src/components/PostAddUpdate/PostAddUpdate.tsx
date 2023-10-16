@@ -4,32 +4,76 @@ import { MultiUploader } from "../MultiUploader"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { DevTool } from "@hookform/devtools"
+import { api } from "~/utils/api"
 import { X } from "lucide-react"
 import { z } from "zod"
-import { api } from "~/utils/api"
+import moment from "moment"
 
 export type TMultiUploaderHandle = {
     uploadAll: () => void
 }
 
-const zPostSchema = z.object({
-    title: z.string().min(2, { message: "Please write lil long title" }),
-    description: z.ostring(),
-    address: z.string().min(2, { message: "Please write lil long address" }),
-    hasTarget: z.boolean({
-        errorMap: () => ({ message: "Please select any one of these" }),
-    }),
-    targetAmount: z.onumber().nullable(),
-    collectedAmount: z.onumber().nullable(),
-    amountType: z.ostring().nullable(),
-    hasDeadline: z.boolean({
-        errorMap: () => ({ message: "Please select any one of these" }),
-    }),
-    startDate: z.ostring().nullable(),
-    endDate: z.ostring().nullable(),
-    metaData: z.ostring().nullable(),
-    status: z.boolean().default(true),
-})
+const zPostSchema = z
+    .object({
+        title: z.string().min(2, { message: "Please write lil long title" }),
+        description: z.ostring(),
+        address: z
+            .string()
+            .min(2, { message: "Please write lil long address" }),
+        hasTarget: z.boolean({
+            errorMap: () => ({ message: "Please select any one of these" }),
+        }),
+        targetAmount: z.number().or(z.nan()).nullable().optional(),
+        collectedAmount: z.onumber().nullable(),
+        amountType: z.ostring().nullable(),
+        hasDeadline: z.boolean({
+            errorMap: () => ({ message: "Please select any one of these" }),
+        }),
+        startDate: z.ostring().nullable(),
+        endDate: z.ostring().nullable(),
+        metaData: z.ostring().nullable(),
+        status: z.boolean().default(true),
+    })
+    .refine(
+        ({ hasTarget, targetAmount }) => {
+            if (hasTarget === true) {
+                return (
+                    typeof targetAmount === "number" &&
+                    !isNaN(targetAmount) &&
+                    targetAmount > 0
+                )
+            }
+            return true
+        },
+        {
+            message: "Please Enter a Valid Amount",
+            path: ["targetAmount"],
+        }
+    )
+    .refine(
+        ({ hasDeadline, startDate, endDate }) => {
+            if (hasDeadline === true) {
+                return startDate && endDate
+            }
+            return true
+        },
+        {
+            message: "Please select both dates",
+            path: ["startDate"],
+        }
+    )
+    .refine(
+        ({ hasDeadline, startDate, endDate }) => {
+            if (hasDeadline === true) {
+                return moment(startDate).diff(endDate, "hours") <= 0
+            }
+            return true
+        },
+        {
+            message: "End date can't be before Start date",
+            path: ["startDate"],
+        }
+    )
 
 type PostTypes = z.infer<typeof zPostSchema>
 
@@ -192,6 +236,10 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({ modalOpen, setModalOpen }) => {
                                         valueAsNumber: true,
                                     })}
                                 />
+                                <small className="text-red-500">
+                                    {errors?.targetAmount &&
+                                        errors?.targetAmount?.message}
+                                </small>
                             </>
                         )}
                     </div>
@@ -261,6 +309,10 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({ modalOpen, setModalOpen }) => {
                                         className="w-full rounded-md border-2 px-2 py-1"
                                         {...register("startDate")}
                                     />
+                                    <small className="text-red-500">
+                                        {errors?.startDate &&
+                                            errors?.startDate?.message}
+                                    </small>
                                 </div>
                                 <div className="flex-1">
                                     <label
