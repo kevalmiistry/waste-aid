@@ -1,16 +1,11 @@
-import { useState, type FC, useRef } from "react"
-import { MultiUploader } from "~/components/MultiUploader"
-import { Sparkles, X } from "lucide-react"
+import { useState, type FC } from "react"
+import { Sparkles } from "lucide-react"
 import { motion } from "framer-motion"
+import PostAddUpdate from "~/components/PostAddUpdate/PostAddUpdate"
 import Modal from "~/components/Modal/Modal"
-
-export type TMultiUploaderHandle = {
-    uploadAll: () => void
-}
 
 interface AidManProps {}
 const AidMan: FC<AidManProps> = () => {
-    const uploaderRef = useRef<TMultiUploaderHandle | null>(null)
     const [modalOpen, setModalOpen] = useState(false)
 
     return (
@@ -24,21 +19,10 @@ const AidMan: FC<AidManProps> = () => {
                 Add Post <Sparkles size={"20px"} />
             </motion.button>
             <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
-                <div className="relative h-[85vh] w-[80vw] overflow-hidden sm:w-[600px]">
-                    <h2 className="text-lg font-medium">Create New Post</h2>
-                    <X
-                        tabIndex={1}
-                        className="absolute right-0 top-0 cursor-pointer"
-                        onClick={() => setModalOpen(false)}
-                    />
-                    <MultiUploader ref={uploaderRef} />
-                    <button
-                        className="btn-secondary"
-                        onClick={() => uploaderRef.current?.uploadAll()}
-                    >
-                        Submit
-                    </button>
-                </div>
+                <PostAddUpdate
+                    modalOpen={modalOpen}
+                    setModalOpen={setModalOpen}
+                />
             </Modal>
         </div>
     )

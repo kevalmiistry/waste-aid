@@ -2,7 +2,7 @@
 import type { FileWithPath } from "@uploadthing/react"
 import { forwardRef, useCallback, useImperativeHandle, useState } from "react"
 import { generateClientDropzoneAccept } from "uploadthing/client"
-import { TMultiUploaderHandle } from "~/pages/aid-man"
+import { TMultiUploaderHandle } from "~/components/PostAddUpdate/PostAddUpdate"
 import { useUploadThing } from "~/utils/uploadthing"
 import { UploadCloud, X } from "lucide-react"
 import { useDropzone } from "@uploadthing/react/hooks"
@@ -45,10 +45,12 @@ export const MultiUploader = forwardRef<TMultiUploaderHandle, {}>((_, ref) => {
         })
     }
 
+    // function of type: () => void - to easy provide to parent to call
     const uploadAll = () => {
         startUpload(files)
     }
 
+    // To give access of fn uploadAll() in ref.current
     useImperativeHandle(ref, () => {
         return {
             uploadAll: uploadAll,

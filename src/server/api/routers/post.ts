@@ -14,8 +14,12 @@ export const postRouter = createTRPCRouter({
                 description: z.string(),
                 address: z.string(),
                 hasTarget: z.boolean(),
+                targetAmount: z.number(),
                 amountType: z.string(),
                 hasDeadline: z.boolean(),
+                startDate: z.ostring().nullable(),
+                endDate: z.ostring().nullable(),
+                status: z.boolean(),
                 am_id: z.string(),
             })
         )
@@ -57,7 +61,7 @@ export const postRouter = createTRPCRouter({
             try {
                 const post = await ctx.prisma.post.update({
                     where: {
-                        uuid: input.uuid
+                        uuid: input.uuid,
                     },
                     data: input,
                 })
@@ -97,4 +101,14 @@ export const postRouter = createTRPCRouter({
             },
         })
     }),
+
+    getOnePost: publicProcedure
+        .input(z.object({ pid: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            return await ctx.prisma.post.findUnique({
+                where: {
+                    uuid: input.pid,
+                },
+            })
+        }),
 })

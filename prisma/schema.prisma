@@ -25,7 +25,7 @@ model Post {
     am_id           String
     PostImages      PostImages[]
     donations       Donations[]
-    metaData        Json
+    metaData        Json?
     status          Boolean      @default(true)
 }
 

@@ -23,24 +23,24 @@ const Home = () => {
     }
 
     const handleCreatePost = () => {
-        createPost.mutate(
-            {
-                title: "This is Title!!!",
-                description:
-                    "A nice description for the post, have a good day... ;)",
-                address: "101, main street, NY",
-                hasTarget: false,
-                amountType: "KG",
-                hasDeadline: false,
-                am_id: "cll2ku9se0002i3rsd4qom4tu",
-            },
-            {
-                onSuccess: (post) => {
-                    console.log("-------------------------------")
-                    console.log(post)
-                },
-            }
-        )
+        // createPost.mutate(
+        //     {
+        //         title: "This is Title!!!",
+        //         description:
+        //             "A nice description for the post, have a good day... ;)",
+        //         address: "101, main street, NY",
+        //         hasTarget: false,
+        //         amountType: "KG",
+        //         hasDeadline: false,
+        //         am_id: "cll2ku9se0002i3rsd4qom4tu",
+        //     },
+        //     {
+        //         onSuccess: (post) => {
+        //             console.log("-------------------------------")
+        //             console.log(post)
+        //         },
+        //     }
+        // )
     }
 
     const handleUpdatePost = () => {
