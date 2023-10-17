@@ -18,7 +18,11 @@ const AidMan: FC<AidManProps> = () => {
             >
                 Add Post <Sparkles size={"20px"} />
             </motion.button>
-            <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
+            <Modal
+                open={modalOpen}
+                onClose={() => setModalOpen(false)}
+                classNames="pr-2"
+            >
                 <PostAddUpdate
                     modalOpen={modalOpen}
                     setModalOpen={setModalOpen}

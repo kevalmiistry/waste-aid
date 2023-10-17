@@ -8,9 +8,10 @@ interface IModal {
     children: ReactNode
     open: boolean
     onClose: () => void
+    classNames?: string
 }
 
-const Modal: FC<IModal> = ({ children, open, onClose }) => {
+const Modal: FC<IModal> = ({ children, open, onClose, classNames = "" }) => {
     const [isMounted, setIsMounted] = useState(false)
 
     useEffect(() => {
@@ -51,7 +52,7 @@ const Modal: FC<IModal> = ({ children, open, onClose }) => {
                                   translateY: "-50%",
                               }}
                               transition={{ ease: cubicBezier, duration: 0.3 }}
-                              className="fixed left-1/2 top-1/2 z-[2] rounded-xl bg-white p-5 shadow-lg"
+                              className={`fixed left-1/2 top-1/2 z-[2] rounded-xl bg-white p-5 shadow-lg ${classNames}`}
                           >
                               {children}
                           </motion.div>

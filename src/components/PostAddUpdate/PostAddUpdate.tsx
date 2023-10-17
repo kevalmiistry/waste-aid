@@ -126,13 +126,15 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({ modalOpen, setModalOpen }) => {
     // console.log(errors)
 
     return (
-        <div className="custom-scrollbar relative h-[85vh] w-[80vw] overflow-y-auto overflow-x-hidden pb-5 sm:w-[600px]">
-            <h2 className="text-lg font-medium">Create New Post</h2>
-            <X
-                tabIndex={1}
-                className="absolute right-0 top-0 cursor-pointer"
-                onClick={() => setModalOpen(false)}
-            />
+        <div className="custom-scrollbar relative h-[85vh] w-[80vw] overflow-y-auto overflow-x-hidden pb-5 pr-3 sm:w-[600px]">
+            <div className="sticky top-0 flex items-center justify-between bg-white pb-3">
+                <h2 className="text-lg font-medium">Create New Post</h2>
+                <X
+                    tabIndex={1}
+                    className="cursor-pointer"
+                    onClick={() => setModalOpen(false)}
+                />
+            </div>
             <MultiUploader ref={uploaderRef} />
             <form
                 className="flex flex-col gap-3"

@@ -61,7 +61,7 @@ export const MultiUploader = forwardRef<TMultiUploaderHandle, {}>((_, ref) => {
         <>
             <div
                 {...getRootProps()}
-                className="m-3 min-h-[100px] rounded-xl border-2 border-[#999] p-3"
+                className="min-h-[100px] w-full rounded-xl border-2 border-[#999] p-3"
             >
                 <input {...getInputProps()} />
                 {files?.length > 0 && (
