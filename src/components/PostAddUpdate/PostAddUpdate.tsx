@@ -7,7 +7,16 @@ import { DevTool } from "@hookform/devtools"
 import { api } from "~/utils/api"
 import { X } from "lucide-react"
 import { z } from "zod"
+import RHFSelect from "../RHFSelect/RHFSelect"
 import moment from "moment"
+
+const amountTypeOptions = [
+    { value: "kg", label: "KG" },
+    { value: "mg", label: "MG" },
+    { value: "ltr", label: "Ltr" },
+    { value: "ml", label: "ML" },
+    { value: "units", label: "Units" },
+]
 
 export type TMultiUploaderHandle = {
     uploadAll: () => void
@@ -17,9 +26,6 @@ const zPostSchema = z
     .object({
         title: z.string().min(2, { message: "Please write lil long title" }),
         description: z.ostring(),
-        address: z
-            .string()
-            .min(2, { message: "Please write lil long address" }),
         hasTarget: z.boolean({
             errorMap: () => ({ message: "Please select any one of these" }),
         }),
@@ -33,6 +39,9 @@ const zPostSchema = z
         endDate: z.ostring().nullable(),
         metaData: z.ostring().nullable(),
         status: z.boolean().default(true),
+        address: z
+            .string()
+            .min(2, { message: "Please write lil long address" }),
     })
     .refine(
         ({ hasTarget, targetAmount }) => {
@@ -48,6 +57,18 @@ const zPostSchema = z
         {
             message: "Please Enter a Valid Amount",
             path: ["targetAmount"],
+        }
+    )
+    .refine(
+        ({ hasTarget, amountType }) => {
+            if (hasTarget === true) {
+                return !!amountType
+            }
+            return true
+        },
+        {
+            message: "Please Select a Amount Type",
+            path: ["amountType"],
         }
     )
     .refine(
@@ -75,7 +96,7 @@ const zPostSchema = z
         }
     )
 
-type PostTypes = z.infer<typeof zPostSchema>
+export type PostTypes = z.infer<typeof zPostSchema>
 
 interface IPostAddUpdate {
     modalOpen: boolean
@@ -126,7 +147,7 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({ modalOpen, setModalOpen }) => {
     // console.log(errors)
 
     return (
-        <div className="custom-scrollbar relative h-[85vh] w-[80vw] overflow-y-auto overflow-x-hidden pb-5 pr-3 sm:w-[600px]">
+        <>
             <div className="sticky top-0 flex items-center justify-between bg-white pb-3">
                 <h2 className="text-lg font-medium">Create New Post</h2>
                 <X
@@ -135,235 +156,268 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({ modalOpen, setModalOpen }) => {
                     onClick={() => setModalOpen(false)}
                 />
             </div>
-            <MultiUploader ref={uploaderRef} />
-            <form
-                className="flex flex-col gap-3"
-                onSubmit={handleSubmit(onSubmit)}
-            >
-                <div className="w-full" aria-label="input-group">
-                    <label
-                        htmlFor="title"
-                        className="text-sm font-medium text-[#333]"
-                    >
-                        Title
-                    </label>
-                    <input
-                        type="text"
-                        id="title"
-                        className="w-full rounded-md border-2 px-2 py-1"
-                        {...register("title")}
-                    />
-                    <small className="text-red-500">
-                        {errors?.title && errors?.title?.message}
-                    </small>
-                </div>
-                <div className="w-full" aria-label="input-group">
-                    <label
-                        htmlFor="description"
-                        className="text-sm font-medium text-[#333]"
-                    >
-                        Description
-                    </label>
-                    <textarea
-                        id="description"
-                        rows={3}
-                        className="w-full rounded-md border-2 px-2 py-1"
-                        {...register("description")}
-                    />
-                    <small className="text-red-500">
-                        {errors?.description && errors?.description?.message}
-                    </small>
-                </div>
-                <div className="flex gap-2">
-                    <div className="flex-1" aria-label="input-group">
+            <div className="custom-scrollbar relative h-[80vh] w-[80vw] overflow-y-auto overflow-x-hidden pb-5 pr-3 sm:w-[600px]">
+                <MultiUploader ref={uploaderRef} />
+                <form
+                    className="flex flex-col gap-3"
+                    onSubmit={handleSubmit(onSubmit)}
+                >
+                    <div className="w-full" aria-label="input-group">
                         <label
-                            htmlFor=""
+                            htmlFor="title"
                             className="text-sm font-medium text-[#333]"
                         >
-                            Has Target?
+                            Title
                         </label>
-                        <div className="flex gap-1">
-                            <input
-                                type="radio"
-                                id="yes"
-                                className="w-[18px]"
-                                onChange={(e) => {
-                                    if (e.target.checked)
-                                        setValue("hasTarget", true)
-                                }}
-                                checked={watch("hasTarget")}
-                            />
-                            <label
-                                htmlFor="yes"
-                                className="text-sm font-medium text-[#333]"
-                            >
-                                Yes
-                            </label>
-                            <input
-                                type="radio"
-                                id="no"
-                                className="ms-3 w-[18px]"
-                                onChange={(e) => {
-                                    if (e.target.checked)
-                                        setValue("hasTarget", false)
-                                }}
-                                checked={watch("hasTarget") === false}
-                            />
-                            <label
-                                htmlFor="no"
-                                className="text-sm font-medium text-[#333]"
-                            >
-                                No
-                            </label>
-                        </div>
+                        <input
+                            type="text"
+                            id="title"
+                            className="w-full rounded-md border-2 px-2 py-1"
+                            {...register("title")}
+                        />
                         <small className="text-red-500">
-                            {errors?.hasTarget && errors?.hasTarget?.message}
+                            {errors?.title && errors?.title?.message}
                         </small>
                     </div>
-
-                    <div className="flex-1" aria-label="input-group">
-                        {watch("hasTarget") && (
-                            <>
+                    <div className="w-full" aria-label="input-group">
+                        <label
+                            htmlFor="description"
+                            className="text-sm font-medium text-[#333]"
+                        >
+                            Description
+                        </label>
+                        <textarea
+                            id="description"
+                            rows={3}
+                            className="w-full rounded-md border-2 px-2 py-1"
+                            {...register("description")}
+                        />
+                        <small className="text-red-500">
+                            {errors?.description &&
+                                errors?.description?.message}
+                        </small>
+                    </div>
+                    <div className="flex gap-2">
+                        <div className="flex-1" aria-label="input-group">
+                            <label
+                                htmlFor=""
+                                className="text-sm font-medium text-[#333]"
+                            >
+                                Has Target?
+                            </label>
+                            <div className="flex gap-1">
+                                <input
+                                    type="radio"
+                                    id="yes"
+                                    className="w-[18px]"
+                                    onChange={(e) => {
+                                        if (e.target.checked)
+                                            setValue("hasTarget", true)
+                                    }}
+                                    checked={watch("hasTarget")}
+                                />
                                 <label
-                                    htmlFor="description"
+                                    htmlFor="yes"
                                     className="text-sm font-medium text-[#333]"
                                 >
-                                    Target Amount
+                                    Yes
                                 </label>
                                 <input
-                                    type="number"
-                                    id="title"
-                                    className="w-full rounded-md border-2 px-2 py-1"
-                                    {...register("targetAmount", {
-                                        valueAsNumber: true,
-                                    })}
+                                    type="radio"
+                                    id="no"
+                                    className="ms-3 w-[18px]"
+                                    onChange={(e) => {
+                                        if (e.target.checked)
+                                            setValue("hasTarget", false)
+                                    }}
+                                    checked={watch("hasTarget") === false}
                                 />
-                                <small className="text-red-500">
-                                    {errors?.targetAmount &&
-                                        errors?.targetAmount?.message}
-                                </small>
-                            </>
-                        )}
-                    </div>
-                </div>
+                                <label
+                                    htmlFor="no"
+                                    className="text-sm font-medium text-[#333]"
+                                >
+                                    No
+                                </label>
+                            </div>
+                            <small className="text-red-500">
+                                {errors?.hasTarget &&
+                                    errors?.hasTarget?.message}
+                            </small>
+                        </div>
 
-                <div className="mt-3">
-                    <div className="flex-1" aria-label="input-group">
+                        <div className="flex-1" aria-label="input-group">
+                            {watch("hasTarget") && (
+                                <>
+                                    <label
+                                        htmlFor="description"
+                                        className="text-sm font-medium text-[#333]"
+                                    >
+                                        Target Amount
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="title"
+                                        className="w-full rounded-md border-2 px-2 py-1"
+                                        {...register("targetAmount", {
+                                            valueAsNumber: true,
+                                        })}
+                                    />
+                                    <small className="text-red-500">
+                                        {errors?.targetAmount &&
+                                            errors?.targetAmount?.message}
+                                    </small>
+                                </>
+                            )}
+                        </div>
+                        <div className="flex-1" aria-label="input-group">
+                            {watch("hasTarget") && (
+                                <>
+                                    <label
+                                        htmlFor="description"
+                                        className="text-sm font-medium text-[#333]"
+                                    >
+                                        Amount Type
+                                    </label>
+                                    <RHFSelect
+                                        control={control}
+                                        name={"amountType"}
+                                        options={amountTypeOptions}
+                                    />
+                                    <small className="text-red-500">
+                                        {errors?.targetAmount &&
+                                            errors?.amountType?.message}
+                                    </small>
+                                </>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="mt-3 flex gap-2">
+                        <div className="flex-1" aria-label="input-group">
+                            <label
+                                htmlFor=""
+                                className="text-sm font-medium text-[#333]"
+                            >
+                                Has Deadline?
+                            </label>
+                            <div className="flex gap-1">
+                                <input
+                                    type="radio"
+                                    id="deadline_yes"
+                                    className="w-[18px]"
+                                    onChange={(e) => {
+                                        if (e.target.checked)
+                                            setValue("hasDeadline", true)
+                                    }}
+                                    checked={watch("hasDeadline")}
+                                />
+                                <label
+                                    htmlFor="deadline_yes"
+                                    className="text-sm font-medium text-[#333]"
+                                >
+                                    Yes
+                                </label>
+                                <input
+                                    type="radio"
+                                    id="deadline_no"
+                                    className="ms-3 w-[18px]"
+                                    onChange={(e) => {
+                                        if (e.target.checked)
+                                            setValue("hasDeadline", false)
+                                    }}
+                                    checked={watch("hasDeadline") === false}
+                                />
+                                <label
+                                    htmlFor="deadline_no"
+                                    className="text-sm font-medium text-[#333]"
+                                >
+                                    No
+                                </label>
+                            </div>
+                            <small className="text-red-500">
+                                {errors?.hasDeadline &&
+                                    errors?.hasDeadline?.message}
+                            </small>
+                        </div>
+
+                        <div className="flex-[2]">
+                            <div className="flex gap-2">
+                                {watch("hasDeadline") && (
+                                    <div
+                                        className="flex-1"
+                                        aria-label="input-group"
+                                    >
+                                        <label
+                                            htmlFor="startDate"
+                                            className="text-sm font-medium text-[#333]"
+                                        >
+                                            Start Date
+                                        </label>
+                                        <input
+                                            type="date"
+                                            id="startDate"
+                                            className="w-full rounded-md border-2 px-2 py-1"
+                                            {...register("startDate")}
+                                        />
+                                    </div>
+                                )}
+                                {watch("hasDeadline") && (
+                                    <div
+                                        className="flex-1"
+                                        aria-label="input-group"
+                                    >
+                                        <label
+                                            htmlFor="endDate"
+                                            className="text-sm font-medium text-[#333]"
+                                        >
+                                            End Date
+                                        </label>
+                                        <input
+                                            type="date"
+                                            id="endDate"
+                                            className="w-full rounded-md border-2 px-2 py-1"
+                                            {...register("endDate")}
+                                        />
+                                    </div>
+                                )}
+                            </div>
+                            <small className="mt-1 block text-center text-red-500">
+                                {errors?.startDate &&
+                                    errors?.startDate?.message}
+                            </small>
+                        </div>
+                    </div>
+                    <div className="w-full" aria-label="input-group">
                         <label
-                            htmlFor=""
+                            htmlFor="address"
                             className="text-sm font-medium text-[#333]"
                         >
-                            Has Deadline?
+                            Address
                         </label>
-                        <div className="flex gap-1">
-                            <input
-                                type="radio"
-                                id="deadline_yes"
-                                className="w-[18px]"
-                                onChange={(e) => {
-                                    if (e.target.checked)
-                                        setValue("hasDeadline", true)
-                                }}
-                                checked={watch("hasDeadline")}
-                            />
-                            <label
-                                htmlFor="deadline_yes"
-                                className="text-sm font-medium text-[#333]"
-                            >
-                                Yes
-                            </label>
-                            <input
-                                type="radio"
-                                id="deadline_no"
-                                className="ms-3 w-[18px]"
-                                onChange={(e) => {
-                                    if (e.target.checked)
-                                        setValue("hasDeadline", false)
-                                }}
-                                checked={watch("hasDeadline") === false}
-                            />
-                            <label
-                                htmlFor="deadline_no"
-                                className="text-sm font-medium text-[#333]"
-                            >
-                                No
-                            </label>
-                        </div>
+                        <textarea
+                            id="address"
+                            rows={3}
+                            className="w-full rounded-md border-2 px-2 py-1"
+                            {...register("address")}
+                        />
                         <small className="text-red-500">
-                            {errors?.hasDeadline &&
-                                errors?.hasDeadline?.message}
+                            {errors?.address && errors?.address?.message}
                         </small>
                     </div>
 
-                    <div className="flex-1" aria-label="input-group">
-                        {watch("hasDeadline") && (
-                            <div className="mt-3 flex gap-3">
-                                <div className="flex-1">
-                                    <label
-                                        htmlFor="startDate"
-                                        className="text-sm font-medium text-[#333]"
-                                    >
-                                        Start Date
-                                    </label>
-                                    <input
-                                        type="date"
-                                        id="startDate"
-                                        className="w-full rounded-md border-2 px-2 py-1"
-                                        {...register("startDate")}
-                                    />
-                                    <small className="text-red-500">
-                                        {errors?.startDate &&
-                                            errors?.startDate?.message}
-                                    </small>
-                                </div>
-                                <div className="flex-1">
-                                    <label
-                                        htmlFor="endDate"
-                                        className="text-sm font-medium text-[#333]"
-                                    >
-                                        End Date
-                                    </label>
-                                    <input
-                                        type="date"
-                                        id="endDate"
-                                        className="w-full rounded-md border-2 px-2 py-1"
-                                        {...register("endDate")}
-                                    />
-                                </div>
-                            </div>
-                        )}
+                    <div className="flex justify-end px-2">
+                        <button
+                            className="btn-secondary mt-5"
+                            // onClick={() => uploaderRef.current?.uploadAll()}
+                            type="submit"
+                        >
+                            Submit
+                        </button>
                     </div>
-                </div>
-                <div className="w-full" aria-label="input-group">
-                    <label
-                        htmlFor="address"
-                        className="text-sm font-medium text-[#333]"
-                    >
-                        Address
-                    </label>
-                    <textarea
-                        id="address"
-                        rows={3}
-                        className="w-full rounded-md border-2 px-2 py-1"
-                        {...register("address")}
-                    />
-                    <small className="text-red-500">
-                        {errors?.address && errors?.address?.message}
-                    </small>
-                </div>
-
-                <div className="flex justify-end px-2">
-                    <button
-                        className="btn-secondary mt-5"
-                        // onClick={() => uploaderRef.current?.uploadAll()}
-                        type="submit"
-                    >
-                        Submit
-                    </button>
-                </div>
-            </form>
-            <DevTool control={control} />
-        </div>
+                </form>
+            </div>
+            {/* <DevTool control={control} /> */}
+        </>
     )
 }
 
