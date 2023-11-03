@@ -21,7 +21,7 @@ model Post {
     endDate         DateTime?
     createdAt       DateTime     @default(now())
     updatedAt       DateTime     @updatedAt
-    aidman          Account      @relation(fields: [am_id], references: [id], onDelete: Cascade)
+    aidman          User         @relation(fields: [am_id], references: [id], onDelete: Cascade)
     am_id           String
     PostImages      PostImages[]
     donations       Donations[]
@@ -40,7 +40,7 @@ model Donations {
     uuid         String    @id @default(uuid())
     post         Post      @relation(fields: [post_id], references: [uuid])
     post_id      String
-    donator      Account   @relation(fields: [donator_id], references: [id], onDelete: Cascade)
+    donator      User      @relation(fields: [donator_id], references: [id], onDelete: Cascade)
     donator_id   String
     donatedAmout Int?
     reached      Boolean   @default(false)
@@ -50,21 +50,19 @@ model Donations {
 
 // Necessary for Next auth
 model Account {
-    id                String      @id @default(cuid())
+    id                String  @id @default(cuid())
     userId            String
     type              String
     provider          String
     providerAccountId String
-    refresh_token     String?     @db.Text
-    access_token      String?     @db.Text
+    refresh_token     String? @db.Text
+    access_token      String? @db.Text
     expires_at        Int?
     token_type        String?
     scope             String?
-    id_token          String?     @db.Text
+    id_token          String? @db.Text
     session_state     String?
-    user              User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-    Post              Post[]
-    donations         Donations[]
+    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@unique([provider, providerAccountId])
 }
@@ -78,13 +76,15 @@ model Session {
 }
 
 model User {
-    id            String    @id @default(cuid())
+    id            String      @id @default(cuid())
     name          String?
-    email         String?   @unique
+    email         String?     @unique
     emailVerified DateTime?
     image         String?
     accounts      Account[]
     sessions      Session[]
+    Post          Post[]
+    Donations     Donations[]
 }
 
 model VerificationToken {
