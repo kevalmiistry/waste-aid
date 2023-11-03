@@ -10,7 +10,7 @@ datasource db {
 model Post {
     uuid            String       @id @default(uuid())
     title           String
-    description     String
+    description     String?
     address         String
     hasTarget       Boolean      @default(false)
     targetAmount    Int?
