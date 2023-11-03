@@ -2,8 +2,9 @@ import { useRef, type FC, Dispatch, SetStateAction } from "react"
 import { useSearchParams } from "next/navigation"
 import { MultiUploader } from "../MultiUploader"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useSession } from "next-auth/react"
 import { useForm } from "react-hook-form"
-import { DevTool } from "@hookform/devtools"
+// import { DevTool } from "@hookform/devtools"
 import { api } from "~/utils/api"
 import { X } from "lucide-react"
 import { z } from "zod"
@@ -103,6 +104,8 @@ interface IPostAddUpdate {
     setModalOpen: Dispatch<SetStateAction<boolean>>
 }
 const PostAddUpdate: FC<IPostAddUpdate> = ({ modalOpen, setModalOpen }) => {
+    const { data: sessionData } = useSession()
+
     const uploaderRef = useRef<TMultiUploaderHandle | null>(null)
 
     // const router = useRouter()
@@ -110,6 +113,8 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({ modalOpen, setModalOpen }) => {
     const searchParams = useSearchParams()
 
     const getPost = api.post.getOnePost.useMutation()
+    const { mutate: createPostMutate, isLoading: creatingPostLoading } =
+        api.post.createPost.useMutation()
 
     const fetchPostData = async () => {
         if (
@@ -131,7 +136,7 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({ modalOpen, setModalOpen }) => {
         handleSubmit,
         watch,
         setValue,
-        getValues,
+        // getValues,
         // setError,
         formState: { errors, isLoading },
     } = useForm<PostTypes>({
@@ -140,7 +145,43 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({ modalOpen, setModalOpen }) => {
     })
 
     const onSubmit = async (data: PostTypes) => {
-        console.log(data)
+        try {
+            const payloadData = {
+                title: data.title,
+                description: data.description || "",
+                address: data.address,
+                hasTarget: data.hasTarget,
+                targetAmount: data.hasTarget ? data.targetAmount : null,
+                amountType: data.hasTarget ? data.amountType : null,
+                hasDeadline: data.hasDeadline,
+                startDate:
+                    data.hasDeadline && typeof data.startDate === "string"
+                        ? new Date(data.startDate).toISOString()
+                        : null,
+                endDate:
+                    data.hasDeadline && typeof data.endDate === "string"
+                        ? new Date(data.endDate).toISOString()
+                        : null,
+                status: true,
+                am_id: sessionData?.user.id as string,
+            }
+
+            if (
+                sessionData?.user.id &&
+                typeof sessionData?.user.id === "string"
+            ) {
+                console.log(sessionData?.user.id)
+                createPostMutate(payloadData, {
+                    onSuccess(data, variables, context) {
+                        console.log(data)
+                        console.log(variables)
+                        console.log(context)
+                    },
+                })
+            }
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     // console.log(getValues())
@@ -414,8 +455,9 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({ modalOpen, setModalOpen }) => {
                             className="btn-secondary mt-5"
                             // onClick={() => uploaderRef.current?.uploadAll()}
                             type="submit"
+                            disabled={creatingPostLoading}
                         >
-                            Submit
+                            {creatingPostLoading ? "Submitting..." : "Submit"}
                         </button>
                     </div>
                 </form>

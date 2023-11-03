@@ -2,20 +2,21 @@ import { TRPCError } from "@trpc/server"
 import { z } from "zod"
 import {
     createTRPCRouter,
+    protectedProcedure,
     publicProcedure,
     // protectedProcedure,
 } from "~/server/api/trpc"
 
 export const postRouter = createTRPCRouter({
-    createPost: publicProcedure
+    createPost: protectedProcedure
         .input(
             z.object({
                 title: z.string(),
-                description: z.string(),
+                description: z.ostring(),
                 address: z.string(),
                 hasTarget: z.boolean(),
-                targetAmount: z.number(),
-                amountType: z.string(),
+                targetAmount: z.number().or(z.nan()).nullable().optional(),
+                amountType: z.ostring().nullable(),
                 hasDeadline: z.boolean(),
                 startDate: z.ostring().nullable(),
                 endDate: z.ostring().nullable(),
@@ -31,6 +32,8 @@ export const postRouter = createTRPCRouter({
 
                 return post
             } catch (error) {
+                console.log("Error at: post.createPost")
+                console.log(error)
                 throw new TRPCError({
                     code: "CONFLICT",
                     message: "something went wrong",
