@@ -172,7 +172,8 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({ modalOpen, setModalOpen }) => {
                         <input
                             type="text"
                             id="title"
-                            className="w-full rounded-md border-2 px-2 py-1"
+                            className="w-full rounded-lg border-2 px-2 py-1 placeholder:text-sm placeholder:font-light placeholder:italic"
+                            placeholder="Eg. Collecting mango seeds for farmers"
                             {...register("title")}
                         />
                         <small className="text-red-500">
@@ -189,7 +190,8 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({ modalOpen, setModalOpen }) => {
                         <textarea
                             id="description"
                             rows={3}
-                            className="w-full rounded-md border-2 px-2 py-1"
+                            className="w-full rounded-lg border-2 px-2 py-1 placeholder:text-sm placeholder:font-light placeholder:italic"
+                            placeholder="Eg. We're collecting dried up mango seeds to plant them and then donate them to poor farmers..."
                             {...register("description")}
                         />
                         <small className="text-red-500">
@@ -257,7 +259,8 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({ modalOpen, setModalOpen }) => {
                                     <input
                                         type="number"
                                         id="title"
-                                        className="w-full rounded-md border-2 px-2 py-1"
+                                        className="w-full rounded-lg border-2 px-2 py-1 placeholder:text-sm placeholder:font-light placeholder:italic"
+                                        placeholder="Eg. 1000"
                                         {...register("targetAmount", {
                                             valueAsNumber: true,
                                         })}
@@ -356,7 +359,7 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({ modalOpen, setModalOpen }) => {
                                         <input
                                             type="date"
                                             id="startDate"
-                                            className="w-full rounded-md border-2 px-2 py-1"
+                                            className="w-full rounded-lg border-2 px-2 py-1"
                                             {...register("startDate")}
                                         />
                                     </div>
@@ -375,7 +378,7 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({ modalOpen, setModalOpen }) => {
                                         <input
                                             type="date"
                                             id="endDate"
-                                            className="w-full rounded-md border-2 px-2 py-1"
+                                            className="w-full rounded-lg border-2 px-2 py-1"
                                             {...register("endDate")}
                                         />
                                     </div>
@@ -397,7 +400,8 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({ modalOpen, setModalOpen }) => {
                         <textarea
                             id="address"
                             rows={3}
-                            className="w-full rounded-md border-2 px-2 py-1"
+                            className="w-full rounded-lg border-2 px-2 py-1 placeholder:text-sm placeholder:font-light placeholder:italic"
+                            placeholder="Eg. 101, main street, Mumbai Maharastra, PIN: 40XXXX9"
                             {...register("address")}
                         />
                         <small className="text-red-500">

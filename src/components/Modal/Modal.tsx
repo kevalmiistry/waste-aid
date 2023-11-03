@@ -52,7 +52,7 @@ const Modal: FC<IModal> = ({ children, open, onClose, classNames = "" }) => {
                                   translateY: "-50%",
                               }}
                               transition={{ ease: cubicBezier, duration: 0.3 }}
-                              className={`fixed left-1/2 top-1/2 z-[2] rounded-xl bg-white p-5 shadow-lg ${classNames}`}
+                              className={`fixed left-1/2 top-1/2 z-[2] rounded-3xl bg-white p-5 shadow-lg ${classNames}`}
                           >
                               {children}
                           </motion.div>

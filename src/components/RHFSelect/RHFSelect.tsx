@@ -15,7 +15,7 @@ const customReactSelectStyle: StylesConfig = {
     control: (baseStyles, { isDisabled, isFocused }) => ({
         ...baseStyles,
         borderWidth: isFocused ? "0" : "2px",
-        borderRadius: "6px",
+        borderRadius: "0.5rem",
         borderColor: isFocused ? "none" : "#e9ebee",
         boxShadow: "none",
         outline: isFocused ? "2px solid #000" : "none",
@@ -33,7 +33,7 @@ const customReactSelectStyle: StylesConfig = {
         ...baseStyles,
         border: "2px solid #e9ebee",
         overflow: "hidden",
-        borderRadius: "6px",
+        borderRadius: "0.5rem",
         boxShadow: "none",
     }),
     option: (baseStyles, { data, isDisabled, isFocused, isSelected }) => ({
