@@ -138,6 +138,7 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({ modalOpen, setModalOpen }) => {
         setValue,
         // getValues,
         // setError,
+        reset,
         formState: { errors, isLoading },
     } = useForm<PostTypes>({
         // defaultValues: searchParams.get("pid") ? fetchPostData : {},
@@ -170,12 +171,9 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({ modalOpen, setModalOpen }) => {
                 sessionData?.user.id &&
                 typeof sessionData?.user.id === "string"
             ) {
-                console.log(sessionData?.user.id)
                 createPostMutate(payloadData, {
                     onSuccess(data, variables, context) {
-                        console.log(data)
-                        console.log(variables)
-                        console.log(context)
+                        reset()
                     },
                 })
             }
@@ -452,12 +450,23 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({ modalOpen, setModalOpen }) => {
 
                     <div className="flex justify-end px-2">
                         <button
-                            className="btn-secondary mt-5"
+                            className={`mt-5 ${
+                                creatingPostLoading
+                                    ? "btn-secondary"
+                                    : "btn-primary"
+                            }`}
                             // onClick={() => uploaderRef.current?.uploadAll()}
                             type="submit"
                             disabled={creatingPostLoading}
                         >
-                            {creatingPostLoading ? "Submitting..." : "Submit"}
+                            {creatingPostLoading ? (
+                                <>
+                                    <span className="loader mr-2" />
+                                    Submitting
+                                </>
+                            ) : (
+                                "Submit"
+                            )}
                         </button>
                     </div>
                 </form>
