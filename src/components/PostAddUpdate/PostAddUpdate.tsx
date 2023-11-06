@@ -1,4 +1,4 @@
-import { useRef, type FC, Dispatch, SetStateAction } from "react"
+import { useRef, type FC, Dispatch, SetStateAction, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { MultiUploader } from "../MultiUploader"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -10,6 +10,8 @@ import { X } from "lucide-react"
 import { z } from "zod"
 import RHFSelect from "../RHFSelect/RHFSelect"
 import moment from "moment"
+import { type UploadFileResponse } from "uploadthing/client"
+import { useUploadThing } from "~/utils/uploadthing"
 
 const amountTypeOptions = [
     { value: "kg", label: "KG" },
@@ -20,7 +22,7 @@ const amountTypeOptions = [
 ]
 
 export type TMultiUploaderHandle = {
-    uploadAll: () => void
+    uploadAll: () => Promise<UploadFileResponse[] | undefined>
 }
 
 const zPostSchema = z
@@ -107,14 +109,19 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({ modalOpen, setModalOpen }) => {
     const { data: sessionData } = useSession()
 
     const uploaderRef = useRef<TMultiUploaderHandle | null>(null)
+    const [imagesUploading, setImagesUploading] = useState(false)
 
     // const router = useRouter()
     // console.log(router.query?.pid)
     const searchParams = useSearchParams()
 
     const getPost = api.post.getOnePost.useMutation()
+
     const { mutate: createPostMutate, isLoading: creatingPostLoading } =
         api.post.createPost.useMutation()
+
+    const { mutate: saveImageURLsMutate, isLoading: savingImageURLsLoading } =
+        api.post.savePostImageURLs.useMutation()
 
     const fetchPostData = async () => {
         if (
@@ -136,10 +143,8 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({ modalOpen, setModalOpen }) => {
         handleSubmit,
         watch,
         setValue,
-        // getValues,
-        // setError,
         reset,
-        formState: { errors, isLoading },
+        formState: { errors },
     } = useForm<PostTypes>({
         // defaultValues: searchParams.get("pid") ? fetchPostData : {},
         resolver: zodResolver(zPostSchema),
@@ -147,6 +152,9 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({ modalOpen, setModalOpen }) => {
 
     const onSubmit = async (data: PostTypes) => {
         try {
+            // upload all imgage & get response
+            const uploadedFiles = await uploaderRef.current?.uploadAll()
+
             const payloadData = {
                 title: data.title,
                 description: data.description || "",
@@ -173,7 +181,19 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({ modalOpen, setModalOpen }) => {
             ) {
                 createPostMutate(payloadData, {
                     onSuccess(data, variables, context) {
-                        reset()
+                        if (uploadedFiles && uploadedFiles.length > 0) {
+                            const imageURLsPayload = uploadedFiles.map(
+                                (item) => ({
+                                    imageURL: item.url,
+                                    post_id: data.uuid,
+                                })
+                            )
+                            saveImageURLsMutate(imageURLsPayload, {
+                                onSettled: () => {
+                                    reset()
+                                },
+                            })
+                        }
                     },
                 })
             }
@@ -182,21 +202,21 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({ modalOpen, setModalOpen }) => {
         }
     }
 
-    // console.log(getValues())
-    // console.log(errors)
-
     return (
         <>
             <div className="sticky top-0 flex items-center justify-between bg-white pb-3">
                 <h2 className="text-lg font-medium">Create New Post</h2>
                 <X
                     tabIndex={1}
-                    className="cursor-pointer"
+                    className="mr-2 cursor-pointer"
                     onClick={() => setModalOpen(false)}
                 />
             </div>
             <div className="custom-scrollbar relative h-[80vh] w-[80vw] overflow-y-auto overflow-x-hidden pb-5 pr-3 sm:w-[600px]">
-                <MultiUploader ref={uploaderRef} />
+                <MultiUploader
+                    ref={uploaderRef}
+                    setImagesUploading={setImagesUploading}
+                />
                 <form
                     className="flex flex-col gap-3"
                     onSubmit={handleSubmit(onSubmit)}
@@ -451,15 +471,22 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({ modalOpen, setModalOpen }) => {
                     <div className="flex justify-end px-2">
                         <button
                             className={`mt-5 ${
-                                creatingPostLoading
+                                creatingPostLoading ||
+                                imagesUploading ||
+                                savingImageURLsLoading
                                     ? "btn-secondary"
                                     : "btn-primary"
                             }`}
-                            // onClick={() => uploaderRef.current?.uploadAll()}
                             type="submit"
-                            disabled={creatingPostLoading}
+                            disabled={
+                                creatingPostLoading ||
+                                imagesUploading ||
+                                savingImageURLsLoading
+                            }
                         >
-                            {creatingPostLoading ? (
+                            {creatingPostLoading ||
+                            imagesUploading ||
+                            savingImageURLsLoading ? (
                                 <>
                                     <span className="loader mr-2" />
                                     Submitting

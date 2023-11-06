@@ -41,6 +41,21 @@ export const postRouter = createTRPCRouter({
             }
         }),
 
+    savePostImageURLs: protectedProcedure
+        .input(
+            z.array(
+                z.object({
+                    imageURL: z.string(),
+                    post_id: z.string(),
+                })
+            )
+        )
+        .mutation(async ({ ctx, input }) => {
+            return await ctx.prisma.postImages.createMany({
+                data: input,
+            })
+        }),
+
     deletePost: publicProcedure
         .input(z.object({ uuid: z.string() }))
         .mutation(async ({ ctx, input }) => {
