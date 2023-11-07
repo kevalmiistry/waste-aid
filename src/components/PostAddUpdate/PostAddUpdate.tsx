@@ -1,17 +1,17 @@
-import { useRef, type FC, Dispatch, SetStateAction, useState } from "react"
+import type { FC, Dispatch, SetStateAction } from "react"
+import type { UploadFileResponse } from "uploadthing/client"
+import { useRef, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { MultiUploader } from "../MultiUploader"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useSession } from "next-auth/react"
+import { DevTool } from "@hookform/devtools"
 import { useForm } from "react-hook-form"
-// import { DevTool } from "@hookform/devtools"
 import { api } from "~/utils/api"
 import { X } from "lucide-react"
 import { z } from "zod"
 import RHFSelect from "../RHFSelect/RHFSelect"
 import moment from "moment"
-import { type UploadFileResponse } from "uploadthing/client"
-import { useUploadThing } from "~/utils/uploadthing"
 
 const amountTypeOptions = [
     { value: "kg", label: "KG" },
@@ -498,7 +498,7 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({ modalOpen, setModalOpen }) => {
                     </div>
                 </form>
             </div>
-            {/* <DevTool control={control} /> */}
+            <DevTool control={control} />
         </>
     )
 }
