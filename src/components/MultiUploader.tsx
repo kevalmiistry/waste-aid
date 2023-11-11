@@ -9,10 +9,7 @@ import {
     useImperativeHandle,
     useState,
 } from "react"
-import {
-    generateClientDropzoneAccept,
-    type UploadFileResponse,
-} from "uploadthing/client"
+import { generateClientDropzoneAccept } from "uploadthing/client"
 import { useUploadThing } from "~/utils/uploadthing"
 import { UploadCloud, X } from "lucide-react"
 import { useDropzone } from "@uploadthing/react/hooks"
