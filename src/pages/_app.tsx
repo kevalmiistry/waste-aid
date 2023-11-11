@@ -34,7 +34,7 @@ const MyApp = ({
 
     return getLayout(
         <SessionProvider session={session}>
-            <SkeletonTheme>
+            <SkeletonTheme baseColor="#f2f2f2" highlightColor="#ebebeb">
                 <Component {...pageProps} />
             </SkeletonTheme>
         </SessionProvider>
