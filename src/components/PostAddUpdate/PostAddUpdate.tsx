@@ -1,5 +1,6 @@
 import type { FC, Dispatch, SetStateAction } from "react"
 import type { UploadFileResponse } from "uploadthing/client"
+import { useNotifierStore } from "~/stores/notifier"
 import { useRef, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { MultiUploader } from "../MultiUploader"
@@ -106,6 +107,8 @@ interface IPostAddUpdate {
     setModalOpen: Dispatch<SetStateAction<boolean>>
 }
 const PostAddUpdate: FC<IPostAddUpdate> = ({ modalOpen, setModalOpen }) => {
+    const { notify } = useNotifierStore()
+
     const { data: sessionData } = useSession()
 
     const uploaderRef = useRef<TMultiUploaderHandle | null>(null)
@@ -189,11 +192,22 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({ modalOpen, setModalOpen }) => {
                                 })
                             )
                             saveImageURLsMutate(imageURLsPayload, {
-                                onSettled: () => {
-                                    reset()
+                                onSuccess: (data) => {
+                                    console.log(data)
+                                },
+                                onError(error, variables, context) {
+                                    console.log(error.message)
                                 },
                             })
                         }
+                        notify({
+                            show: true,
+                            message: "New Post Created! :D",
+                            status: "success",
+                            duration: 5000,
+                        })
+                        reset()
+                        setModalOpen(false)
                     },
                 })
             }

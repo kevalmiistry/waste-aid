@@ -1,5 +1,6 @@
 import type { FC, ReactNode } from "react"
 import ProfileSection from "./ProfileSection/ProfileSection"
+import Notification from "./Notification/Notification"
 import Link from "next/link"
 
 interface ISidebarAndProfile {
@@ -8,8 +9,9 @@ interface ISidebarAndProfile {
 
 const SidebarAndProfile: FC<ISidebarAndProfile> = ({ children }) => {
     return (
-        <>
-            <div className="flex h-screen">
+        <div className="h-screen overflow-hidden pt-3">
+            <Notification />
+            <div className="flex">
                 <div aria-label="sidebar" className="flex-[1.5] p-4">
                     <ul>
                         <Link href={"/"}>
@@ -33,7 +35,7 @@ const SidebarAndProfile: FC<ISidebarAndProfile> = ({ children }) => {
                     <ProfileSection />
                 </div>
             </div>
-        </>
+        </div>
     )
 }
 
