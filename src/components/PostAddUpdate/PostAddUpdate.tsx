@@ -5,7 +5,6 @@ import { useRef, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { MultiUploader } from "../MultiUploader"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useSession } from "next-auth/react"
 import { DevTool } from "@hookform/devtools"
 import { useForm } from "react-hook-form"
 import { api } from "~/utils/api"
@@ -26,91 +25,14 @@ export type TMultiUploaderHandle = {
     uploadAll: () => Promise<UploadFileResponse[] | undefined>
 }
 
-const zPostSchema = z
-    .object({
-        title: z.string().min(2, { message: "Please write lil long title" }),
-        description: z.ostring(),
-        hasTarget: z.boolean({
-            errorMap: () => ({ message: "Please select any one of these" }),
-        }),
-        targetAmount: z.number().or(z.nan()).nullable().optional(),
-        collectedAmount: z.onumber().nullable(),
-        amountType: z.ostring().nullable(),
-        hasDeadline: z.boolean({
-            errorMap: () => ({ message: "Please select any one of these" }),
-        }),
-        startDate: z.ostring().nullable(),
-        endDate: z.ostring().nullable(),
-        metaData: z.ostring().nullable(),
-        status: z.boolean().default(true),
-        address: z
-            .string()
-            .min(2, { message: "Please write lil long address" }),
-    })
-    .refine(
-        ({ hasTarget, targetAmount }) => {
-            if (hasTarget === true) {
-                return (
-                    typeof targetAmount === "number" &&
-                    !isNaN(targetAmount) &&
-                    targetAmount > 0
-                )
-            }
-            return true
-        },
-        {
-            message: "Please Enter a Valid Amount",
-            path: ["targetAmount"],
-        }
-    )
-    .refine(
-        ({ hasTarget, amountType }) => {
-            if (hasTarget === true) {
-                return !!amountType
-            }
-            return true
-        },
-        {
-            message: "Please Select a Amount Type",
-            path: ["amountType"],
-        }
-    )
-    .refine(
-        ({ hasDeadline, startDate, endDate }) => {
-            if (hasDeadline === true) {
-                return startDate && endDate
-            }
-            return true
-        },
-        {
-            message: "Please select both dates",
-            path: ["startDate"],
-        }
-    )
-    .refine(
-        ({ hasDeadline, startDate, endDate }) => {
-            if (hasDeadline === true) {
-                return moment(startDate).diff(endDate, "hours") <= 0
-            }
-            return true
-        },
-        {
-            message: "End date can't be before Start date",
-            path: ["startDate"],
-        }
-    )
-
 export type PostTypes = z.infer<typeof zPostSchema>
 
 interface IPostAddUpdate {
     modalOpen: boolean
     setModalOpen: Dispatch<SetStateAction<boolean>>
 }
-const PostAddUpdate: FC<IPostAddUpdate> = ({ modalOpen, setModalOpen }) => {
+const PostAddUpdate: FC<IPostAddUpdate> = ({ setModalOpen }) => {
     const { notify } = useNotifierStore()
-
-    const { data: sessionData } = useSession()
-
     const uploaderRef = useRef<TMultiUploaderHandle | null>(null)
     const [imagesUploading, setImagesUploading] = useState(false)
 
@@ -175,42 +97,34 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({ modalOpen, setModalOpen }) => {
                         ? new Date(data.endDate).toISOString()
                         : null,
                 status: true,
-                am_id: sessionData?.user.id as string,
             }
 
-            if (
-                sessionData?.user.id &&
-                typeof sessionData?.user.id === "string"
-            ) {
-                createPostMutate(payloadData, {
-                    onSuccess(data, variables, context) {
-                        if (uploadedFiles && uploadedFiles.length > 0) {
-                            const imageURLsPayload = uploadedFiles.map(
-                                (item) => ({
-                                    imageURL: item.url,
-                                    post_id: data.uuid,
-                                })
-                            )
-                            saveImageURLsMutate(imageURLsPayload, {
-                                onSuccess: (data) => {
-                                    console.log(data)
-                                },
-                                onError(error, variables, context) {
-                                    console.log(error.message)
-                                },
-                            })
-                        }
-                        notify({
-                            show: true,
-                            message: "New Post Created! :D",
-                            status: "success",
-                            duration: 5000,
+            createPostMutate(payloadData, {
+                onSuccess(data, variables, context) {
+                    if (uploadedFiles && uploadedFiles.length > 0) {
+                        const imageURLsPayload = uploadedFiles.map((item) => ({
+                            imageURL: item.url,
+                            post_id: data.uuid,
+                        }))
+                        saveImageURLsMutate(imageURLsPayload, {
+                            onSuccess: (data) => {
+                                console.log(data)
+                            },
+                            onError(error, variables, context) {
+                                console.log(error.message)
+                            },
                         })
-                        reset()
-                        setModalOpen(false)
-                    },
-                })
-            }
+                    }
+                    notify({
+                        show: true,
+                        message: "New Post Created! :D",
+                        status: "success",
+                        duration: 5000,
+                    })
+                    reset()
+                    setModalOpen(false)
+                },
+            })
         } catch (error) {
             console.log(error)
         }
@@ -516,5 +430,79 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({ modalOpen, setModalOpen }) => {
         </>
     )
 }
+
+const zPostSchema = z
+    .object({
+        title: z.string().min(2, { message: "Please write lil long title" }),
+        description: z.ostring().nullable(),
+        hasTarget: z.boolean({
+            errorMap: () => ({ message: "Please select any one of these" }),
+        }),
+        targetAmount: z.number().or(z.nan()).nullable().optional(),
+        collectedAmount: z.onumber().nullable(),
+        amountType: z.ostring().nullable(),
+        hasDeadline: z.boolean({
+            errorMap: () => ({ message: "Please select any one of these" }),
+        }),
+        startDate: z.ostring().nullable(),
+        endDate: z.ostring().nullable(),
+        metaData: z.ostring().nullable(),
+        status: z.boolean().default(true),
+        address: z
+            .string()
+            .min(2, { message: "Please write lil long address" }),
+    })
+    .refine(
+        ({ hasTarget, targetAmount }) => {
+            if (hasTarget === true) {
+                return (
+                    typeof targetAmount === "number" &&
+                    !isNaN(targetAmount) &&
+                    targetAmount > 0
+                )
+            }
+            return true
+        },
+        {
+            message: "Please Enter a Valid Amount",
+            path: ["targetAmount"],
+        }
+    )
+    .refine(
+        ({ hasTarget, amountType }) => {
+            if (hasTarget === true) {
+                return !!amountType
+            }
+            return true
+        },
+        {
+            message: "Please Select a Amount Type",
+            path: ["amountType"],
+        }
+    )
+    .refine(
+        ({ hasDeadline, startDate, endDate }) => {
+            if (hasDeadline === true) {
+                return startDate && endDate
+            }
+            return true
+        },
+        {
+            message: "Please select both dates",
+            path: ["startDate"],
+        }
+    )
+    .refine(
+        ({ hasDeadline, startDate, endDate }) => {
+            if (hasDeadline === true) {
+                return moment(startDate).diff(endDate, "hours") <= 0
+            }
+            return true
+        },
+        {
+            message: "End date can't be before Start date",
+            path: ["startDate"],
+        }
+    )
 
 export default PostAddUpdate

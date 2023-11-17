@@ -4,9 +4,11 @@ import { motion } from "framer-motion"
 import PostAddUpdate from "~/components/PostAddUpdate/PostAddUpdate"
 import Modal from "~/components/Modal/Modal"
 import Post from "~/components/Post/Post"
+import { api } from "~/utils/api"
 
 interface AidManProps {}
 const AidMan: FC<AidManProps> = () => {
+    const { data, isLoading } = api.post.getAMPosts.useQuery()
     const [modalOpen, setModalOpen] = useState(false)
 
     return (
@@ -21,10 +23,23 @@ const AidMan: FC<AidManProps> = () => {
                     Add Post <Sparkles size={"20px"} />
                 </motion.button>
             </div>
-
-            <div className="p-5">
-                <Post />
-            </div>
+            {isLoading ? (
+                <p>Loading...</p>
+            ) : (
+                <div className="p-5">
+                    {data?.map((post) => {
+                        const { metaData, startDate, endDate, ...rest } = post
+                        return (
+                            <Post
+                                key={post.uuid}
+                                {...rest}
+                                startDate={startDate?.toISOString()}
+                                endDate={endDate?.toISOString()}
+                            />
+                        )
+                    })}
+                </div>
+            )}
 
             <Modal
                 open={modalOpen}

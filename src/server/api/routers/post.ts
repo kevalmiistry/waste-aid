@@ -21,13 +21,12 @@ export const postRouter = createTRPCRouter({
                 startDate: z.ostring().nullable(),
                 endDate: z.ostring().nullable(),
                 status: z.boolean(),
-                am_id: z.string(),
             })
         )
         .mutation(async ({ ctx, input }) => {
             try {
                 const post = await ctx.prisma.post.create({
-                    data: input,
+                    data: { ...input, am_id: ctx.session.user.id },
                 })
 
                 return post
@@ -40,6 +39,27 @@ export const postRouter = createTRPCRouter({
                 })
             }
         }),
+
+    getAMPosts: protectedProcedure.query(async ({ ctx }) => {
+        return await ctx.prisma.post.findMany({
+            include: {
+                _count: {
+                    select: {
+                        donations: true,
+                    },
+                },
+                PostImages: {
+                    select: {
+                        imageURL: true,
+                        uuid: true,
+                    },
+                },
+            },
+            where: {
+                am_id: ctx.session.user.id,
+            },
+        })
+    }),
 
     savePostImageURLs: protectedProcedure
         .input(
@@ -108,12 +128,18 @@ export const postRouter = createTRPCRouter({
             return donation
         }),
 
-    getAllPosts: publicProcedure.query(async ({ ctx }) => {
+    getAllPosts: protectedProcedure.query(async ({ ctx }) => {
         return await ctx.prisma.post.findMany({
             include: {
                 _count: {
                     select: {
                         donations: true,
+                    },
+                },
+                PostImages: {
+                    select: {
+                        imageURL: true,
+                        uuid: true,
                     },
                 },
             },

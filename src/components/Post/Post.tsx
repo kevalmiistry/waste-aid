@@ -1,17 +1,35 @@
 import { AnimatePresence, motion } from "framer-motion"
 import { useState, type FC } from "react"
+import { type PostTypes } from "~/components/PostAddUpdate/PostAddUpdate"
+import { Expand, Users2 } from "lucide-react"
 import { cubicBezier } from "~/utils/constants"
 import { Carousel } from "react-responsive-carousel"
-import { Expand, Users2 } from "lucide-react"
 import "react-responsive-carousel/lib/styles/carousel.min.css" // requires a loader
+import moment from "moment"
 
-const URLS = [
-    "https://utfs.io/f/4d9de025-b784-4404-90b6-b2ba94ab4690-e8n3y3.jpg",
-    "https://uploadthing.com/f/653369ec-0e4f-4a5d-b4c8-0319f3da3f02-r2ds1x.jpeg",
-    "https://utfs.io/f/f5f508ca-d291-474f-b655-8ed7c615bfd0-cejcs5.jpg",
-]
-interface IPost {}
-const Post: FC<IPost> = () => {
+interface IPost {
+    PostImages: {
+        imageURL: string
+        uuid: string
+    }[]
+    _count: {
+        donations: number
+    }
+    createdAt: Date
+}
+const Post: FC<IPost & PostTypes> = ({
+    PostImages,
+    title,
+    description,
+    hasTarget,
+    targetAmount,
+    collectedAmount,
+    amountType,
+    _count,
+    endDate,
+    hasDeadline,
+    createdAt,
+}) => {
     const [selectedItem, setSelectedItem] = useState(0)
     const [fullViewOpen, setFullViewOpen] = useState(false)
 
@@ -29,8 +47,8 @@ const Post: FC<IPost> = () => {
                         onClick={() => setFullViewOpen(false)}
                     >
                         <img
-                            src={URLS[selectedItem]}
-                            alt="img"
+                            src={PostImages[selectedItem]?.imageURL}
+                            alt={`image ${selectedItem + 1}`}
                             className="max-h-[80%] max-w-[80%] object-contain"
                         />
                     </motion.div>
@@ -47,15 +65,15 @@ const Post: FC<IPost> = () => {
                 showArrows={false}
                 showIndicators={false}
                 selectedItem={selectedItem}
-                onClickItem={(index) => setFullViewOpen(true)}
+                onClickItem={() => setFullViewOpen(true)}
                 onChange={(index) => setSelectedItem(index)}
             >
-                {URLS.map((url, idx) => (
+                {PostImages.map(({ imageURL, uuid }, idx) => (
                     <div className="relative">
                         <img
-                            key={idx}
-                            src={url}
-                            alt="img"
+                            key={uuid}
+                            src={imageURL}
+                            alt={`image ${idx + 1}`}
                             className="object-cover"
                         />
                         <Expand
@@ -69,7 +87,7 @@ const Post: FC<IPost> = () => {
 
             {/* image carousel bullets */}
             <div className="mt-3 flex items-center justify-center gap-2 ">
-                {URLS.map((_, idx) => (
+                {PostImages.map((_, idx) => (
                     <span
                         className={`inline-block h-[8px] w-[8px] rounded-full ${
                             selectedItem === idx ? "bg-black" : "bg-primary"
@@ -83,43 +101,46 @@ const Post: FC<IPost> = () => {
                 ))}
             </div>
 
-            <h2 className="mt-3 text-2xl font-semibold">This is the Title</h2>
-            <p className="text-[#555]">
-                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Velit,
-                accusamus culpa! Ut maiores id, necessitatibus repellendus iste
-                nemo sed, dolore cumque, vel voluptas accusamus error...
-            </p>
+            <h2 className="mt-5 text-2xl font-semibold">{title}</h2>
+            <p className="text-[#555]">{description}</p>
 
             <div className="mt-4 flex gap-4 text-lg">
                 <div className="flex-1">
                     <p className="font-light text-[#888]">Collected</p>
                     <p className="font-satoshi text-2xl font-medium">
-                        2500
-                        <span className="text-base font-normal text-[#666]">
-                            {" "}
-                            / 3500 KG
-                        </span>
+                        {collectedAmount || 0}
+                        {hasTarget && (
+                            <span className="text-base font-normal text-[#666]">
+                                {" "}
+                                /{" "}
+                                {targetAmount + " " + amountType?.toUpperCase()}
+                            </span>
+                        )}
                     </p>
                 </div>
                 <div className="flex-1">
                     <p className="font-light text-[#888]">By</p>
                     <p className="font-satoshi flex items-center gap-1 text-2xl font-medium">
-                        20 <Users2 />
+                        {_count.donations} <Users2 />
                     </p>
                 </div>
             </div>
-            <p className="mt-4 font-light text-[#888]">
-                Last Date:{" "}
-                <span className="font-satoshi font-medium text-[#333]">
-                    31 MAR 23
-                </span>
-            </p>
+            {hasDeadline && (
+                <p className="mt-4 font-light text-[#888]">
+                    Last Date:{" "}
+                    <span className="font-satoshi font-medium uppercase text-[#333]">
+                        {moment(endDate).format("DD MMM YY")}
+                    </span>
+                </p>
+            )}
 
             <div
                 aria-label="footer"
                 className="mb-3 mt-5 flex items-center justify-between"
             >
-                <small className="font-satoshi">10 OCT 23</small>
+                <small className="font-satoshi uppercase">
+                    {moment(createdAt).format("DD MMM YY")}
+                </small>
                 <button className="btn-primary rounded-full p-1 px-3 text-sm">
                     Know more!
                 </button>
