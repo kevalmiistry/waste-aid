@@ -11,7 +11,7 @@ const SidebarAndProfile: FC<ISidebarAndProfile> = ({ children }) => {
     return (
         <div className="h-screen overflow-hidden pt-3">
             <Notification />
-            <div className="flex">
+            <div className="flex h-screen">
                 <div aria-label="sidebar" className="flex-[1.5] p-4">
                     <ul>
                         <Link href={"/"}>
@@ -27,7 +27,7 @@ const SidebarAndProfile: FC<ISidebarAndProfile> = ({ children }) => {
                 </div>
                 <div
                     aria-label="main-section"
-                    className="flex-[3] border-l-[2px] border-r-[2px]"
+                    className="custom-scrollbar flex-[3] overflow-x-auto border-l-[2px] border-r-[2px]"
                 >
                     {children}
                 </div>

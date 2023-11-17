@@ -16,6 +16,14 @@
     }
 }
 
+body {
+    font-family: "General Sans", sans-serif;
+}
+
+.font-satoshi {
+    font-family: "Satoshi", "Roboto", sans-serif;
+}
+
 .custom-scrollbar::-webkit-scrollbar {
     width: 8px;
     height: 8px;
