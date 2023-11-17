@@ -1,19 +1,44 @@
-import { Users2 } from "lucide-react"
+import { AnimatePresence, motion } from "framer-motion"
 import { useState, type FC } from "react"
+import { cubicBezier } from "~/utils/constants"
 import { Carousel } from "react-responsive-carousel"
+import { Expand, Users2 } from "lucide-react"
 import "react-responsive-carousel/lib/styles/carousel.min.css" // requires a loader
 
-const URL1 = "https://utfs.io/f/4d9de025-b784-4404-90b6-b2ba94ab4690-e8n3y3.jpg"
-const URL2 =
-    "https://uploadthing.com/f/653369ec-0e4f-4a5d-b4c8-0319f3da3f02-r2ds1x.jpeg"
+const URLS = [
+    "https://utfs.io/f/4d9de025-b784-4404-90b6-b2ba94ab4690-e8n3y3.jpg",
+    "https://uploadthing.com/f/653369ec-0e4f-4a5d-b4c8-0319f3da3f02-r2ds1x.jpeg",
+    "https://utfs.io/f/f5f508ca-d291-474f-b655-8ed7c615bfd0-cejcs5.jpg",
+]
 interface IPost {}
 const Post: FC<IPost> = () => {
     const [selectedItem, setSelectedItem] = useState(0)
+    const [fullViewOpen, setFullViewOpen] = useState(false)
 
     return (
         <div className="border-b border-t border-[2] p-4 text-[#333]">
+            {/* view full image in overlay */}
+            <AnimatePresence>
+                {fullViewOpen ? (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ ease: cubicBezier, duration: 0.3 }}
+                        className="absolute inset-0 z-10 flex items-center justify-center bg-[#000000BB]"
+                        onClick={() => setFullViewOpen(false)}
+                    >
+                        <img
+                            src={URLS[selectedItem]}
+                            alt="img"
+                            className="max-h-[80%] max-w-[80%] object-contain"
+                        />
+                    </motion.div>
+                ) : null}
+            </AnimatePresence>
+
             <Carousel
-                className="aspect-[16/9] overflow-hidden rounded-2xl border"
+                className="aspect-[16/9] overflow-hidden rounded-2xl"
                 swipeable
                 emulateTouch
                 infiniteLoop
@@ -22,22 +47,29 @@ const Post: FC<IPost> = () => {
                 showArrows={false}
                 showIndicators={false}
                 selectedItem={selectedItem}
-                onClickItem={(index) => console.log("Hii", index)}
+                onClickItem={(index) => setFullViewOpen(true)}
                 onChange={(index) => setSelectedItem(index)}
             >
-                <img
-                    src={URL1}
-                    alt="img"
-                    className="h-full w-full border border-red-600 object-cover"
-                />
-                <img
-                    src={URL2}
-                    alt="img"
-                    className="h-full w-full border border-red-600 object-cover"
-                />
+                {URLS.map((url, idx) => (
+                    <div className="relative">
+                        <img
+                            key={idx}
+                            src={url}
+                            alt="img"
+                            className="object-cover"
+                        />
+                        <Expand
+                            className="absolute right-5 top-5 shadow-lg shadow-black"
+                            color="#fff"
+                            size={"1.25rem"}
+                        />
+                    </div>
+                ))}
             </Carousel>
+
+            {/* image carousel bullets */}
             <div className="mt-3 flex items-center justify-center gap-2 ">
-                {Array.from({ length: 2 }).map((_, idx) => (
+                {URLS.map((_, idx) => (
                     <span
                         className={`inline-block h-[8px] w-[8px] rounded-full ${
                             selectedItem === idx ? "bg-black" : "bg-primary"
@@ -50,6 +82,7 @@ const Post: FC<IPost> = () => {
                     ></span>
                 ))}
             </div>
+
             <h2 className="mt-3 text-2xl font-semibold">This is the Title</h2>
             <p className="text-[#555]">
                 Lorem ipsum dolor, sit amet consectetur adipisicing elit. Velit,
