@@ -1,11 +1,13 @@
+import { Expand, Pencil, Trash, Users2 } from "lucide-react"
 import { AnimatePresence, motion } from "framer-motion"
 import { useState, type FC } from "react"
 import { type PostTypes } from "~/components/PostAddUpdate/PostAddUpdate"
-import { Expand, Users2 } from "lucide-react"
+import { useNotifierStore } from "~/stores/notifier"
 import { cubicBezier } from "~/utils/constants"
 import { Carousel } from "react-responsive-carousel"
-import "react-responsive-carousel/lib/styles/carousel.min.css" // requires a loader
+import { api } from "~/utils/api"
 import moment from "moment"
+import "react-responsive-carousel/lib/styles/carousel.min.css" // requires a loader
 
 interface IPost {
     PostImages: {
@@ -16,6 +18,8 @@ interface IPost {
         donations: number
     }
     createdAt: Date
+    uuid: string
+    refetchPosts: () => void
 }
 const Post: FC<IPost & PostTypes> = ({
     PostImages,
@@ -29,9 +33,37 @@ const Post: FC<IPost & PostTypes> = ({
     endDate,
     hasDeadline,
     createdAt,
+    uuid,
+    refetchPosts,
 }) => {
+    const { notify } = useNotifierStore()
+    const { mutate: deletePostMutate, isLoading } =
+        api.post.deletePost.useMutation()
+
     const [selectedItem, setSelectedItem] = useState(0)
     const [fullViewOpen, setFullViewOpen] = useState(false)
+    const [deleteClicked, setDeleteClicked] = useState(false)
+
+    const handleDelete = () => {
+        if (deleteClicked) {
+            deletePostMutate(
+                { uuid: uuid },
+                {
+                    onSuccess() {
+                        refetchPosts()
+                        notify({
+                            show: true,
+                            message: "Post Deleted! :D",
+                            status: "success",
+                            duration: 5000,
+                        })
+                    },
+                }
+            )
+        } else {
+            setDeleteClicked(true)
+        }
+    }
 
     return (
         <div className="border-b border-t border-[2] p-4 text-[#333]">
@@ -55,6 +87,49 @@ const Post: FC<IPost & PostTypes> = ({
                 ) : null}
             </AnimatePresence>
 
+            {/* Edit and Delete buttons */}
+            <div className="flex items-center justify-end gap-3 pb-2">
+                <button
+                    disabled={isLoading}
+                    className="flex h-[2rem] items-center justify-center rounded-full bg-[#33b5e5] p-2"
+                >
+                    <Pencil size={"1rem"} strokeWidth="2px" />
+                </button>
+
+                <button
+                    disabled={isLoading}
+                    className={`flex h-[2rem] items-center justify-center rounded-full bg-[#ff4444] p-2 transition-all ${
+                        deleteClicked ? "w-[5rem]" : "w-[2rem]"
+                    }`}
+                    onClick={handleDelete}
+                >
+                    {deleteClicked ? (
+                        isLoading ? (
+                            <small className="font-medium">Deleting...</small>
+                        ) : (
+                            <motion.small
+                                initial={{ scaleX: 0 }}
+                                animate={{
+                                    scaleX: 1,
+                                    transformOrigin: "right",
+                                }}
+                                transition={{
+                                    bounce: 0,
+                                    ease: "linear",
+                                    duration: 0.15,
+                                }}
+                                className="font-medium"
+                            >
+                                Confirm!
+                            </motion.small>
+                        )
+                    ) : (
+                        <Trash size={"1rem"} strokeWidth="2px" />
+                    )}
+                </button>
+            </div>
+
+            {/* image carousel */}
             <Carousel
                 className="aspect-[16/9] overflow-hidden rounded-2xl"
                 swipeable
@@ -141,7 +216,10 @@ const Post: FC<IPost & PostTypes> = ({
                 <small className="font-satoshi uppercase">
                     {moment(createdAt).format("DD MMM YY")}
                 </small>
-                <button className="btn-primary rounded-full p-1 px-3 text-sm">
+                <button
+                    disabled={isLoading}
+                    className="btn-primary rounded-full p-1 px-3 text-sm"
+                >
                     Know more!
                 </button>
             </div>

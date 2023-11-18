@@ -38,6 +38,7 @@ const AidMan: FC<AidManProps> = () => {
                                 {...rest}
                                 startDate={startDate?.toISOString()}
                                 endDate={endDate?.toISOString()}
+                                refetchPosts={refetchPosts}
                             />
                         )
                     })}
