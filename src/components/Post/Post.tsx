@@ -1,4 +1,4 @@
-import { Expand, Pencil, Trash, Users2 } from "lucide-react"
+import { Expand, Pencil, Trash, Users2, X } from "lucide-react"
 import { AnimatePresence, motion } from "framer-motion"
 import { useState, type FC } from "react"
 import { type PostTypes } from "~/components/PostAddUpdate/PostAddUpdate"
@@ -65,6 +65,14 @@ const Post: FC<IPost & PostTypes> = ({
         }
     }
 
+    const handleEdit = () => {
+        if (deleteClicked) {
+            setDeleteClicked(false)
+        } else {
+            // Edit logic
+        }
+    }
+
     return (
         <div className="border-b border-t border-[2] p-4 text-[#333]">
             {/* view full image in overlay */}
@@ -88,12 +96,19 @@ const Post: FC<IPost & PostTypes> = ({
             </AnimatePresence>
 
             {/* Edit and Delete buttons */}
-            <div className="flex items-center justify-end gap-3 pb-2">
+            <div className="flex items-center justify-end gap-2 pb-3">
                 <button
                     disabled={isLoading}
-                    className="flex h-[2rem] items-center justify-center rounded-full bg-[#33b5e5] p-2"
+                    className={`flex h-[2rem] items-center justify-center rounded-full p-2 ${
+                        deleteClicked ? "bg-gray-500" : "bg-[#33b5e5]"
+                    }`}
+                    onClick={handleEdit}
                 >
-                    <Pencil size={"1rem"} strokeWidth="2px" />
+                    {deleteClicked ? (
+                        <X size={"1rem"} strokeWidth="2px" color="#fff" />
+                    ) : (
+                        <Pencil size={"1rem"} strokeWidth="2px" />
+                    )}
                 </button>
 
                 <button
@@ -116,7 +131,7 @@ const Post: FC<IPost & PostTypes> = ({
                                 transition={{
                                     bounce: 0,
                                     ease: "linear",
-                                    duration: 0.15,
+                                    duration: 0.125,
                                 }}
                                 className="font-medium"
                             >
