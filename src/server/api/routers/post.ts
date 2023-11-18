@@ -58,6 +58,9 @@ export const postRouter = createTRPCRouter({
             where: {
                 am_id: ctx.session.user.id,
             },
+            orderBy: {
+                updatedAt: "desc",
+            },
         })
     }),
 

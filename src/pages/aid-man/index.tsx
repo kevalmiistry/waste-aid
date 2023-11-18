@@ -8,8 +8,11 @@ import { api } from "~/utils/api"
 
 interface AidManProps {}
 const AidMan: FC<AidManProps> = () => {
-    const { data, isLoading } = api.post.getAMPosts.useQuery()
+    const { data, isLoading, refetch } = api.post.getAMPosts.useQuery()
     const [modalOpen, setModalOpen] = useState(false)
+    const refetchPosts = () => {
+        refetch()
+    }
 
     return (
         <>
@@ -47,8 +50,8 @@ const AidMan: FC<AidManProps> = () => {
                 classNames="pr-2"
             >
                 <PostAddUpdate
-                    modalOpen={modalOpen}
                     setModalOpen={setModalOpen}
+                    refetchPosts={refetchPosts}
                 />
             </Modal>
         </>

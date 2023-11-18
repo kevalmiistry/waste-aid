@@ -28,10 +28,10 @@ export type TMultiUploaderHandle = {
 export type PostTypes = z.infer<typeof zPostSchema>
 
 interface IPostAddUpdate {
-    modalOpen: boolean
     setModalOpen: Dispatch<SetStateAction<boolean>>
+    refetchPosts: () => void
 }
-const PostAddUpdate: FC<IPostAddUpdate> = ({ setModalOpen }) => {
+const PostAddUpdate: FC<IPostAddUpdate> = ({ setModalOpen, refetchPosts }) => {
     const { notify } = useNotifierStore()
     const uploaderRef = useRef<TMultiUploaderHandle | null>(null)
     const [imagesUploading, setImagesUploading] = useState(false)
@@ -113,16 +113,19 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({ setModalOpen }) => {
                             onError(error, variables, context) {
                                 console.log(error.message)
                             },
+                            onSettled: () => {
+                                notify({
+                                    show: true,
+                                    message: "New Post Created! :D",
+                                    status: "success",
+                                    duration: 5000,
+                                })
+                                refetchPosts()
+                                reset()
+                                setModalOpen(false)
+                            },
                         })
                     }
-                    notify({
-                        show: true,
-                        message: "New Post Created! :D",
-                        status: "success",
-                        duration: 5000,
-                    })
-                    reset()
-                    setModalOpen(false)
                 },
             })
         } catch (error) {
