@@ -1,15 +1,16 @@
 import { useState, type FC } from "react"
 import { Sparkles } from "lucide-react"
 import { motion } from "framer-motion"
+import { api } from "~/utils/api"
 import PostAddUpdate from "~/components/PostAddUpdate/PostAddUpdate"
 import Modal from "~/components/Modal/Modal"
 import Post from "~/components/Post/Post"
-import { api } from "~/utils/api"
 
 interface AidManProps {}
 const AidMan: FC<AidManProps> = () => {
     const { data, isLoading, refetch } = api.post.getAMPosts.useQuery()
     const [modalOpen, setModalOpen] = useState(false)
+    const [selectedPost, setSelectedPost] = useState<string | null>(null)
     const refetchPosts = () => {
         refetch()
     }
@@ -39,6 +40,8 @@ const AidMan: FC<AidManProps> = () => {
                                 startDate={startDate?.toISOString()}
                                 endDate={endDate?.toISOString()}
                                 refetchPosts={refetchPosts}
+                                setModalOpen={setModalOpen}
+                                setSelectedPost={setSelectedPost}
                             />
                         )
                     })}
@@ -53,6 +56,8 @@ const AidMan: FC<AidManProps> = () => {
                 <PostAddUpdate
                     setModalOpen={setModalOpen}
                     refetchPosts={refetchPosts}
+                    selectedPost={selectedPost}
+                    setSelectedPost={setSelectedPost}
                 />
             </Modal>
         </>

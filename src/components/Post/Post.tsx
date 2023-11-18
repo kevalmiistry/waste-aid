@@ -1,8 +1,8 @@
+import { useState, type FC, Dispatch, SetStateAction } from "react"
 import { Expand, Pencil, Trash, Users2, X } from "lucide-react"
 import { AnimatePresence, motion } from "framer-motion"
-import { useState, type FC } from "react"
-import { type PostTypes } from "~/components/PostAddUpdate/PostAddUpdate"
 import { useNotifierStore } from "~/stores/notifier"
+import { type PostTypes } from "~/components/PostAddUpdate/PostAddUpdate"
 import { cubicBezier } from "~/utils/constants"
 import { Carousel } from "react-responsive-carousel"
 import { api } from "~/utils/api"
@@ -20,6 +20,8 @@ interface IPost {
     createdAt: Date
     uuid: string
     refetchPosts: () => void
+    setModalOpen: Dispatch<SetStateAction<boolean>>
+    setSelectedPost: Dispatch<SetStateAction<string | null>>
 }
 const Post: FC<IPost & PostTypes> = ({
     PostImages,
@@ -35,6 +37,8 @@ const Post: FC<IPost & PostTypes> = ({
     createdAt,
     uuid,
     refetchPosts,
+    setModalOpen,
+    setSelectedPost,
 }) => {
     const { notify } = useNotifierStore()
     const { mutate: deletePostMutate, isLoading } =
@@ -69,7 +73,8 @@ const Post: FC<IPost & PostTypes> = ({
         if (deleteClicked) {
             setDeleteClicked(false)
         } else {
-            // Edit logic
+            setSelectedPost(uuid)
+            setModalOpen(true)
         }
     }
 
@@ -159,9 +164,8 @@ const Post: FC<IPost & PostTypes> = ({
                 onChange={(index) => setSelectedItem(index)}
             >
                 {PostImages.map(({ imageURL, uuid }, idx) => (
-                    <div className="relative">
+                    <div className="relative" key={uuid}>
                         <img
-                            key={uuid}
                             src={imageURL}
                             alt={`image ${idx + 1}`}
                             className="object-cover"
@@ -177,13 +181,13 @@ const Post: FC<IPost & PostTypes> = ({
 
             {/* image carousel bullets */}
             <div className="mt-3 flex items-center justify-center gap-2 ">
-                {PostImages.map((_, idx) => (
+                {PostImages.map(({ uuid }, idx) => (
                     <span
+                        key={uuid}
                         className={`inline-block h-[8px] w-[8px] rounded-full ${
                             selectedItem === idx ? "bg-black" : "bg-primary"
                         }`}
                         onClick={() => setSelectedItem(idx)}
-                        key={idx}
                         role="button"
                         tabIndex={0}
                         aria-label={`image ${idx + 1}`}

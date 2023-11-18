@@ -52,14 +52,34 @@ body {
     box-sizing: border-box;
     animation: rotation 750ms linear infinite;
 }
-.loader.dark {
+.loader-dark {
     border-color: #333 transparent;
 }
-.loader.light {
+.loader-light {
     border-color: #fff transparent;
 }
-.loader.primary {
+.loader-primary {
     border-color: rgb(150 217 5) transparent;
+}
+.loader-sm {
+    width: 22px;
+    height: 22px;
+    border: 3px solid;
+}
+.loader-lg {
+    width: 36px;
+    height: 36px;
+    border-width: 4px;
+}
+.loader-xl {
+    width: 45px;
+    height: 45px;
+    border-width: 5px;
+}
+.loader-2xl {
+    width: 56px;
+    height: 56px;
+    border-width: 6px;
 }
 
 @keyframes rotation {
