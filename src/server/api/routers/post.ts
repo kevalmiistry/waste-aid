@@ -85,17 +85,20 @@ export const postRouter = createTRPCRouter({
             return await ctx.prisma.post.delete({ where: { uuid: input.uuid } })
         }),
 
-    updatePost: publicProcedure
+    updatePost: protectedProcedure
         .input(
             z.object({
                 uuid: z.string(),
                 title: z.string(),
-                description: z.string(),
+                description: z.ostring(),
                 address: z.string(),
                 hasTarget: z.boolean(),
-                amountType: z.string(),
+                targetAmount: z.number().or(z.nan()).nullable().optional(),
+                amountType: z.ostring().nullable(),
                 hasDeadline: z.boolean(),
-                am_id: z.string(),
+                startDate: z.ostring().nullable(),
+                endDate: z.ostring().nullable(),
+                status: z.boolean(),
             })
         )
         .mutation(async ({ ctx, input }) => {

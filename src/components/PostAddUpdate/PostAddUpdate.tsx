@@ -1,12 +1,12 @@
 import type { FC, Dispatch, SetStateAction } from "react"
 import type { UploadFileResponse } from "uploadthing/client"
+import type { DefaultValues } from "react-hook-form"
 import { useNotifierStore } from "~/stores/notifier"
 import { useEffect, useRef, useState } from "react"
 import { MultiUploader } from "../MultiUploader"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useRouter } from "next/router"
 import { DevTool } from "@hookform/devtools"
-import { useForm, type DefaultValues } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { api } from "~/utils/api"
 import { X } from "lucide-react"
 import { z } from "zod"
@@ -31,26 +31,23 @@ interface IPostAddUpdate {
     setModalOpen: Dispatch<SetStateAction<boolean>>
     refetchPosts: () => void
     selectedPost: string | null
-    setSelectedPost: Dispatch<SetStateAction<string | null>>
 }
 const PostAddUpdate: FC<IPostAddUpdate> = ({
     setModalOpen,
     refetchPosts,
     selectedPost,
-    setSelectedPost,
 }) => {
     const { notify } = useNotifierStore()
     const uploaderRef = useRef<TMultiUploaderHandle | null>(null)
     const [imagesUploading, setImagesUploading] = useState(false)
 
-    useEffect(() => {
-        return () => setSelectedPost(null)
-    }, [])
-
     const getPost = api.post.getOnePost.useMutation()
 
     const { mutate: createPostMutate, isLoading: creatingPostLoading } =
         api.post.createPost.useMutation()
+
+    const { mutate: updatePostMutate, isLoading: updatingPostLoading } =
+        api.post.updatePost.useMutation()
 
     const { mutate: saveImageURLsMutate, isLoading: savingImageURLsLoading } =
         api.post.savePostImageURLs.useMutation()
@@ -139,38 +136,69 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
                 status: true,
             }
 
-            createPostMutate(payloadData, {
-                onSuccess(data, variables, context) {
-                    if (uploadedFiles && uploadedFiles.length > 0) {
-                        const imageURLsPayload = uploadedFiles.map((item) => ({
-                            imageURL: item.url,
-                            post_id: data.uuid,
-                        }))
-                        saveImageURLsMutate(imageURLsPayload, {
-                            onSuccess: (data) => {
-                                console.log(data)
-                            },
-                            onError(error, variables, context) {
-                                console.log(error.message)
-                            },
-                            onSettled: () => {
-                                notify({
-                                    show: true,
-                                    message: "New Post Created! :D",
-                                    status: "success",
-                                    duration: 5000,
-                                })
-                                refetchPosts()
-                                reset()
-                                setModalOpen(false)
-                            },
+            if (selectedPost) {
+                const updatePayload = {
+                    ...payloadData,
+                    uuid: selectedPost,
+                }
+                updatePostMutate(updatePayload, {
+                    onSuccess() {
+                        notify({
+                            show: true,
+                            message: "Post Updated! :D",
+                            status: "success",
+                            duration: 5000,
                         })
-                    }
-                },
-            })
+                        refetchPosts()
+                        reset()
+                        setModalOpen(false)
+                    },
+                })
+            } else {
+                createPostMutate(payloadData, {
+                    onSuccess(data, variables, context) {
+                        if (uploadedFiles && uploadedFiles.length > 0) {
+                            const imageURLsPayload = uploadedFiles.map(
+                                (item) => ({
+                                    imageURL: item.url,
+                                    post_id: data.uuid,
+                                })
+                            )
+                            saveImageURLsMutate(imageURLsPayload, {
+                                onSuccess: (data) => {
+                                    console.log(data)
+                                },
+                                onError(error, variables, context) {
+                                    console.log(error.message)
+                                },
+                                onSettled: () => {
+                                    notify({
+                                        show: true,
+                                        message: "New Post Created! :D",
+                                        status: "success",
+                                        duration: 5000,
+                                    })
+                                    refetchPosts()
+                                    reset()
+                                    setModalOpen(false)
+                                },
+                            })
+                        }
+                    },
+                })
+            }
         } catch (error) {
             console.log(error)
         }
+    }
+
+    const isSubmitting = () => {
+        return (
+            creatingPostLoading ||
+            updatingPostLoading ||
+            imagesUploading ||
+            savingImageURLsLoading
+        )
     }
 
     return (
@@ -195,10 +223,12 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
                     </div>
                 ) : (
                     <>
-                        <MultiUploader
-                            ref={uploaderRef}
-                            setImagesUploading={setImagesUploading}
-                        />
+                        {!selectedPost && (
+                            <MultiUploader
+                                ref={uploaderRef}
+                                setImagesUploading={setImagesUploading}
+                            />
+                        )}
                         <form
                             className="flex flex-col gap-3"
                             onSubmit={handleSubmit(onSubmit)}
@@ -476,23 +506,15 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
 
                             <div className="flex justify-end px-2">
                                 <button
+                                    type="submit"
                                     className={`mt-5 ${
-                                        creatingPostLoading ||
-                                        imagesUploading ||
-                                        savingImageURLsLoading
+                                        isSubmitting()
                                             ? "btn-secondary"
                                             : "btn-primary"
                                     }`}
-                                    type="submit"
-                                    disabled={
-                                        creatingPostLoading ||
-                                        imagesUploading ||
-                                        savingImageURLsLoading
-                                    }
+                                    disabled={isSubmitting()}
                                 >
-                                    {creatingPostLoading ||
-                                    imagesUploading ||
-                                    savingImageURLsLoading ? (
+                                    {isSubmitting() ? (
                                         <>
                                             <span className="loader mr-2" />
                                             Submitting
@@ -513,7 +535,10 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
 
 const zPostSchema = z
     .object({
-        title: z.string().min(2, { message: "Please write lil long title" }),
+        title: z
+            .string()
+            .min(2, { message: "Please write lil long title" })
+            .max(100, { message: "Title is too long" }),
         description: z.ostring().nullable(),
         hasTarget: z.boolean({
             errorMap: () => ({ message: "Please select any one of these" }),

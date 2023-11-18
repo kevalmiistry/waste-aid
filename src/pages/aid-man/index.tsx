@@ -1,4 +1,4 @@
-import { useState, type FC } from "react"
+import { useState, type FC, useEffect } from "react"
 import { Sparkles } from "lucide-react"
 import { motion } from "framer-motion"
 import { api } from "~/utils/api"
@@ -14,6 +14,12 @@ const AidMan: FC<AidManProps> = () => {
     const refetchPosts = () => {
         refetch()
     }
+
+    useEffect(() => {
+        if (!modalOpen) {
+            setSelectedPost(null)
+        }
+    }, [modalOpen])
 
     return (
         <>
@@ -57,7 +63,6 @@ const AidMan: FC<AidManProps> = () => {
                     setModalOpen={setModalOpen}
                     refetchPosts={refetchPosts}
                     selectedPost={selectedPost}
-                    setSelectedPost={setSelectedPost}
                 />
             </Modal>
         </>
