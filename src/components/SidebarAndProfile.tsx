@@ -1,8 +1,8 @@
 import { useState, type FC, type ReactNode } from "react"
+import { Menu, UserCircle2, X } from "lucide-react"
 import ProfileSection from "./ProfileSection/ProfileSection"
 import Notification from "./Notification/Notification"
 import Link from "next/link"
-import { Menu, UserCircle2 } from "lucide-react"
 
 interface ISidebarAndProfile {
     children: ReactNode
@@ -18,9 +18,18 @@ const SidebarAndProfile: FC<ISidebarAndProfile> = ({ children }) => {
             <div className="flex h-screen">
                 <div
                     aria-label="sidebar"
-                    className="absolute z-[2] bg-white md:static md:flex-[1.5] md:p-4"
+                    className={`absolute left-0 right-0 z-[2] border-t bg-white p-5 text-xl font-medium shadow-[3px_-15px_82px_-25px_rgba(0,0,0,0.5)] transition-all md:static md:z-[0] md:flex-[1.5] md:p-4 md:shadow-none ${
+                        openMenu ? "bottom-0" : "-bottom-full"
+                    }`}
                 >
-                    <ul>
+                    <div className="flex justify-end">
+                        <X
+                            size={"1.75rem"}
+                            onClick={() => setOpenMenu(false)}
+                            className="md:hidden"
+                        />
+                    </div>
+                    <ul className="flex flex-col items-center gap-4">
                         <Link href={"/"}>
                             <li>Home</li>
                         </Link>
@@ -54,7 +63,7 @@ const SidebarAndProfile: FC<ISidebarAndProfile> = ({ children }) => {
 
                 <div
                     aria-label="profile"
-                    className={`absolute left-0 right-0 z-[2] bg-white transition-all md:static md:flex-[2] ${
+                    className={`absolute left-0 right-0 z-[2] bg-white transition-all md:static md:z-[0] md:flex-[2] ${
                         openProfile ? "top-0" : "-top-full"
                     }`}
                 >

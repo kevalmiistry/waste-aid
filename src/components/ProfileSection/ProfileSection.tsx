@@ -1,8 +1,8 @@
 import type { Dispatch, FC, SetStateAction } from "react"
 import { useSession } from "next-auth/react"
+import { X } from "lucide-react"
 import Skeleton from "react-loading-skeleton"
 import "react-loading-skeleton/dist/skeleton.css"
-import { X } from "lucide-react"
 
 interface IProfileSection {
     setOpenProfile: Dispatch<SetStateAction<boolean>>
@@ -19,7 +19,7 @@ const ProfileSection: FC<IProfileSection> = ({ setOpenProfile }) => {
                 <Skeleton width={"300px"} count={4} />
 
                 <button
-                    className="absolute bottom-5 left-1/2 z-10 -translate-x-1/2"
+                    className="absolute bottom-5 left-1/2 z-10 -translate-x-1/2 md:hidden"
                     onClick={() => setOpenProfile(false)}
                 >
                     <X size={"1.75rem"} color="#333" />
@@ -45,7 +45,7 @@ const ProfileSection: FC<IProfileSection> = ({ setOpenProfile }) => {
             </p>
 
             <button
-                className="absolute bottom-5 left-1/2 z-10 -translate-x-1/2"
+                className="absolute bottom-5 left-1/2 z-10 -translate-x-1/2 md:hidden"
                 onClick={() => setOpenProfile(false)}
             >
                 <X size={"1.75rem"} color="#333" />
