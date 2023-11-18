@@ -171,9 +171,9 @@ const Post: FC<IPost & PostTypes> = ({
                             className="object-cover"
                         />
                         <Expand
-                            className="absolute right-5 top-5 shadow-lg shadow-black"
+                            className="absolute right-5 top-5 rounded-md bg-gray-600 bg-transparent p-1 shadow-xl"
                             color="#fff"
-                            size={"1.25rem"}
+                            size={"1.5rem"}
                         />
                     </div>
                 ))}

@@ -33,7 +33,7 @@ const Notification: FC<INotification> = () => {
                             backgroundColor: colors[status],
                         }}
                         transition={{ ease: cubicBezier }}
-                        className={`absolute left-0 right-0 top-0 m-0 w-full py-[2px] text-center font-medium text-[#333]`}
+                        className={`absolute left-0 right-0 top-0 z-[1000000] m-0 w-full py-[2px] text-center font-medium text-[#333]`}
                     >
                         {message}
                     </motion.div>
