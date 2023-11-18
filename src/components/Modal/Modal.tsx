@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "framer-motion"
 import { useState, useEffect } from "react"
 import { createPortal } from "react-dom"
 import { cubicBezier } from "~/utils/constants"
+import { twMerge } from "tailwind-merge"
 
 interface IModal {
     children: ReactNode
@@ -18,6 +19,12 @@ const Modal: FC<IModal> = ({ children, open, onClose, classNames = "" }) => {
         setIsMounted(true)
         return () => setIsMounted(false)
     }, [])
+
+    const c = twMerge(
+        "fixed left-1/2 top-1/2 z-[2] rounded-3xl bg-white p-5 shadow-lg",
+        classNames
+    )
+    // console.log(c)
 
     return isMounted
         ? createPortal(
@@ -52,7 +59,7 @@ const Modal: FC<IModal> = ({ children, open, onClose, classNames = "" }) => {
                                   translateY: "-50%",
                               }}
                               transition={{ ease: cubicBezier, duration: 0.3 }}
-                              className={`fixed left-1/2 top-1/2 z-[2] rounded-3xl bg-white p-5 shadow-lg ${classNames}`}
+                              className={c}
                           >
                               {children}
                           </motion.div>
