@@ -1,10 +1,13 @@
-import type { FC } from "react"
+import type { Dispatch, FC, SetStateAction } from "react"
 import { useSession } from "next-auth/react"
 import Skeleton from "react-loading-skeleton"
 import "react-loading-skeleton/dist/skeleton.css"
+import { X } from "lucide-react"
 
-interface IProfileSection {}
-const ProfileSection: FC<IProfileSection> = () => {
+interface IProfileSection {
+    setOpenProfile: Dispatch<SetStateAction<boolean>>
+}
+const ProfileSection: FC<IProfileSection> = ({ setOpenProfile }) => {
     const { data: session, status } = useSession()
 
     if (status === "loading") {
@@ -14,6 +17,13 @@ const ProfileSection: FC<IProfileSection> = () => {
                 <Skeleton width={"200px"} className="py-1" />
                 <div className="mt-3" />
                 <Skeleton width={"300px"} count={4} />
+
+                <button
+                    className="absolute bottom-5 left-1/2 z-10 -translate-x-1/2"
+                    onClick={() => setOpenProfile(false)}
+                >
+                    <X size={"1.75rem"} color="#333" />
+                </button>
             </div>
         )
     }
@@ -33,6 +43,13 @@ const ProfileSection: FC<IProfileSection> = () => {
             <p className="text-xl font-medium text-gray-600">
                 {session?.user?.name}
             </p>
+
+            <button
+                className="absolute bottom-5 left-1/2 z-10 -translate-x-1/2"
+                onClick={() => setOpenProfile(false)}
+            >
+                <X size={"1.75rem"} color="#333" />
+            </button>
         </div>
     )
 }
