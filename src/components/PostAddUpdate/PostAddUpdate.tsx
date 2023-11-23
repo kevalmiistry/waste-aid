@@ -41,7 +41,7 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
     const uploaderRef = useRef<TMultiUploaderHandle | null>(null)
     const [imagesUploading, setImagesUploading] = useState(false)
 
-    const getPost = api.post.getOnePost.useMutation()
+    const getPost = api.post.getOneAMPost.useMutation()
 
     const { mutate: createPostMutate, isLoading: creatingPostLoading } =
         api.post.createPost.useMutation()
