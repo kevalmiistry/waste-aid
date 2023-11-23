@@ -3,8 +3,10 @@ import { Sparkles } from "lucide-react"
 import { motion } from "framer-motion"
 import { api } from "~/utils/api"
 import PostAddUpdate from "~/components/PostAddUpdate/PostAddUpdate"
+import PostSkeleton from "~/components/PostSkeleton"
 import Modal from "~/components/Modal/Modal"
 import Post from "~/components/Post/Post"
+import Image from "next/image"
 
 interface AidManProps {}
 const AidMan: FC<AidManProps> = () => {
@@ -34,23 +36,46 @@ const AidMan: FC<AidManProps> = () => {
                 </motion.button>
             </div>
             {isLoading ? (
-                <p>Loading...</p>
+                <div className="p-8">
+                    <PostSkeleton />
+                </div>
             ) : (
                 <div className="p-5">
-                    {data?.map((post) => {
-                        const { metaData, startDate, endDate, ...rest } = post
-                        return (
-                            <Post
-                                key={post.uuid}
-                                {...rest}
-                                startDate={startDate?.toISOString()}
-                                endDate={endDate?.toISOString()}
-                                refetchPosts={refetchPosts}
-                                setModalOpen={setModalOpen}
-                                setSelectedPost={setSelectedPost}
+                    {data && data?.length > 0 ? (
+                        data?.map((post) => {
+                            const { metaData, startDate, endDate, ...rest } =
+                                post
+                            return (
+                                <Post
+                                    key={post.uuid}
+                                    {...rest}
+                                    startDate={startDate?.toISOString()}
+                                    endDate={endDate?.toISOString()}
+                                    refetchPosts={refetchPosts}
+                                    setModalOpen={setModalOpen}
+                                    setSelectedPost={setSelectedPost}
+                                />
+                            )
+                        })
+                    ) : (
+                        <div className="justify-starts flex flex-col items-center gap-28">
+                            <p className="mt-5 text-center">
+                                Oops! there is no post yet.{" "}
+                                <button
+                                    className="font-medium text-blue-600 underline"
+                                    onClick={() => setModalOpen(true)}
+                                >
+                                    Create One?
+                                </button>
+                            </p>
+                            <Image
+                                src={"/nothing-to-see.png"}
+                                alt="nothing to see"
+                                width={300}
+                                height={300}
                             />
-                        )
-                    })}
+                        </div>
+                    )}
                 </div>
             )}
 
