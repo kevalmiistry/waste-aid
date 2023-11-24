@@ -1,10 +1,11 @@
-import { useState, type FC, Dispatch, SetStateAction } from "react"
+import type { FC, Dispatch, SetStateAction } from "react"
+import type { PostTypes } from "~/components/PostAddUpdate/PostAddUpdate"
 import { Expand, Pencil, Trash, Users2, X } from "lucide-react"
 import { AnimatePresence, motion } from "framer-motion"
 import { useNotifierStore } from "~/stores/notifier"
-import { type PostTypes } from "~/components/PostAddUpdate/PostAddUpdate"
 import { cubicBezier } from "~/utils/constants"
 import { Carousel } from "react-responsive-carousel"
+import { useState } from "react"
 import { api } from "~/utils/api"
 import moment from "moment"
 import "react-responsive-carousel/lib/styles/carousel.min.css" // requires a loader
@@ -19,7 +20,7 @@ interface IPost {
     }
     createdAt: Date
     uuid: string
-    refetchPosts: () => void
+    refetchPosts: () => Promise<void>
     setModalOpen: Dispatch<SetStateAction<boolean>>
     setSelectedPost: Dispatch<SetStateAction<string | null>>
 }
@@ -53,8 +54,8 @@ const Post: FC<IPost & PostTypes> = ({
             deletePostMutate(
                 { uuid: uuid },
                 {
-                    onSuccess() {
-                        refetchPosts()
+                    async onSuccess() {
+                        await refetchPosts()
                         notify({
                             show: true,
                             message: "Post Deleted! :D",
@@ -202,7 +203,7 @@ const Post: FC<IPost & PostTypes> = ({
                 <div className="flex-1">
                     <p className="font-light text-[#888]">Collected</p>
                     <p className="font-satoshi text-2xl font-medium">
-                        {collectedAmount || 0}
+                        {collectedAmount ?? 0}
                         {hasTarget && (
                             <span className="text-base font-normal text-[#666]">
                                 {" "}

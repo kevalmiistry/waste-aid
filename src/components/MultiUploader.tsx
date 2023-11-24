@@ -1,14 +1,14 @@
 // Note: `useUploadThing` is IMPORTED FROM YOUR CODEBASE using the `generateReactHelpers` function
-import type { TMultiUploaderHandle } from "~/components/PostAddUpdate/PostAddUpdate"
-import type { FileWithPath } from "@uploadthing/react"
 import {
-    Dispatch,
-    SetStateAction,
+    type Dispatch,
+    type SetStateAction,
     forwardRef,
     useCallback,
     useImperativeHandle,
     useState,
 } from "react"
+import type { TMultiUploaderHandle } from "~/components/PostAddUpdate/PostAddUpdate"
+import type { FileWithPath } from "@uploadthing/react"
 import { generateClientDropzoneAccept } from "uploadthing/client"
 import { useUploadThing } from "~/utils/uploadthing"
 import { UploadCloud, X } from "lucide-react"
@@ -21,7 +21,7 @@ interface TProps {
 }
 
 export const MultiUploader = forwardRef<TMultiUploaderHandle, TProps>(
-    ({ setImagesUploading }, ref) => {
+    function MultiUploader({ setImagesUploading }, ref) {
         const [files, setFiles] = useState<File[]>([])
         const [errMsg, setErrMsg] = useState("")
 
@@ -51,10 +51,10 @@ export const MultiUploader = forwardRef<TMultiUploaderHandle, TProps>(
                     setImagesUploading(false)
                     console.log("UT Error:", error)
                 },
-                onUploadBegin: (data) => {
+                onUploadBegin: () => {
                     setImagesUploading(true)
                 },
-                onUploadProgress: (count) => {
+                onUploadProgress: () => {
                     // console.log(count)
                 },
             }
@@ -140,15 +140,6 @@ export const MultiUploader = forwardRef<TMultiUploaderHandle, TProps>(
                           ))
                         : null}
                 </div>
-
-                {/* <div className="my-5 flex justify-center">
-                <button
-                    className="btn-secondary text-center"
-                    onClick={() => startUpload(files)}
-                >
-                    Upload {files.length} files
-                </button>
-            </div> */}
             </>
         )
     }

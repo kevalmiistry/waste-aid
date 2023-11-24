@@ -1,11 +1,26 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import type { PostTypes } from "../PostAddUpdate/PostAddUpdate"
 import type { FC } from "react"
-import { Controller, type Control, FieldError } from "react-hook-form"
-import { PostTypes } from "../PostAddUpdate/PostAddUpdate"
+import { Controller, type Control } from "react-hook-form"
 import Select, { type StylesConfig } from "react-select"
 
 interface IRHFSelect {
     control: Control<PostTypes>
-    name: any
+    name:
+        | "title"
+        | "description"
+        | "hasTarget"
+        | "status"
+        | "targetAmount"
+        | "collectedAmount"
+        | "amountType"
+        | "hasDeadline"
+        | "startDate"
+        | "endDate"
+        | "metaData"
+        | "address"
     options: Record<string, string>[]
     isMulti?: boolean
     valueKey?: string
@@ -36,7 +51,7 @@ const customReactSelectStyle: StylesConfig = {
         borderRadius: "0.5rem",
         boxShadow: "none",
     }),
-    option: (baseStyles, { data, isDisabled, isFocused, isSelected }) => ({
+    option: (baseStyles, { isFocused, isSelected }) => ({
         ...baseStyles,
         backgroundColor: isSelected
             ? "#000"
@@ -59,8 +74,8 @@ const RHFSelect: FC<IRHFSelect> = ({
         <Controller
             name={name}
             control={control}
-            defaultValue={isMulti ? [] : ""}
-            render={({ field, fieldState: { invalid, error } }) => (
+            defaultValue={undefined}
+            render={({ field, fieldState: {} }) => (
                 <>
                     <Select
                         {...rest}
@@ -68,44 +83,23 @@ const RHFSelect: FC<IRHFSelect> = ({
                         options={options}
                         isMulti={isMulti}
                         className="capitalize"
-                        value={
-                            isMulti
-                                ? field.value?.filter(
-                                      (option: { value: string | undefined }) =>
-                                          options?.find(
-                                              (item) =>
-                                                  item[valueKey] ===
-                                                  option.value
-                                          )
-                                  )
-                                : options?.find(
-                                      (option) =>
-                                          option[valueKey] === field.value
-                                  )
-                        }
+                        value={options?.find(
+                            (option) => option[valueKey] === field.value
+                        )}
                         onChange={(selectedOptions) => {
                             const selectedValue = isMulti
                                 ? selectedOptions
-                                : selectedOptions[valueKey]
+                                : // @ts-ignore-next-line
+                                  selectedOptions[valueKey]
                             field.onChange(selectedValue)
                         }}
                         onBlur={field.onBlur}
                         styles={customReactSelectStyle}
                     />
-                    {/* {invalid && <ErrorHolder error={error} />} */}
                 </>
             )}
         />
     )
 }
-
-// const styles = {
-//     color: "#b02a37",
-//     fontSize: ".875em",
-//     marginTop: "0.25rem",
-// }
-// const ErrorHolder = ({ error }: { error: FieldError | undefined }) => {
-//     return <>{error && <div style={styles}>{error.message}</div>}</>
-// }
 
 export default RHFSelect

@@ -1,86 +1,18 @@
 import { signOut, useSession } from "next-auth/react"
-import { useRouter } from "next/router"
 import { api } from "~/utils/api"
 import Head from "next/head"
 
-// cll2mjbqh0007i3rsuhorsr3o
 const Home = () => {
-    const createPost = api.post.createPost.useMutation()
-    const updatePost = api.post.updatePost.useMutation()
-    const deletePost = api.post.deletePost.useMutation()
-
     const createDonation = api.post.createDonation.useMutation()
-    const { data: session, status } = useSession()
-    const router = useRouter()
+    const { status } = useSession()
 
     if (status === "loading") {
         return <main>Loading...</main>
     }
 
-    if (!session?.user) {
-        /* eslint-disable @typescript-eslint/no-floating-promises */
-        router.push("/welcome").then((val) => null)
-    }
-
-    const handleCreatePost = () => {
-        // createPost.mutate(
-        //     {
-        //         title: "This is Title!!!",
-        //         description:
-        //             "A nice description for the post, have a good day... ;)",
-        //         address: "101, main street, NY",
-        //         hasTarget: false,
-        //         amountType: "KG",
-        //         hasDeadline: false,
-        //         am_id: "cll2ku9se0002i3rsd4qom4tu",
-        //     },
-        //     {
-        //         onSuccess: (post) => {
-        //             console.log("-------------------------------")
-        //             console.log(post)
-        //         },
-        //     }
-        // )
-    }
-
-    const handleUpdatePost = () => {
-        updatePost.mutate(
-            {
-                uuid: "7dd0dc0f-e16b-4125-8319-2eded7dbca9e",
-                title: "[edit] This is Title!!!",
-                description:
-                    "[edit] A nice description for the post, have a good day... ;)",
-                address: "[edit] 101, main street, NY",
-                hasTarget: false,
-                amountType: "KG",
-                hasDeadline: false,
-                am_id: "cll2ku9se0002i3rsd4qom4tu",
-            },
-            {
-                onSuccess: (post) => {
-                    console.log("-------------------------------")
-                    console.log(post)
-                },
-            }
-        )
-    }
-
-    const handleDeletePost = () => {
-        deletePost.mutate(
-            { uuid: "c19cbad6-594b-4937-9d6a-90af36995b6b" },
-            {
-                onSuccess: (post) => {
-                    console.log("-------------------------------")
-                    console.log(post)
-                },
-            }
-        )
-    }
-
     const handleCreateDonation = () => {
         createDonation.mutate(
             {
-                // donator_id: "cll2mjbqh0007i3rsuhorsr3o",
                 donator_id: "cll2ku9se0002i3rsd4qom4tu",
                 post_id: "c19cbad6-594b-4937-9d6a-90af36995b6b",
                 reachedDate: new Date(),
@@ -96,10 +28,10 @@ const Home = () => {
 
     // const data = api.post.getAllPosts.useQuery()
 
-    // const handleFetchPosts = () => {
-    //     console.log("**************  Data  **************")
-    //     console.log(data.data)
-    // }
+    const handleFetchPosts = () => {
+        // console.log("**************  Data  **************")
+        // console.log(data.data)
+    }
 
     return (
         <>
@@ -116,26 +48,15 @@ const Home = () => {
                     >
                         SignOut
                     </button>
-                    <button className="btn-primary" onClick={handleCreatePost}>
-                        Create Post
-                    </button>
-                    <button className="btn-primary" onClick={handleUpdatePost}>
-                        Update Post
-                    </button>
+                    <button className="btn-primary">Update Post</button>
                     <button
                         className="btn-primary"
                         onClick={handleCreateDonation}
                     >
                         Create Donations
                     </button>
-                    <button
-                        className="btn-primary"
-                        // onClick={handleFetchPosts}
-                    >
+                    <button className="btn-primary" onClick={handleFetchPosts}>
                         Fetch Posts
-                    </button>
-                    <button className="btn-primary" onClick={handleDeletePost}>
-                        Delete Post
                     </button>
                 </div>
             </main>

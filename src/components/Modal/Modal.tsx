@@ -66,7 +66,7 @@ const Modal: FC<IModal> = ({ children, open, onClose, classNames = "" }) => {
                       </>
                   ) : null}
               </AnimatePresence>,
-              document.querySelector("#my-portal") as HTMLElement
+              document.querySelector("#my-portal")!
           )
         : null
 }

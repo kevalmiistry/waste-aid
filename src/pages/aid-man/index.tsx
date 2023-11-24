@@ -13,8 +13,8 @@ const AidMan: FC<AidManProps> = () => {
     const { data, isLoading, refetch } = api.post.getAMPosts.useQuery()
     const [modalOpen, setModalOpen] = useState(false)
     const [selectedPost, setSelectedPost] = useState<string | null>(null)
-    const refetchPosts = () => {
-        refetch()
+    const refetchPosts = async (): Promise<void> => {
+        await refetch()
     }
 
     useEffect(() => {
@@ -45,6 +45,7 @@ const AidMan: FC<AidManProps> = () => {
                         data?.map((post) => {
                             const { metaData, startDate, endDate, ...rest } =
                                 post
+                            metaData
                             return (
                                 <Post
                                     key={post.uuid}

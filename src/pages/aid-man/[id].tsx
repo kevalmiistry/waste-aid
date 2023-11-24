@@ -1,4 +1,7 @@
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next"
+import type {
+    GetServerSidePropsContext,
+    InferGetServerSidePropsType,
+} from "next"
 import { AnimatePresence, motion } from "framer-motion"
 import { createServerSideHelpers } from "@trpc/react-query/server"
 import { getServerAuthSession } from "~/server/auth"
@@ -28,7 +31,7 @@ export const getServerSideProps = async (
     })
 
     try {
-        const id = context.params?.id as string
+        const id = context.params?.id ?? ""
         const data = await helpers.post.getOnePost.fetch({ pid: id })
 
         const finalDataProps =
@@ -166,7 +169,7 @@ const ViewPost = (
                 <div className="flex-1">
                     <p className="font-light text-[#888]">Collected</p>
                     <p className="font-satoshi text-2xl font-medium">
-                        {collectedAmount || 0}
+                        {collectedAmount ?? 0}
                         {hasTarget && (
                             <span className="text-base font-normal text-[#666]">
                                 {" "}

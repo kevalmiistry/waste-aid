@@ -1,8 +1,8 @@
 import type { FC, Dispatch, SetStateAction } from "react"
 import type { UploadFileResponse } from "uploadthing/client"
-import type { DefaultValues } from "react-hook-form"
+import type { DefaultValues, SubmitHandler } from "react-hook-form"
 import { useNotifierStore } from "~/stores/notifier"
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import { MultiUploader } from "../MultiUploader"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { DevTool } from "@hookform/devtools"
@@ -29,7 +29,7 @@ export type PostTypes = z.infer<typeof zPostSchema>
 
 interface IPostAddUpdate {
     setModalOpen: Dispatch<SetStateAction<boolean>>
-    refetchPosts: () => void
+    refetchPosts: () => Promise<void>
     selectedPost: string | null
 }
 const PostAddUpdate: FC<IPostAddUpdate> = ({
@@ -112,14 +112,14 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
         resolver: zodResolver(zPostSchema),
     })
 
-    const onSubmit = async (data: PostTypes) => {
+    const onSubmit: SubmitHandler<PostTypes> = async (data) => {
         try {
             // upload all imgage & get response
             const uploadedFiles = await uploaderRef.current?.uploadAll()
 
             const payloadData = {
                 title: data.title,
-                description: data.description || "",
+                description: data.description ?? "",
                 address: data.address,
                 hasTarget: data.hasTarget,
                 targetAmount: data.hasTarget ? data.targetAmount : null,
@@ -142,21 +142,21 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
                     uuid: selectedPost,
                 }
                 updatePostMutate(updatePayload, {
-                    onSuccess() {
+                    async onSuccess() {
                         notify({
                             show: true,
                             message: "Post Updated! :D",
                             status: "success",
                             duration: 5000,
                         })
-                        refetchPosts()
+                        await refetchPosts()
                         reset()
                         setModalOpen(false)
                     },
                 })
             } else {
                 createPostMutate(payloadData, {
-                    onSuccess(data, variables, context) {
+                    onSuccess(data) {
                         if (uploadedFiles && uploadedFiles.length > 0) {
                             const imageURLsPayload = uploadedFiles.map(
                                 (item) => ({
@@ -168,17 +168,17 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
                                 onSuccess: (data) => {
                                     console.log(data)
                                 },
-                                onError(error, variables, context) {
+                                onError(error) {
                                     console.log(error.message)
                                 },
-                                onSettled: () => {
+                                async onSettled() {
                                     notify({
                                         show: true,
                                         message: "New Post Created! :D",
                                         status: "success",
                                         duration: 5000,
                                     })
-                                    refetchPosts()
+                                    await refetchPosts()
                                     reset()
                                     setModalOpen(false)
                                 },
@@ -231,6 +231,7 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
                         )}
                         <form
                             className="flex flex-col gap-3"
+                            // eslint-disable-next-line @typescript-eslint/no-misused-promises
                             onSubmit={handleSubmit(onSubmit)}
                         >
                             <div className="w-full" aria-label="input-group">
@@ -248,7 +249,7 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
                                     {...register("title")}
                                 />
                                 <small className="text-red-500">
-                                    {errors?.title && errors?.title?.message}
+                                    {errors?.title?.message ?? ""}
                                 </small>
                             </div>
                             <div className="w-full" aria-label="input-group">
@@ -266,8 +267,7 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
                                     {...register("description")}
                                 />
                                 <small className="text-red-500">
-                                    {errors?.description &&
-                                        errors?.description?.message}
+                                    {errors?.description?.message ?? ""}
                                 </small>
                             </div>
                             <div className="flex gap-2">
@@ -318,8 +318,7 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
                                         </label>
                                     </div>
                                     <small className="text-red-500">
-                                        {errors?.hasTarget &&
-                                            errors?.hasTarget?.message}
+                                        {errors?.hasTarget?.message ?? ""}
                                     </small>
                                 </div>
 
@@ -345,9 +344,8 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
                                                 })}
                                             />
                                             <small className="text-red-500">
-                                                {errors?.targetAmount &&
-                                                    errors?.targetAmount
-                                                        ?.message}
+                                                {errors?.targetAmount
+                                                    ?.message ?? ""}
                                             </small>
                                         </>
                                     )}
@@ -432,8 +430,7 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
                                         </label>
                                     </div>
                                     <small className="text-red-500">
-                                        {errors?.hasDeadline &&
-                                            errors?.hasDeadline?.message}
+                                        {errors?.hasDeadline?.message ?? ""}
                                     </small>
                                 </div>
 
@@ -479,8 +476,7 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
                                         )}
                                     </div>
                                     <small className="mt-1 block text-center text-red-500">
-                                        {errors?.startDate &&
-                                            errors?.startDate?.message}
+                                        {errors?.startDate?.message ?? ""}
                                     </small>
                                 </div>
                             </div>
@@ -499,8 +495,7 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
                                     {...register("address")}
                                 />
                                 <small className="text-red-500">
-                                    {errors?.address &&
-                                        errors?.address?.message}
+                                    {errors?.address?.message ?? ""}
                                 </small>
                             </div>
 
