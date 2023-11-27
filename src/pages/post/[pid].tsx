@@ -17,7 +17,7 @@ import moment from "moment"
 import "react-responsive-carousel/lib/styles/carousel.min.css"
 
 export const getServerSideProps = async (
-    context: GetServerSidePropsContext<{ id: string }>
+    context: GetServerSidePropsContext<{ pid: string }>
 ) => {
     const session = await getServerAuthSession(context)
 
@@ -31,19 +31,25 @@ export const getServerSideProps = async (
     })
 
     try {
-        const id = context.params?.id ?? ""
+        const id = context.params?.pid ?? ""
         const data = await helpers.post.getOnePost.fetch({ pid: id })
 
-        const finalDataProps =
-            data !== null
-                ? {
-                      ...data,
-                      startDate: moment(data.startDate).format("DD MMM YY"),
-                      endDate: moment(data.endDate).format("DD MMM YY"),
-                      createdAt: moment(data.createdAt).format("DD MMM YY"),
-                      updatedAt: moment(data.updatedAt).format("DD MMM YY"),
-                  }
-                : null
+        if (data === null) {
+            return {
+                redirect: {
+                    destination: "/404",
+                    permanent: false,
+                },
+            }
+        }
+
+        const finalDataProps = {
+            ...data,
+            startDate: moment(data.startDate).format("DD MMM YY"),
+            endDate: moment(data.endDate).format("DD MMM YY"),
+            createdAt: moment(data.createdAt).format("DD MMM YY"),
+            updatedAt: moment(data.updatedAt).format("DD MMM YY"),
+        }
 
         return {
             props: {
@@ -73,7 +79,13 @@ const ViewPost = (
     const [selectedItem, setSelectedItem] = useState(0)
     const [fullViewOpen, setFullViewOpen] = useState(false)
 
-    if (!data) return <>No data!..</>
+    if (!data) {
+        return (
+            <p className="my-10 text-center text-lg font-semibold">
+                {"Oops! No Post data found. : ("}
+            </p>
+        )
+    }
 
     const {
         PostImages,
@@ -210,9 +222,9 @@ const ViewPost = (
                 )}
             </div>
 
-            <div className="mt-5 rounded-xl border-2 border-dashed px-3 py-1 text-[#333]">
-                <p className="text-lg font-semibold">Address:</p>
-                <p>{address}</p>
+            <p className="mb-1 mt-5 text-lg font-medium">Address:</p>
+            <div className="rounded-lg border-2 border-dashed border-gray-500 bg-gray-100 px-3 py-1 text-[#333]">
+                <p className="whitespace-pre-line">{address}</p>
             </div>
 
             <div

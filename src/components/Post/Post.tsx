@@ -9,6 +9,7 @@ import { useState } from "react"
 import { api } from "~/utils/api"
 import moment from "moment"
 import "react-responsive-carousel/lib/styles/carousel.min.css" // requires a loader
+import Link from "next/link"
 
 interface IPost {
     PostImages: {
@@ -20,6 +21,7 @@ interface IPost {
     }
     createdAt: Date
     uuid: string
+    showControls: boolean
     refetchPosts: () => Promise<void>
     setModalOpen: Dispatch<SetStateAction<boolean>>
     setSelectedPost: Dispatch<SetStateAction<string | null>>
@@ -40,6 +42,7 @@ const Post: FC<IPost & PostTypes> = ({
     refetchPosts,
     setModalOpen,
     setSelectedPost,
+    showControls,
 }) => {
     const { notify } = useNotifierStore()
     const { mutate: deletePostMutate, isLoading } =
@@ -102,53 +105,57 @@ const Post: FC<IPost & PostTypes> = ({
             </AnimatePresence>
 
             {/* Edit and Delete buttons */}
-            <div className="flex items-center justify-end gap-2 pb-3">
-                <button
-                    disabled={isLoading}
-                    className={`flex h-[2rem] items-center justify-center rounded-full p-2 ${
-                        deleteClicked ? "bg-gray-500" : "bg-[#33b5e5]"
-                    }`}
-                    onClick={handleEdit}
-                >
-                    {deleteClicked ? (
-                        <X size={"1rem"} strokeWidth="2px" color="#fff" />
-                    ) : (
-                        <Pencil size={"1rem"} strokeWidth="2px" />
-                    )}
-                </button>
-
-                <button
-                    disabled={isLoading}
-                    className={`flex h-[2rem] items-center justify-center rounded-full bg-[#ff4444] p-2 transition-all ${
-                        deleteClicked ? "w-[5rem]" : "w-[2rem]"
-                    }`}
-                    onClick={handleDelete}
-                >
-                    {deleteClicked ? (
-                        isLoading ? (
-                            <small className="font-medium">Deleting...</small>
+            {showControls && (
+                <div className="flex items-center justify-end gap-2 pb-3">
+                    <button
+                        disabled={isLoading}
+                        className={`flex h-[2rem] items-center justify-center rounded-full p-2 ${
+                            deleteClicked ? "bg-gray-500" : "bg-[#33b5e5]"
+                        }`}
+                        onClick={handleEdit}
+                    >
+                        {deleteClicked ? (
+                            <X size={"1rem"} strokeWidth="2px" color="#fff" />
                         ) : (
-                            <motion.small
-                                initial={{ scaleX: 0 }}
-                                animate={{
-                                    scaleX: 1,
-                                    transformOrigin: "right",
-                                }}
-                                transition={{
-                                    bounce: 0,
-                                    ease: "linear",
-                                    duration: 0.125,
-                                }}
-                                className="font-medium"
-                            >
-                                Confirm!
-                            </motion.small>
-                        )
-                    ) : (
-                        <Trash size={"1rem"} strokeWidth="2px" />
-                    )}
-                </button>
-            </div>
+                            <Pencil size={"1rem"} strokeWidth="2px" />
+                        )}
+                    </button>
+
+                    <button
+                        disabled={isLoading}
+                        className={`flex h-[2rem] items-center justify-center rounded-full bg-[#ff4444] p-2 transition-all ${
+                            deleteClicked ? "w-[5rem]" : "w-[2rem]"
+                        }`}
+                        onClick={handleDelete}
+                    >
+                        {deleteClicked ? (
+                            isLoading ? (
+                                <small className="font-medium">
+                                    Deleting...
+                                </small>
+                            ) : (
+                                <motion.small
+                                    initial={{ scaleX: 0 }}
+                                    animate={{
+                                        scaleX: 1,
+                                        transformOrigin: "right",
+                                    }}
+                                    transition={{
+                                        bounce: 0,
+                                        ease: "linear",
+                                        duration: 0.125,
+                                    }}
+                                    className="font-medium"
+                                >
+                                    Confirm!
+                                </motion.small>
+                            )
+                        ) : (
+                            <Trash size={"1rem"} strokeWidth="2px" />
+                        )}
+                    </button>
+                </div>
+            )}
 
             {/* image carousel */}
             <Carousel
@@ -197,7 +204,7 @@ const Post: FC<IPost & PostTypes> = ({
             </div>
 
             <h2 className="mt-5 text-2xl font-semibold">{title}</h2>
-            <p className="text-[#555]">{description}</p>
+            <p className="line-clamp-2 text-[#555]">{description}</p>
 
             <div className="mt-4 flex gap-4 text-lg">
                 <div className="flex-1">
@@ -236,12 +243,12 @@ const Post: FC<IPost & PostTypes> = ({
                 <small className="font-satoshi uppercase">
                     {moment(createdAt).format("DD MMM YY")}
                 </small>
-                <button
-                    disabled={isLoading}
+                <Link
+                    href={`/post/${uuid}`}
                     className="btn-primary rounded-full p-1 px-3 text-sm"
                 >
                     Know more!
-                </button>
+                </Link>
             </div>
         </div>
     )

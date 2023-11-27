@@ -6,6 +6,7 @@ import { SessionProvider } from "next-auth/react"
 import { SkeletonTheme } from "react-loading-skeleton"
 import { api } from "~/utils/api"
 import SidebarAndProfile from "~/components/SidebarAndProfile"
+import NextTopLoader from "nextjs-toploader"
 import "~/styles/globals.css"
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -27,6 +28,7 @@ const MyApp = ({
         ((page) => (
             <SessionProvider session={session}>
                 <SkeletonTheme baseColor="#f2f2f2" highlightColor="#ebebeb">
+                    <NextTopLoader />
                     <SidebarAndProfile>{page}</SidebarAndProfile>
                 </SkeletonTheme>
             </SessionProvider>
@@ -35,6 +37,7 @@ const MyApp = ({
     return getLayout(
         <SessionProvider session={session}>
             <SkeletonTheme baseColor="#f2f2f2" highlightColor="#ebebeb">
+                <NextTopLoader color="rgb(150, 217, 5)" />
                 <Component {...pageProps} />
             </SkeletonTheme>
         </SessionProvider>

@@ -55,6 +55,7 @@ const AidMan: FC<AidManProps> = () => {
                                     refetchPosts={refetchPosts}
                                     setModalOpen={setModalOpen}
                                     setSelectedPost={setSelectedPost}
+                                    showControls
                                 />
                             )
                         })
