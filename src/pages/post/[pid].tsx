@@ -175,7 +175,7 @@ const ViewPost = (
             </div>
 
             <h2 className="mt-5 text-2xl font-semibold">{title}</h2>
-            <p className="text-[#555]">{description}</p>
+            <p className="whitespace-pre-wrap text-[#555]">{description}</p>
 
             <div className="mt-4 flex gap-4 text-lg">
                 <div className="flex-1">
