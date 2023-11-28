@@ -1,29 +1,11 @@
 import { signOut, useSession } from "next-auth/react"
-import { api } from "~/utils/api"
 import Head from "next/head"
 
 const Home = () => {
-    const createDonation = api.post.createDonation.useMutation()
     const { status } = useSession()
 
     if (status === "loading") {
         return <main>Loading...</main>
-    }
-
-    const handleCreateDonation = () => {
-        createDonation.mutate(
-            {
-                donator_id: "cll2ku9se0002i3rsd4qom4tu",
-                post_id: "c19cbad6-594b-4937-9d6a-90af36995b6b",
-                reachedDate: new Date(),
-            },
-            {
-                onSuccess: (donation) => {
-                    console.log("---------------  Donations  ----------------")
-                    console.log(donation)
-                },
-            }
-        )
     }
 
     // const data = api.post.getAllPosts.useQuery()
@@ -49,12 +31,7 @@ const Home = () => {
                         SignOut
                     </button>
                     <button className="btn-primary">Update Post</button>
-                    <button
-                        className="btn-primary"
-                        onClick={handleCreateDonation}
-                    >
-                        Create Donations
-                    </button>
+                    <button className="btn-primary">Create Donations</button>
                     <button className="btn-primary" onClick={handleFetchPosts}>
                         Fetch Posts
                     </button>
