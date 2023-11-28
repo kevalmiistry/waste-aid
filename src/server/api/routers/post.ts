@@ -1,11 +1,6 @@
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc"
 import { TRPCError } from "@trpc/server"
 import { z } from "zod"
-import {
-    createTRPCRouter,
-    protectedProcedure,
-    publicProcedure,
-    // protectedProcedure,
-} from "~/server/api/trpc"
 
 export const postRouter = createTRPCRouter({
     createPost: protectedProcedure
@@ -79,7 +74,7 @@ export const postRouter = createTRPCRouter({
             })
         }),
 
-    deletePost: publicProcedure
+    deletePost: protectedProcedure
         .input(z.object({ uuid: z.string() }))
         .mutation(async ({ ctx, input }) => {
             return await ctx.prisma.post.delete({ where: { uuid: input.uuid } })
@@ -117,21 +112,6 @@ export const postRouter = createTRPCRouter({
                     message: "something went wrong",
                 })
             }
-        }),
-
-    createDonation: publicProcedure
-        .input(
-            z.object({
-                post_id: z.string(),
-                donator_id: z.string(),
-                reachedDate: z.date(),
-            })
-        )
-        .mutation(async ({ ctx, input }) => {
-            const donation = await ctx.prisma.donations.create({
-                data: input,
-            })
-            return donation
         }),
 
     getAllPosts: protectedProcedure.query(async ({ ctx }) => {
