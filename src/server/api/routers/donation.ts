@@ -6,6 +6,7 @@ export const donationRouter = createTRPCRouter({
         .input(
             z.object({
                 post_id: z.string(),
+                donatedAmout: z.number(),
             })
         )
         .mutation(async ({ ctx, input }) => {

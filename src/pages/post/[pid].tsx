@@ -2,6 +2,7 @@ import type {
     GetServerSidePropsContext,
     InferGetServerSidePropsType,
 } from "next"
+import type { FormEventHandler } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { createServerSideHelpers } from "@trpc/react-query/server"
 import { getServerAuthSession } from "~/server/auth"
@@ -9,11 +10,14 @@ import { Expand, Users2 } from "lucide-react"
 import { cubicBezier } from "~/utils/constants"
 import { TRPCError } from "@trpc/server"
 import { appRouter } from "~/server/api/root"
+import { toDataURL } from "qrcode"
 import { Carousel } from "react-responsive-carousel"
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { prisma } from "~/server/db"
+import { api } from "~/utils/api"
 import SuperJSON from "superjson"
 import moment from "moment"
+import Modal from "~/components/Modal/Modal"
 import "react-responsive-carousel/lib/styles/carousel.min.css"
 
 export const getServerSideProps = async (
@@ -76,8 +80,19 @@ const ViewPost = (
 ) => {
     const { data } = props
 
+    const { mutate: createDonationMutate, isLoading: creatingDonationLoading } =
+        api.donation.createDonation.useMutation()
+
     const [selectedItem, setSelectedItem] = useState(0)
     const [fullViewOpen, setFullViewOpen] = useState(false)
+
+    const [isDialogOpen, setIsDialogOpen] = useState(false)
+    const [inputAmount, setInputAmount] = useState<number | undefined>(
+        undefined
+    )
+    const [errorMessage, setErrorMessage] = useState("")
+    const [QRCodeDataURL, setQRCodeDataURL] = useState<string | null>(null)
+    const qrLink = useRef<HTMLAnchorElement>(null)
 
     if (!data) {
         return (
@@ -101,10 +116,36 @@ const ViewPost = (
         createdAt,
         startDate,
         address,
+        uuid,
     } = data
 
+    const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
+        e.preventDefault()
+
+        if (!inputAmount || inputAmount <= 0) {
+            setErrorMessage("Please enter a valid value")
+            return
+        }
+
+        createDonationMutate(
+            {
+                post_id: uuid,
+                donatedAmout: inputAmount,
+            },
+            {
+                async onSuccess(data) {
+                    const URL = await toDataURL(data.uuid)
+                    setQRCodeDataURL(URL)
+                },
+                onSettled() {
+                    qrLink.current?.click()
+                },
+            }
+        )
+    }
+
     return (
-        <div className="p-4 md:p-8">
+        <div className="p-4 pb-36 md:p-8">
             <h2 className="mb-2 text-2xl font-medium text-[#333]">
                 Post Details:
             </h2>
@@ -175,7 +216,7 @@ const ViewPost = (
             </div>
 
             <h2 className="mt-5 text-2xl font-semibold">{title}</h2>
-            <p className="whitespace-pre-wrap text-[#555]">{description}</p>
+            <p className="whitespace-pre-line text-[#555]">{description}</p>
 
             <div className="mt-4 flex gap-4 text-lg">
                 <div className="flex-1">
@@ -227,12 +268,102 @@ const ViewPost = (
                 <p className="whitespace-pre-line">{address}</p>
             </div>
 
-            <div
-                aria-label="footer"
-                className="mb-3 mt-5 flex items-center justify-between"
-            >
+            <div className="mb-3 mt-5 flex items-center justify-between">
                 <small className="font-satoshi uppercase">{createdAt}</small>
             </div>
+
+            <div
+                className="flex justify-end"
+                onClick={() => setIsDialogOpen(true)}
+            >
+                <button className="btn btn-primary">Generate Token</button>
+            </div>
+
+            <Modal
+                open={isDialogOpen}
+                classNames="w-[90%] max-w-[500px] min-h-[40%] h-fit"
+                onClose={() => setIsDialogOpen(false)}
+            >
+                <div className="relative text-xl font-medium italic">
+                    {"Let's get to generate your Token :D"}
+                    <div className="absolute -bottom-1 h-[1px] w-full bg-gray-200" />
+                </div>
+                {!QRCodeDataURL && (
+                    <form
+                        onSubmit={handleSubmit}
+                        className="mt-5 flex flex-col"
+                    >
+                        <label htmlFor="amount">
+                            Please enter the amount you sending in!{" "}
+                            <span className="font-satoshi font-thin">
+                                ( in{" "}
+                                <span className="uppercase">{amountType}</span>{" "}
+                                )
+                            </span>
+                        </label>
+                        <input
+                            type="number"
+                            name="amount"
+                            id="amount"
+                            placeholder="Eg. 10000"
+                            className="w-full rounded-lg border-2 px-2 py-1 placeholder:text-sm placeholder:font-light placeholder:italic"
+                            value={inputAmount}
+                            onChange={(e) => setInputAmount(+e.target.value)}
+                        />
+                        <small className="text-red-500">{errorMessage}</small>
+                        <div className="flex justify-center">
+                            <button
+                                className="btn-primary mt-5 w-min text-sm"
+                                disabled={creatingDonationLoading}
+                            >
+                                Generate!
+                            </button>
+                        </div>
+                    </form>
+                )}
+
+                {QRCodeDataURL && (
+                    <div className="mt-4 flex flex-col items-center justify-center gap-1 text-[#333]">
+                        <div className="font-light">
+                            Amount:{" "}
+                            <span className="font-satoshi text-lg font-semibold capitalize">
+                                {inputAmount} {amountType}
+                            </span>
+                        </div>
+                        <motion.img
+                            initial={{ scale: 0.9 }}
+                            animate={{ scale: 1 }}
+                            transition={{ ease: cubicBezier }}
+                            src={QRCodeDataURL}
+                            alt="QR Code"
+                            className="w-[80%] md:w-[50%]"
+                        />
+
+                        <p className="text font-medium">
+                            Woohoo!!! QR code generated🥳
+                        </p>
+                        <p className="text-center text-sm">
+                            Now make sure you save Screenshot or Download this
+                            QR code and attach a print of it with the parcel you
+                            are sending in your collected waste.
+                        </p>
+                        <p className="mt-2 text-center text-sm">
+                            The Receiver will scan this QR code from their side
+                            and you will be notified.
+                        </p>
+                        <a
+                            ref={qrLink}
+                            href={QRCodeDataURL}
+                            target="_blank"
+                            className="my-2 text-sm text-blue-700 underline"
+                            rel="noopener noreferrer"
+                            download
+                        >
+                            Download
+                        </a>
+                    </div>
+                )}
+            </Modal>
         </div>
     )
 }
