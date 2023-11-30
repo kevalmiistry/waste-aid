@@ -11,8 +11,9 @@ import { cubicBezier } from "~/utils/constants"
 import { TRPCError } from "@trpc/server"
 import { appRouter } from "~/server/api/root"
 import { toDataURL } from "qrcode"
+import { useState } from "react"
 import { Carousel } from "react-responsive-carousel"
-import { useRef, useState } from "react"
+import { saveAs } from "file-saver"
 import { prisma } from "~/server/db"
 import { api } from "~/utils/api"
 import SuperJSON from "superjson"
@@ -92,7 +93,6 @@ const ViewPost = (
     )
     const [errorMessage, setErrorMessage] = useState("")
     const [QRCodeDataURL, setQRCodeDataURL] = useState<string | null>(null)
-    const qrLink = useRef<HTMLAnchorElement>(null)
 
     if (!data) {
         return (
@@ -119,6 +119,32 @@ const ViewPost = (
         uuid,
     } = data
 
+    const saveBase64AsFile = (base64: string, fileName: string): void => {
+        const splitData = base64.split(";base64,")
+        if (splitData.length !== 2) {
+            throw new Error("Invalid base64 string")
+        }
+
+        const data = splitData.pop()!
+        const contentType = base64.match(/:([^;]+);/)?.[1]
+
+        if (!contentType) {
+            throw new Error("Invalid content type in base64 string")
+        }
+
+        const byteCharacters = atob(data)
+        const byteNumbers = new Array(byteCharacters.length)
+
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i)
+        }
+
+        const byteArray = new Uint8Array(byteNumbers)
+        const blob = new Blob([byteArray], { type: contentType })
+
+        saveAs(blob, fileName)
+    }
+
     const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
         e.preventDefault()
 
@@ -134,11 +160,14 @@ const ViewPost = (
             },
             {
                 async onSuccess(data) {
-                    const URL = await toDataURL(data.uuid)
+                    const URL = await toDataURL(data.uuid, {
+                        scale: 20,
+                    })
                     setQRCodeDataURL(URL)
-                },
-                onSettled() {
-                    qrLink.current?.click()
+                    saveBase64AsFile(
+                        URL,
+                        `${inputAmount} ${amountType} donation QR Code`
+                    )
                 },
             }
         )
@@ -351,16 +380,17 @@ const ViewPost = (
                             The Receiver will scan this QR code from their side
                             and you will be notified.
                         </p>
-                        <a
-                            ref={qrLink}
-                            href={QRCodeDataURL}
-                            target="_blank"
+                        <button
                             className="my-2 text-sm text-blue-700 underline"
-                            rel="noopener noreferrer"
-                            download
+                            onClick={() =>
+                                saveBase64AsFile(
+                                    QRCodeDataURL,
+                                    `${inputAmount} ${amountType} donation QR Code`
+                                )
+                            }
                         >
                             Download
-                        </a>
+                        </button>
                     </div>
                 )}
             </Modal>
