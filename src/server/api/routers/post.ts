@@ -135,16 +135,6 @@ export const postRouter = createTRPCRouter({
     getOneAMPost: protectedProcedure
         .input(z.object({ pid: z.string() }))
         .mutation(async ({ ctx, input }) => {
-            return await ctx.prisma.post.findUnique({
-                where: {
-                    uuid: input.pid,
-                },
-            })
-        }),
-
-    getOnePost: protectedProcedure
-        .input(z.object({ pid: z.string() }))
-        .query(async ({ ctx, input }) => {
             return await ctx.prisma.post.findFirst({
                 where: {
                     AND: [
@@ -155,6 +145,16 @@ export const postRouter = createTRPCRouter({
                             am_id: ctx.session.user.id,
                         },
                     ],
+                },
+            })
+        }),
+
+    getOnePost: protectedProcedure
+        .input(z.object({ pid: z.string() }))
+        .query(async ({ ctx, input }) => {
+            return await ctx.prisma.post.findFirst({
+                where: {
+                    uuid: input.pid,
                 },
                 include: {
                     _count: {
