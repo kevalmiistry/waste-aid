@@ -3,6 +3,7 @@ import { Menu, UserCircle2, X } from "lucide-react"
 import ProfileSection from "./ProfileSection/ProfileSection"
 import Notification from "./Notification/Notification"
 import Link from "next/link"
+import { AnimatePresence } from "framer-motion"
 
 interface ISidebarAndProfile {
     children: ReactNode
@@ -38,6 +39,9 @@ const SidebarAndProfile: FC<ISidebarAndProfile> = ({ children }) => {
                         <Link href={"/aid-man"} onClick={closeMenu}>
                             <li>Aid-Man</li>
                         </Link>
+                        <Link href={"/verify-token"} onClick={closeMenu}>
+                            <li>Scan QR</li>
+                        </Link>
                         <Link href={"/welcome"} onClick={closeMenu}>
                             <li>Welcome</li>
                         </Link>
@@ -48,7 +52,7 @@ const SidebarAndProfile: FC<ISidebarAndProfile> = ({ children }) => {
                     className="flex-[3] border-l-[2px] border-r-[2px] pr-1"
                 >
                     <div className="custom-scrollbar h-screen overflow-x-auto">
-                        {children}
+                        <AnimatePresence>{children}</AnimatePresence>
                         <div
                             aria-label="mobile-view-bottom-bar"
                             className="fixed bottom-0 left-0 right-0 flex justify-around border bg-white p-3 md:hidden"

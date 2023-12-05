@@ -71,7 +71,11 @@ export const donationRouter = createTRPCRouter({
                 },
             })
 
-            return { oldAmount, newAmount }
+            return {
+                oldAmount,
+                newAmount,
+                amountType: donationWithPost.post.amountType ?? "",
+            }
         }),
 
     listDonations: protectedProcedure.query(async ({ ctx }) => {
