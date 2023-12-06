@@ -16,23 +16,36 @@ const Error: FC<IErrorProps> = () => {
     const message = get("message")
 
     return (
-        <motion.main
+        <main
             key={"error"}
-            initial={{ translateX: "-100%" }}
-            animate={{ translateX: "0%" }}
-            transition={{ ease: cubicBezier }}
             className="flex h-screen flex-col items-center gap-8 p-5"
         >
-            <img
-                src={placeholderImages[code].src}
-                alt={placeholderImages[code].alt}
+            <motion.img
+                initial={{ translateX: "200%" }}
+                animate={{ translateX: "0%" }}
+                transition={{ ease: cubicBezier, duration: 0.3, delay: 0.1 }}
+                src={placeholderImages[code]?.src}
+                alt={placeholderImages[code]?.alt}
                 className="w-3/4 md:w-1/2"
             />
-            <p className="text-lg font-medium">{message}</p>
-            <Link href={"/verify-token"} className="btn-primary mt-12">
-                Go Back
-            </Link>
-        </motion.main>
+            <motion.p
+                initial={{ translateX: "200%" }}
+                animate={{ translateX: "0%" }}
+                transition={{ ease: cubicBezier, duration: 0.3, delay: 0.2 }}
+                className="text-lg font-medium"
+            >
+                {message}
+            </motion.p>
+            <motion.span
+                initial={{ translateX: "200%" }}
+                animate={{ translateX: "0%" }}
+                transition={{ ease: cubicBezier, duration: 0.3, delay: 0.3 }}
+            >
+                <Link href={"/verify-token"} className="btn-primary mt-12">
+                    Go Back
+                </Link>
+            </motion.span>
+        </main>
     )
 }
 

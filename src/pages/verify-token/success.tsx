@@ -35,29 +35,50 @@ const Success: FC<ISuccessProps> = () => {
     }, [startNumber, endNumber])
 
     return (
-        <motion.main
+        <main
             key={"success"}
-            initial={{ translateX: "-100%" }}
-            animate={{ translateX: "0%" }}
-            transition={{ ease: cubicBezier }}
             className="flex h-screen flex-col items-center gap-8 p-5"
         >
-            <img src="/success.svg" alt="Success" className="w-3/4 md:w-1/2" />
-            <p className="text-lg font-medium">
+            <motion.img
+                initial={{ translateX: "200%" }}
+                animate={{ translateX: "0%" }}
+                transition={{ ease: cubicBezier, duration: 0.5, delay: 0 }}
+                src="/success.svg"
+                alt="Success"
+                className="w-3/4 md:w-1/2"
+            />
+            <motion.p
+                initial={{ translateX: "200%" }}
+                animate={{ translateX: "0%" }}
+                transition={{ ease: cubicBezier, duration: 0.5, delay: 0.1 }}
+                className="text-lg font-medium"
+            >
                 QR Code scanned Successfully! 🙌
-            </p>
-            <div className="number-animation flex items-center gap-2">
+            </motion.p>
+
+            <motion.div
+                initial={{ translateX: "200%" }}
+                animate={{ translateX: "0%" }}
+                transition={{ ease: cubicBezier, duration: 0.5, delay: 0.2 }}
+                className="number-animation flex items-center gap-2"
+            >
                 <span className="font-satoshi rounded-md bg-gray-200 px-3 py-1 text-2xl font-semibold">
                     {startNumber}
                 </span>{" "}
                 <span className="font-light">
                     <span className="uppercase">{amountType}</span> collected!
                 </span>
-            </div>
-            <Link href={"/verify-token"} className="btn-primary mt-12">
-                Go Back
-            </Link>
-        </motion.main>
+            </motion.div>
+            <motion.span
+                initial={{ translateX: "200%" }}
+                animate={{ translateX: "0%" }}
+                transition={{ ease: cubicBezier, duration: 0.5, delay: 0.3 }}
+            >
+                <Link href={"/verify-token"} className="btn-primary mt-12">
+                    Go Back
+                </Link>
+            </motion.span>
+        </main>
     )
 }
 

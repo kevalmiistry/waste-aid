@@ -1,5 +1,6 @@
 import type { FC } from "react"
 import { Flashlight, FlashlightOff } from "lucide-react"
+import { cubicBezier } from "~/utils/constants"
 import { useRouter } from "next/navigation"
 import { useZxing } from "react-zxing"
 import { useState } from "react"
@@ -64,7 +65,8 @@ const VerifyToken: FC<IVerifyToken> = () => {
             className="p-5"
             initial={{ translateX: "0%" }}
             animate={{ translateX: "0%" }}
-            exit={{ translateX: "-100%" }}
+            exit={{ translateX: "-100%", position: "absolute" }}
+            transition={{ ease: cubicBezier, duration: 0.5 }}
         >
             <div
                 aria-label="QR Code scanner wrapper"
