@@ -264,7 +264,15 @@ const ViewPost = (
                 <div className="flex-1">
                     <p className="font-light text-[#888]">By</p>
                     <p className="font-satoshi flex items-center gap-1 text-2xl font-medium">
-                        {_count.donations} <Users2 />
+                        {_count.donations} <Users2 />{" "}
+                        {data.donations.map((donation, idx) => (
+                            <img
+                                key={idx}
+                                src={donation?.donator?.image ?? ""}
+                                alt={`donator ${idx}`}
+                                className="h-5 w-5 rounded-full"
+                            />
+                        ))}
                     </p>
                 </div>
             </div>
@@ -273,7 +281,7 @@ const ViewPost = (
                 {hasDeadline && (
                     <div className="flex-1">
                         <p className="mt-4 font-light text-[#888]">
-                            Last Date:{" "}
+                            Start Date:{" "}
                             <span className="font-satoshi font-medium uppercase text-[#333]">
                                 {startDate}
                             </span>

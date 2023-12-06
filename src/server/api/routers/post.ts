@@ -168,6 +168,17 @@ export const postRouter = createTRPCRouter({
                             uuid: true,
                         },
                     },
+                    donations: {
+                        select: {
+                            donator: {
+                                select: {
+                                    image: true,
+                                },
+                            },
+                        },
+                        distinct: "donator_id",
+                        take: 3,
+                    },
                 },
             })
         }),

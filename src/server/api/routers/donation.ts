@@ -83,6 +83,12 @@ export const donationRouter = createTRPCRouter({
             where: {
                 donator_id: ctx.session.user.id,
             },
+            include: {
+                post: true,
+            },
+            orderBy: {
+                createdAt: "desc",
+            },
         })
     }),
 })
