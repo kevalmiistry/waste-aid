@@ -27,6 +27,8 @@ model Post {
     donations       Donations[]
     metaData        Json?
     status          Boolean      @default(true)
+
+    @@unique([createdAt, uuid])
 }
 
 model PostImages {
