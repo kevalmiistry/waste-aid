@@ -21,7 +21,7 @@ const Modal: FC<IModal> = ({ children, open, onClose, classNames = "" }) => {
     }, [])
 
     const c = twMerge(
-        "fixed left-1/2 top-1/2 z-[2] rounded-3xl bg-white p-5 shadow-lg",
+        "fixed left-1/2 top-1/2 z-[5] rounded-3xl bg-white p-5 shadow-lg",
         classNames
     )
     // console.log(c)
@@ -36,7 +36,7 @@ const Modal: FC<IModal> = ({ children, open, onClose, classNames = "" }) => {
                               animate={{ opacity: 1 }}
                               exit={{ opacity: 0 }}
                               transition={{ ease: cubicBezier, duration: 0.3 }}
-                              className="z-1 absolute inset-0 bg-[#00000050]"
+                              className="absolute inset-0 z-[4] bg-[#00000050]"
                               onClick={onClose}
                           />
                           <motion.div
