@@ -10,7 +10,7 @@ export const postRouter = createTRPCRouter({
                 description: z.ostring(),
                 address: z.string(),
                 hasTarget: z.boolean(),
-                targetAmount: z.number().or(z.nan()).nullable().optional(),
+                targetAmount: z.number().nullable().optional(),
                 amountType: z.ostring().nullable(),
                 hasDeadline: z.boolean(),
                 startDate: z.ostring().nullable(),
@@ -48,6 +48,17 @@ export const postRouter = createTRPCRouter({
                         imageURL: true,
                         uuid: true,
                     },
+                },
+                donations: {
+                    select: {
+                        donator: {
+                            select: {
+                                image: true,
+                            },
+                        },
+                    },
+                    distinct: "donator_id",
+                    take: 3,
                 },
             },
             where: {
@@ -88,7 +99,7 @@ export const postRouter = createTRPCRouter({
                 description: z.ostring(),
                 address: z.string(),
                 hasTarget: z.boolean(),
-                targetAmount: z.number().or(z.nan()).nullable().optional(),
+                targetAmount: z.number().nullable().optional(),
                 amountType: z.ostring().nullable(),
                 hasDeadline: z.boolean(),
                 startDate: z.ostring().nullable(),
@@ -113,24 +124,6 @@ export const postRouter = createTRPCRouter({
                 })
             }
         }),
-
-    getAllPosts: protectedProcedure.query(async ({ ctx }) => {
-        return await ctx.prisma.post.findMany({
-            include: {
-                _count: {
-                    select: {
-                        donations: true,
-                    },
-                },
-                PostImages: {
-                    select: {
-                        imageURL: true,
-                        uuid: true,
-                    },
-                },
-            },
-        })
-    }),
 
     getOneAMPost: protectedProcedure
         .input(z.object({ pid: z.string() }))
@@ -181,5 +174,62 @@ export const postRouter = createTRPCRouter({
                     },
                 },
             })
+        }),
+
+    getInfinitePost: protectedProcedure
+        .input(
+            z.object({
+                limit: z.number().optional(),
+                cursor: z
+                    .object({ uuid: z.string(), createdAt: z.date() })
+                    .optional(),
+            })
+        )
+        .query(async ({ ctx, input: { cursor, limit = 10 } }) => {
+            const posts = await ctx.prisma.post.findMany({
+                take: limit + 1,
+                orderBy: {
+                    updatedAt: "desc",
+                },
+                cursor: cursor ? cursor : undefined,
+                include: {
+                    _count: {
+                        select: {
+                            donations: true,
+                        },
+                    },
+                    PostImages: {
+                        select: {
+                            imageURL: true,
+                            uuid: true,
+                        },
+                    },
+                    donations: {
+                        select: {
+                            donator: {
+                                select: {
+                                    image: true,
+                                },
+                            },
+                        },
+                        distinct: "donator_id",
+                        take: 3,
+                    },
+                },
+            })
+
+            let nextCursor: typeof cursor | undefined
+
+            if (posts.length > limit) {
+                const lastItem = posts.pop()
+                if (lastItem != null) {
+                    nextCursor = {
+                        uuid: lastItem.uuid,
+                        createdAt: lastItem.createdAt,
+                    }
+                }
+            }
+
+            return { posts, nextCursor }
         }),
 })
