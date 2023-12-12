@@ -171,19 +171,19 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
                                 onError(error) {
                                     console.log(error.message)
                                 },
-                                async onSettled() {
-                                    notify({
-                                        show: true,
-                                        message: "New Post Created! :D",
-                                        status: "success",
-                                        duration: 5000,
-                                    })
-                                    await refetchPosts()
-                                    reset()
-                                    setModalOpen(false)
-                                },
                             })
                         }
+                    },
+                    async onSettled() {
+                        notify({
+                            show: true,
+                            message: "New Post Created! :D",
+                            status: "success",
+                            duration: 5000,
+                        })
+                        await refetchPosts()
+                        reset()
+                        setModalOpen(false)
                     },
                 })
             }
@@ -534,19 +534,19 @@ const zPostSchema = z
             .string()
             .min(2, { message: "Please write lil long title" })
             .max(100, { message: "Title is too long" }),
-        description: z.ostring().nullable(),
+        description: z.string().nullable().default(null),
         hasTarget: z.boolean({
             errorMap: () => ({ message: "Please select any one of these" }),
         }),
-        targetAmount: z.number().or(z.nan()).nullable().optional(),
-        collectedAmount: z.onumber().nullable(),
-        amountType: z.ostring().nullable(),
+        targetAmount: z.number().or(z.nan()).nullable().default(null),
+        collectedAmount: z.number().nullable().default(null),
+        amountType: z.string().nullable().default(null),
         hasDeadline: z.boolean({
             errorMap: () => ({ message: "Please select any one of these" }),
         }),
-        startDate: z.ostring().nullable(),
-        endDate: z.ostring().nullable(),
-        metaData: z.ostring().nullable(),
+        startDate: z.string().nullable().default(null),
+        endDate: z.string().nullable().default(null),
+        metaData: z.string().nullable().default(null),
         status: z.boolean().default(true),
         address: z
             .string()
@@ -604,5 +604,16 @@ const zPostSchema = z
             path: ["startDate"],
         }
     )
+    .refine(({ hasDeadline, startDate, endDate }) => {
+        if (hasDeadline === true) {
+            if (startDate === "") {
+                startDate = null
+            }
+            if (endDate === "") {
+                endDate = null
+            }
+        }
+        return true
+    })
 
 export default PostAddUpdate

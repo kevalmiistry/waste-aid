@@ -42,23 +42,16 @@ const AidMan: FC<AidManProps> = () => {
             ) : (
                 <div className="p-5">
                     {data && data?.length > 0 ? (
-                        data?.map((post) => {
-                            const { metaData, startDate, endDate, ...rest } =
-                                post
-                            metaData
-                            return (
-                                <Post
-                                    key={post.uuid}
-                                    {...rest}
-                                    startDate={startDate?.toISOString()}
-                                    endDate={endDate?.toISOString()}
-                                    refetchPosts={refetchPosts}
-                                    setModalOpen={setModalOpen}
-                                    setSelectedPost={setSelectedPost}
-                                    showControls
-                                />
-                            )
-                        })
+                        data?.map((post) => (
+                            <Post
+                                key={post.uuid}
+                                refetchPosts={refetchPosts}
+                                setModalOpen={setModalOpen}
+                                setSelectedPost={setSelectedPost}
+                                showControls
+                                {...post}
+                            />
+                        ))
                     ) : (
                         <div className="justify-starts flex flex-col items-center gap-28">
                             <p className="mt-5 text-center">
