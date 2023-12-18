@@ -19,6 +19,7 @@ const amountTypeOptions = [
     { value: "ltr", label: "Ltr" },
     { value: "ml", label: "ML" },
     { value: "units", label: "Units" },
+    { value: "other", label: "Other" },
 ]
 
 export type TMultiUploaderHandle = {
