@@ -12,6 +12,7 @@ import { X } from "lucide-react"
 import { z } from "zod"
 import RHFSelect from "../RHFSelect/RHFSelect"
 import moment from "moment"
+import { twMerge } from "tailwind-merge"
 
 const amountTypeOptions = [
     { value: "kg", label: "KG" },
@@ -231,7 +232,7 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
                             />
                         )}
                         <form
-                            className="flex flex-col gap-3"
+                            className="flex flex-col gap-3 px-1"
                             // eslint-disable-next-line @typescript-eslint/no-misused-promises
                             onSubmit={handleSubmit(onSubmit)}
                         >
@@ -271,38 +272,72 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
                                     {errors?.description?.message ?? ""}
                                 </small>
                             </div>
-                            <div className="flex gap-2">
-                                <div
-                                    className="flex-1"
-                                    aria-label="input-group"
+
+                            <div aria-label="input-group" className="w-1/2">
+                                <label
+                                    htmlFor="description"
+                                    className="text-sm font-medium text-[#333]"
                                 >
+                                    Amount Type
+                                </label>
+                                <RHFSelect
+                                    control={control}
+                                    name={"amountType"}
+                                    options={amountTypeOptions}
+                                />
+                                <small className="text-red-500">
+                                    {errors?.targetAmount &&
+                                        errors?.amountType?.message}
+                                </small>
+                            </div>
+
+                            <div className="" aria-label="input-group">
+                                <label
+                                    htmlFor="description"
+                                    className="text-sm font-medium text-[#333]"
+                                >
+                                    Do you have a target?
+                                </label>
+                                <div className="flex gap-1">
                                     <label
-                                        htmlFor=""
-                                        className="text-sm font-medium text-[#333]"
+                                        htmlFor="yes"
+                                        className={twMerge(
+                                            `flex-1 cursor-pointer rounded-md border border-gray-400 px-4 py-2 text-sm font-medium text-[#333]`,
+                                            watch("hasTarget")
+                                                ? "border border-primary bg-primary-200 text-primary"
+                                                : ""
+                                        )}
                                     >
-                                        Has Target?
-                                    </label>
-                                    <div className="flex gap-1">
+                                        Yes, <small>I have a target!</small>
                                         <input
                                             type="radio"
                                             id="yes"
-                                            className="w-[18px]"
+                                            className="hidden"
                                             onChange={(e) => {
                                                 if (e.target.checked)
                                                     setValue("hasTarget", true)
                                             }}
                                             checked={watch("hasTarget")}
                                         />
-                                        <label
-                                            htmlFor="yes"
-                                            className="text-sm font-medium text-[#333]"
-                                        >
-                                            Yes
-                                        </label>
+                                    </label>
+
+                                    <label
+                                        htmlFor="no"
+                                        className={twMerge(
+                                            `flex-1 cursor-pointer rounded-md border border-gray-400 px-4 py-2 text-sm font-medium text-[#333]`,
+                                            watch("hasTarget") === false
+                                                ? "border border-primary bg-primary-200 text-primary"
+                                                : ""
+                                        )}
+                                    >
+                                        No,{" "}
+                                        <small>
+                                            I don&apos;t have a target!
+                                        </small>
                                         <input
                                             type="radio"
                                             id="no"
-                                            className="ms-3 w-[18px]"
+                                            className="hidden"
                                             onChange={(e) => {
                                                 if (e.target.checked)
                                                     setValue("hasTarget", false)
@@ -311,88 +346,64 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
                                                 watch("hasTarget") === false
                                             }
                                         />
-                                        <label
-                                            htmlFor="no"
-                                            className="text-sm font-medium text-[#333]"
-                                        >
-                                            No
-                                        </label>
-                                    </div>
-                                    <small className="text-red-500">
-                                        {errors?.hasTarget?.message ?? ""}
-                                    </small>
+                                    </label>
                                 </div>
-
-                                <div
-                                    className="flex-1"
-                                    aria-label="input-group"
-                                >
-                                    {watch("hasTarget") && (
-                                        <>
-                                            <label
-                                                htmlFor="description"
-                                                className="text-sm font-medium text-[#333]"
-                                            >
-                                                Target Amount
-                                            </label>
-                                            <input
-                                                type="number"
-                                                id="title"
-                                                className="w-full rounded-lg border-2 px-2 py-1 placeholder:text-sm placeholder:font-light placeholder:italic"
-                                                placeholder="Eg. 1000"
-                                                {...register("targetAmount", {
-                                                    valueAsNumber: true,
-                                                })}
-                                            />
-                                            <small className="text-red-500">
-                                                {errors?.targetAmount
-                                                    ?.message ?? ""}
-                                            </small>
-                                        </>
-                                    )}
-                                </div>
-                                <div
-                                    className="flex-1"
-                                    aria-label="input-group"
-                                >
-                                    {watch("hasTarget") && (
-                                        <>
-                                            <label
-                                                htmlFor="description"
-                                                className="text-sm font-medium text-[#333]"
-                                            >
-                                                Amount Type
-                                            </label>
-                                            <RHFSelect
-                                                control={control}
-                                                name={"amountType"}
-                                                options={amountTypeOptions}
-                                            />
-                                            <small className="text-red-500">
-                                                {errors?.targetAmount &&
-                                                    errors?.amountType?.message}
-                                            </small>
-                                        </>
-                                    )}
-                                </div>
+                                <small className="text-red-500">
+                                    {errors?.hasTarget?.message ?? ""}
+                                </small>
                             </div>
 
-                            <div className="mt-3 flex gap-2">
-                                <div
-                                    className="flex-1"
-                                    aria-label="input-group"
+                            <div className="w-1/2" aria-label="input-group">
+                                {watch("hasTarget") && (
+                                    <>
+                                        <label
+                                            htmlFor="description"
+                                            className="text-sm font-medium text-[#333]"
+                                        >
+                                            Target Amount
+                                        </label>
+                                        <input
+                                            type="number"
+                                            id="title"
+                                            className="w-full rounded-lg border-2 px-2 py-1 placeholder:text-sm placeholder:font-light placeholder:italic"
+                                            onWheel={(e) =>
+                                                e.currentTarget.blur()
+                                            }
+                                            placeholder="Eg. 1000"
+                                            {...register("targetAmount", {
+                                                valueAsNumber: true,
+                                            })}
+                                        />
+                                        <small className="text-red-500">
+                                            {errors?.targetAmount?.message ??
+                                                ""}
+                                        </small>
+                                    </>
+                                )}
+                            </div>
+
+                            <div className="flex-1" aria-label="input-group">
+                                <label
+                                    htmlFor=""
+                                    className="text-sm font-medium text-[#333]"
                                 >
+                                    Do you have a Deadline?
+                                </label>
+                                <div className="flex gap-1">
                                     <label
-                                        htmlFor=""
-                                        className="text-sm font-medium text-[#333]"
+                                        htmlFor="deadline_yes"
+                                        className={twMerge(
+                                            `flex-1 cursor-pointer rounded-md border border-gray-400 px-4 py-2 text-sm font-medium text-[#333]`,
+                                            watch("hasDeadline")
+                                                ? "border border-primary bg-primary-200 text-primary"
+                                                : ""
+                                        )}
                                     >
-                                        Has Deadline?
-                                    </label>
-                                    <div className="flex gap-1">
+                                        Yes, <small>I have a deadline!</small>
                                         <input
                                             type="radio"
                                             id="deadline_yes"
-                                            className="w-[18px]"
+                                            className="hidden"
                                             onChange={(e) => {
                                                 if (e.target.checked)
                                                     setValue(
@@ -402,16 +413,24 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
                                             }}
                                             checked={watch("hasDeadline")}
                                         />
-                                        <label
-                                            htmlFor="deadline_yes"
-                                            className="text-sm font-medium text-[#333]"
-                                        >
-                                            Yes
-                                        </label>
+                                    </label>
+                                    <label
+                                        htmlFor="deadline_no"
+                                        className={twMerge(
+                                            `flex-1 cursor-pointer rounded-md border border-gray-400 px-4 py-2 text-sm font-medium text-[#333]`,
+                                            watch("hasDeadline") === false
+                                                ? "border border-primary bg-primary-200 text-primary"
+                                                : ""
+                                        )}
+                                    >
+                                        No,{" "}
+                                        <small>
+                                            I don&apos;t have a target!
+                                        </small>
                                         <input
                                             type="radio"
                                             id="deadline_no"
-                                            className="ms-3 w-[18px]"
+                                            className="ms-3 hidden"
                                             onChange={(e) => {
                                                 if (e.target.checked)
                                                     setValue(
@@ -423,18 +442,13 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
                                                 watch("hasDeadline") === false
                                             }
                                         />
-                                        <label
-                                            htmlFor="deadline_no"
-                                            className="text-sm font-medium text-[#333]"
-                                        >
-                                            No
-                                        </label>
-                                    </div>
-                                    <small className="text-red-500">
-                                        {errors?.hasDeadline?.message ?? ""}
-                                    </small>
+                                    </label>
                                 </div>
-
+                                <small className="text-red-500">
+                                    {errors?.hasDeadline?.message ?? ""}
+                                </small>
+                            </div>
+                            <div className="mt-3 flex gap-2">
                                 <div className="flex-[2]">
                                     <div className="flex gap-2">
                                         {watch("hasDeadline") && (
