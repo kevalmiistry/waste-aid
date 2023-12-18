@@ -12,10 +12,10 @@ import Link from "next/link"
 import "react-responsive-carousel/lib/styles/carousel.min.css" // requires a loader
 
 interface IPostCardProps extends WAPost {
-    showControls: boolean
-    refetchPosts: () => Promise<void>
-    setModalOpen: Dispatch<SetStateAction<boolean>>
-    setSelectedPost: Dispatch<SetStateAction<string | null>>
+    showControls?: boolean
+    refetchPosts?: () => Promise<void>
+    setModalOpen?: Dispatch<SetStateAction<boolean>>
+    setSelectedPost?: Dispatch<SetStateAction<string | null>>
 }
 const Post: FC<IPostCardProps> = ({
     PostImages,
@@ -30,10 +30,10 @@ const Post: FC<IPostCardProps> = ({
     hasDeadline,
     createdAt,
     uuid,
-    refetchPosts,
-    setModalOpen,
-    setSelectedPost,
-    showControls,
+    showControls = false,
+    refetchPosts = () => null,
+    setModalOpen = () => null,
+    setSelectedPost = () => null,
 }) => {
     const { notify } = useNotifierStore()
     const { mutate: deletePostMutate, isLoading } =

@@ -40,7 +40,7 @@ model PostImages {
 
 model Donations {
     uuid         String    @id @default(uuid())
-    post         Post      @relation(fields: [post_id], references: [uuid])
+    post         Post      @relation(fields: [post_id], references: [uuid], onDelete: Cascade)
     post_id      String
     donator      User      @relation(fields: [donator_id], references: [id], onDelete: Cascade)
     donator_id   String

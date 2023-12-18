@@ -1,9 +1,9 @@
+import { Home, Recycle, ScanLine, UserCircle2, X } from "lucide-react"
 import { useState, type FC, type ReactNode } from "react"
-import { Menu, UserCircle2, X } from "lucide-react"
+import { AnimatePresence } from "framer-motion"
 import ProfileSection from "./ProfileSection/ProfileSection"
 import Notification from "./Notification/Notification"
 import Link from "next/link"
-import { AnimatePresence } from "framer-motion"
 
 interface ISidebarAndProfile {
     children: ReactNode
@@ -11,38 +11,29 @@ interface ISidebarAndProfile {
 
 const SidebarAndProfile: FC<ISidebarAndProfile> = ({ children }) => {
     const [openProfile, setOpenProfile] = useState(false)
-    const [openMenu, setOpenMenu] = useState(false)
-
-    const closeMenu = () => setOpenMenu(false)
 
     return (
-        <div className="h-screen overflow-hidden">
+        <div className="min-h-screen">
             <Notification />
-            <div className="relative flex h-screen overflow-hidden">
+            <div className="relative flex min-h-screen">
                 <div
                     aria-label="sidebar"
-                    className={`absolute left-0 right-0 z-[2] border-t bg-white p-5 text-xl font-medium shadow-[3px_-15px_82px_-25px_rgba(0,0,0,0.5)] transition-all md:static md:z-[2] md:flex-[1.5] md:p-4 md:shadow-none ${
-                        openMenu ? "bottom-0" : "-bottom-full"
-                    }`}
+                    className={`left-0 right-0 z-[2] hidden border-t bg-white p-5 text-xl font-medium shadow-[3px_-15px_82px_-25px_rgba(0,0,0,0.5)] transition-all md:sticky md:left-0 md:top-0 md:z-[2] md:block md:h-screen md:flex-[1.5] md:p-4 md:shadow-none`}
                 >
                     <div className="flex justify-end">
-                        <X
-                            size={"1.75rem"}
-                            onClick={closeMenu}
-                            className="md:hidden"
-                        />
+                        <X size={"1.75rem"} className="md:hidden" />
                     </div>
                     <ul className="flex flex-col items-center gap-4">
-                        <Link href={"/"} onClick={closeMenu}>
+                        <Link href={"/"}>
                             <li>Home</li>
                         </Link>
-                        <Link href={"/aid-man"} onClick={closeMenu}>
+                        <Link href={"/aid-man"}>
                             <li>Aid-Man</li>
                         </Link>
-                        <Link href={"/verify-token"} onClick={closeMenu}>
+                        <Link href={"/verify-token"}>
                             <li>Scan QR</li>
                         </Link>
-                        <Link href={"/welcome"} onClick={closeMenu}>
+                        <Link href={"/welcome"}>
                             <li>Welcome</li>
                         </Link>
                     </ul>
@@ -50,16 +41,16 @@ const SidebarAndProfile: FC<ISidebarAndProfile> = ({ children }) => {
 
                 <div
                     aria-label="main-section"
-                    className="z-[1] flex-[3] overflow-hidden border-l-[2px] border-r-[2px]"
+                    className="z-[1] flex-[3] border-l-[2px] border-r-[2px] pb-16 md:pb-0"
                 >
-                    <div className="custom-scrollbar h-screen overflow-x-auto">
+                    <div className="">
                         <AnimatePresence>{children}</AnimatePresence>
                     </div>
                 </div>
 
                 <div
                     aria-label="profile"
-                    className={`absolute left-0 right-0 z-[2] bg-white transition-all md:static md:z-[2] md:flex-[2] ${
+                    className={`absolute left-0 right-0 z-[2] bg-white transition-all md:sticky md:left-0 md:top-0 md:z-[2] md:h-screen md:flex-[2] ${
                         openProfile ? "top-0" : "-top-full"
                     }`}
                 >
@@ -72,9 +63,15 @@ const SidebarAndProfile: FC<ISidebarAndProfile> = ({ children }) => {
                 aria-label="mobile-view-bottom-bar"
                 className="fixed bottom-0 left-0 right-0 z-[1] flex justify-around border bg-white p-3 md:hidden"
             >
-                <button onClick={() => setOpenMenu(true)}>
-                    <Menu size={"1.75rem"} />
-                </button>
+                <Link href={"/"}>
+                    <Home />
+                </Link>
+                <Link href={"/aid-man"}>
+                    <Recycle />
+                </Link>
+                <Link href={"/verify-token"}>
+                    <ScanLine />
+                </Link>
                 <button onClick={() => setOpenProfile(true)}>
                     <UserCircle2 size={"1.75rem"} />
                 </button>

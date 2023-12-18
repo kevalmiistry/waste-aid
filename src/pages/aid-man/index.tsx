@@ -40,7 +40,7 @@ const AidMan: FC<AidManProps> = () => {
                     <PostSkeleton />
                 </div>
             ) : (
-                <div className="p-5">
+                <div className="p-1 md:p-5">
                     {data && data?.length > 0 ? (
                         data?.map((post) => (
                             <Post

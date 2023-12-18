@@ -185,13 +185,13 @@ export const postRouter = createTRPCRouter({
                     .optional(),
             })
         )
-        .query(async ({ ctx, input: { cursor, limit = 10 } }) => {
+        .query(async ({ ctx, input: { cursor, limit = 4 } }) => {
             const posts = await ctx.prisma.post.findMany({
                 take: limit + 1,
                 orderBy: {
                     updatedAt: "desc",
                 },
-                cursor: cursor ? cursor : undefined,
+                cursor: cursor ? { createdAt_uuid: cursor } : undefined,
                 include: {
                     _count: {
                         select: {
