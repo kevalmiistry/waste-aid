@@ -215,7 +215,7 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
                     onClick={() => setModalOpen(false)}
                 />
             </div>
-            <div className="custom-scrollbar relative h-[80vh] w-[80vw] overflow-y-auto overflow-x-hidden pb-5 pr-3 sm:w-[600px]">
+            <div className="custom-scrollbar relative h-[80vh] w-[88vw] overflow-y-auto overflow-x-hidden pb-5 pr-3 sm:w-[600px]">
                 {isLoading ? (
                     <div className="flex h-full w-full flex-col items-center justify-center gap-3">
                         <span className="loader loader-primary loader-xl"></span>

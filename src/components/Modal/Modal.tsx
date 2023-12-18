@@ -36,7 +36,7 @@ const Modal: FC<IModal> = ({ children, open, onClose, classNames = "" }) => {
                               animate={{ opacity: 1 }}
                               exit={{ opacity: 0 }}
                               transition={{ ease: cubicBezier, duration: 0.3 }}
-                              className="absolute inset-0 z-[4] bg-[#00000050]"
+                              className="fixed inset-0 z-[4] bg-[#00000050]"
                               onClick={onClose}
                           />
                           <motion.div
