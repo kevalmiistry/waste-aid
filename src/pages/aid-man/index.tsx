@@ -25,7 +25,7 @@ const AidMan: FC<AidManProps> = () => {
 
     return (
         <>
-            <div className="flex justify-center pt-5">
+            <div className="flex justify-center pb-4 pt-4 md:pb-0 md:pt-5">
                 <motion.button
                     initial={{ translateY: "-100%" }}
                     animate={{ translateY: "0%" }}
