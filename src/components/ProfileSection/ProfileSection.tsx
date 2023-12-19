@@ -60,7 +60,7 @@ const ProfileSection: FC<IProfileSection> = ({ setOpenProfile }) => {
                 )}
             </div>
 
-            {data ? (
+            {data && data.length > 0 ? (
                 <>
                     <h3 className="mt-2">My Donations:</h3>
                     <div className="w-full px-2 md:px-6">
@@ -122,7 +122,9 @@ const ProfileSection: FC<IProfileSection> = ({ setOpenProfile }) => {
                         ))}
                     </div>
                 </>
-            ) : null}
+            ) : (
+                <p className="italic">No donations to show...</p>
+            )}
 
             <button
                 className="absolute bottom-5 left-1/2 z-10 -translate-x-1/2 md:hidden"
