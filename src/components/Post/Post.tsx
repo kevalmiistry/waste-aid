@@ -1,13 +1,13 @@
 import type { FC, Dispatch, SetStateAction } from "react"
 import type { WAPost } from "~/@types"
 import { Expand, Pencil, Trash, Users2, X } from "lucide-react"
-import { AnimatePresence, motion } from "framer-motion"
 import { useNotifierStore } from "~/stores/notifier"
-import { cubicBezier } from "~/utils/constants"
 import { Carousel } from "react-responsive-carousel"
 import { useState } from "react"
+import { motion } from "framer-motion"
 import { api } from "~/utils/api"
 import moment from "moment"
+import Modal from "../Modal/Modal"
 import Link from "next/link"
 import "react-responsive-carousel/lib/styles/carousel.min.css" // requires a loader
 
@@ -76,7 +76,7 @@ const Post: FC<IPostCardProps> = ({
     return (
         <div className="border-b border-t border-[2] p-4 text-[#333]">
             {/* view full image in overlay */}
-            <AnimatePresence>
+            {/* <AnimatePresence>
                 {fullViewOpen ? (
                     <motion.div
                         initial={{ opacity: 0 }}
@@ -93,7 +93,19 @@ const Post: FC<IPostCardProps> = ({
                         />
                     </motion.div>
                 ) : null}
-            </AnimatePresence>
+            </AnimatePresence> */}
+            <Modal
+                open={fullViewOpen}
+                onClose={() => setFullViewOpen(false)}
+                classNames="pr-2 bg-transparent flex items-center justify-center"
+                overlayClassName="bg-[#000000BB]"
+            >
+                <img
+                    src={PostImages[selectedItem]?.imageURL}
+                    alt={`image ${selectedItem + 1}`}
+                    className="h-[90vh] w-[90vw] object-contain"
+                />
+            </Modal>
 
             {/* Edit and Delete buttons */}
             {showControls && (
