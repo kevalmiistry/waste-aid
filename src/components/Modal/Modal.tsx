@@ -10,9 +10,16 @@ interface IModal {
     open: boolean
     onClose: () => void
     classNames?: string
+    overlayClassName?: string
 }
 
-const Modal: FC<IModal> = ({ children, open, onClose, classNames = "" }) => {
+const Modal: FC<IModal> = ({
+    children,
+    open,
+    onClose,
+    classNames = "",
+    overlayClassName = "",
+}) => {
     const [isMounted, setIsMounted] = useState(false)
 
     useEffect(() => {
@@ -36,7 +43,10 @@ const Modal: FC<IModal> = ({ children, open, onClose, classNames = "" }) => {
                               animate={{ opacity: 1 }}
                               exit={{ opacity: 0 }}
                               transition={{ ease: cubicBezier, duration: 0.3 }}
-                              className="fixed inset-0 z-[4] bg-[#00000050]"
+                              className={twMerge(
+                                  "fixed inset-0 z-[4] bg-[#00000050]",
+                                  overlayClassName
+                              )}
                               onClick={onClose}
                           />
                           <motion.div
