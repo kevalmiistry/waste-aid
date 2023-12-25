@@ -180,8 +180,8 @@ const ViewPost = (
     }
 
     return (
-        <div className="p-4 pb-36 md:p-8">
-            <h2 className="mb-2 text-2xl font-medium text-[#333]">
+        <div className="pb-36 pt-5">
+            <h2 className="mb-2 px-5 text-2xl font-medium text-[#333] md:px-0">
                 Post Details:
             </h2>
             {/* view full image in overlay */}
@@ -206,7 +206,7 @@ const ViewPost = (
 
             {/* image carousel */}
             <Carousel
-                className="aspect-[16/9] overflow-hidden rounded-2xl"
+                className="aspect-[16/9] overflow-hidden md:rounded-2xl"
                 swipeable
                 emulateTouch
                 infiniteLoop
@@ -250,76 +250,82 @@ const ViewPost = (
                 ))}
             </div>
 
-            <h2 className="mt-5 text-2xl font-semibold">{title}</h2>
-            <p className="whitespace-pre-line text-[#555]">{description}</p>
+            <div className="px-5 md:px-0">
+                <h2 className="mt-5 text-2xl font-semibold">{title}</h2>
+                <p className="whitespace-pre-line text-[#555]">{description}</p>
 
-            <div className="mt-4 flex gap-4 text-lg">
-                <div className="flex-1">
-                    <p className="font-light text-[#888]">Collected</p>
-                    <p className="font-satoshi text-2xl font-medium">
-                        {collectedAmount ?? 0}
-                        {hasTarget && (
-                            <span className="text-base font-normal text-[#666]">
-                                {" "}
-                                /{" "}
-                                {targetAmount + " " + amountType?.toUpperCase()}
-                            </span>
-                        )}
-                    </p>
-                </div>
-                <div className="flex-1">
-                    <p className="font-light text-[#888]">By</p>
-                    <p className="font-satoshi flex items-center gap-1 text-2xl font-medium">
-                        {_count.donations} <Users2 />{" "}
-                        {data.donations.map((donation, idx) => (
-                            <img
-                                key={idx}
-                                src={donation?.donator?.image ?? ""}
-                                alt={`donator ${idx}`}
-                                className="h-5 w-5 rounded-full"
-                            />
-                        ))}
-                    </p>
-                </div>
-            </div>
-
-            <div className="mt-3 flex items-center justify-between">
-                {hasDeadline && (
+                <div className="mt-4 flex gap-4 text-lg">
                     <div className="flex-1">
-                        <p className="mt-4 font-light text-[#888]">
-                            Start Date:{" "}
-                            <span className="font-satoshi font-medium uppercase text-[#333]">
-                                {startDate}
-                            </span>
+                        <p className="font-light text-[#888]">Collected</p>
+                        <p className="font-satoshi text-2xl font-medium">
+                            {collectedAmount ?? 0}
+                            {hasTarget && (
+                                <span className="text-base font-normal text-[#666]">
+                                    {" "}
+                                    /{" "}
+                                    {targetAmount +
+                                        " " +
+                                        amountType?.toUpperCase()}
+                                </span>
+                            )}
                         </p>
                     </div>
-                )}
-                {hasDeadline && (
                     <div className="flex-1">
-                        <p className="mt-4 font-light text-[#888]">
-                            Last Date:{" "}
-                            <span className="font-satoshi font-medium uppercase text-[#333]">
-                                {endDate}
-                            </span>
+                        <p className="font-light text-[#888]">By</p>
+                        <p className="font-satoshi flex items-center gap-1 text-2xl font-medium">
+                            {_count.donations} <Users2 />{" "}
+                            {data.donations.map((donation, idx) => (
+                                <img
+                                    key={idx}
+                                    src={donation?.donator?.image ?? ""}
+                                    alt={`donator ${idx}`}
+                                    className="h-5 w-5 rounded-full"
+                                />
+                            ))}
                         </p>
                     </div>
-                )}
-            </div>
+                </div>
 
-            <p className="mb-1 mt-5 text-lg font-medium">Address:</p>
-            <div className="rounded-lg border-2 border-dashed border-gray-500 bg-gray-100 px-3 py-1 text-[#333]">
-                <p className="whitespace-pre-line">{address}</p>
-            </div>
+                <div className="mt-3 flex items-center justify-between">
+                    {hasDeadline && (
+                        <div className="flex-1">
+                            <p className="mt-4 font-light text-[#888]">
+                                Start Date:{" "}
+                                <span className="font-satoshi font-medium uppercase text-[#333]">
+                                    {startDate}
+                                </span>
+                            </p>
+                        </div>
+                    )}
+                    {hasDeadline && (
+                        <div className="flex-1">
+                            <p className="mt-4 font-light text-[#888]">
+                                Last Date:{" "}
+                                <span className="font-satoshi font-medium uppercase text-[#333]">
+                                    {endDate}
+                                </span>
+                            </p>
+                        </div>
+                    )}
+                </div>
 
-            <div className="mb-3 mt-5 flex items-center justify-between">
-                <small className="font-satoshi uppercase">{createdAt}</small>
-            </div>
+                <p className="mb-1 mt-5 text-lg font-medium">Address:</p>
+                <div className="rounded-lg border-2 border-dashed border-gray-500 bg-gray-100 px-3 py-1 text-[#333]">
+                    <p className="whitespace-pre-line">{address}</p>
+                </div>
 
-            <div
-                className="flex justify-end"
-                onClick={() => setIsDialogOpen(true)}
-            >
-                <button className="btn btn-primary">Generate Token</button>
+                <div className="mb-3 mt-5 flex items-center justify-between">
+                    <small className="font-satoshi uppercase">
+                        {createdAt}
+                    </small>
+                </div>
+
+                <div
+                    className="flex justify-end"
+                    onClick={() => setIsDialogOpen(true)}
+                >
+                    <button className="btn btn-primary">Generate Token</button>
+                </div>
             </div>
 
             <Modal
