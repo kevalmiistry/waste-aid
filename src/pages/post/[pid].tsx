@@ -6,6 +6,7 @@ import type { FormEventHandler } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { createServerSideHelpers } from "@trpc/react-query/server"
 import { getServerAuthSession } from "~/server/auth"
+import { useDonationStore } from "~/stores/donation"
 import { Expand, Users2 } from "lucide-react"
 import { cubicBezier } from "~/utils/constants"
 import { TRPCError } from "@trpc/server"
@@ -80,6 +81,10 @@ const ViewPost = (
     props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) => {
     const { data } = props
+
+    const handleDonationRender = useDonationStore(
+        (state) => state.handleDonationRender
+    )
 
     const { mutate: createDonationMutate, isLoading: creatingDonationLoading } =
         api.donation.createDonation.useMutation()
@@ -168,6 +173,7 @@ const ViewPost = (
                         URL,
                         `${inputAmount} ${amountType} donation QR Code`
                     )
+                    handleDonationRender()
                 },
             }
         )
