@@ -75,7 +75,7 @@ const InfinitePostsFeed: FC<IInfinitePostsFeed> = ({
         >
             {posts.map((post) => (
                 <Post
-                    showControls
+                    isAidmanFeed={isAidmanFeed}
                     key={post.uuid}
                     setSelectedPost={setSelectedPost}
                     setModalOpen={setModalOpen}

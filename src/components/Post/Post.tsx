@@ -12,7 +12,7 @@ import Link from "next/link"
 import "react-responsive-carousel/lib/styles/carousel.min.css" // requires a loader
 
 interface IPostCardProps extends WAPost {
-    showControls?: boolean
+    isAidmanFeed?: boolean
     refetchPosts?: () => Promise<void>
     setModalOpen?: Dispatch<SetStateAction<boolean>>
     setSelectedPost?: Dispatch<SetStateAction<string | null>>
@@ -30,7 +30,7 @@ const Post: FC<IPostCardProps> = ({
     hasDeadline,
     createdAt,
     uuid,
-    showControls = false,
+    isAidmanFeed = false,
     refetchPosts = () => null,
     setModalOpen = () => null,
     setSelectedPost = () => null,
@@ -93,7 +93,7 @@ const Post: FC<IPostCardProps> = ({
             </Modal>
 
             {/* Edit and Delete buttons */}
-            {showControls && (
+            {isAidmanFeed && (
                 <div className="flex items-center justify-end gap-2 px-3 pb-3 md:px-0">
                     <button
                         disabled={isLoading}
