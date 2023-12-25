@@ -2,6 +2,7 @@ import type { FC, Dispatch, SetStateAction } from "react"
 import type { WAPost } from "~/@types"
 import { Expand, Pencil, Trash, Users2, X } from "lucide-react"
 import { useNotifierStore } from "~/stores/notifier"
+import { cubicBezier } from "~/utils/constants"
 import { Carousel } from "react-responsive-carousel"
 import { useState } from "react"
 import { motion } from "framer-motion"
@@ -82,13 +83,18 @@ const Post: FC<IPostCardProps> = ({
             <Modal
                 open={fullViewOpen}
                 onClose={() => setFullViewOpen(false)}
-                classNames="pr-2 bg-transparent flex items-center justify-center"
+                classNames="pr-2 bg-transparent flex items-center justify-center p-0 shadow-none h-fit"
                 overlayClassName="bg-[#000000BB]"
+                placeDirectChildren
             >
-                <img
+                <motion.img
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ ease: cubicBezier, duration: 0.3 }}
                     src={PostImages[selectedItem]?.imageURL}
                     alt={`image ${selectedItem + 1}`}
-                    className="h-[90vh] w-[90vw] object-contain"
+                    className="fixed left-1/2 top-1/2 z-[5] h-auto w-[94vw] -translate-x-1/2 -translate-y-1/2 object-contain md:w-[70vw]"
                 />
             </Modal>
 

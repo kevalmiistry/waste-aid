@@ -11,6 +11,7 @@ interface IModal {
     onClose: () => void
     classNames?: string
     overlayClassName?: string
+    placeDirectChildren?: boolean
 }
 
 const Modal: FC<IModal> = ({
@@ -19,6 +20,7 @@ const Modal: FC<IModal> = ({
     onClose,
     classNames = "",
     overlayClassName = "",
+    placeDirectChildren = false,
 }) => {
     const [isMounted, setIsMounted] = useState(false)
 
@@ -49,30 +51,37 @@ const Modal: FC<IModal> = ({
                               )}
                               onClick={onClose}
                           />
-                          <motion.div
-                              initial={{
-                                  opacity: 0,
-                                  scale: 0.95,
-                                  translateX: "-50%",
-                                  translateY: "-50%",
-                              }}
-                              animate={{
-                                  opacity: 1,
-                                  scale: 1,
-                                  translateX: "-50%",
-                                  translateY: "-50%",
-                              }}
-                              exit={{
-                                  opacity: 0,
-                                  scale: 0.95,
-                                  translateX: "-50%",
-                                  translateY: "-50%",
-                              }}
-                              transition={{ ease: cubicBezier, duration: 0.3 }}
-                              className={c}
-                          >
-                              {children}
-                          </motion.div>
+                          {placeDirectChildren ? (
+                              children
+                          ) : (
+                              <motion.div
+                                  initial={{
+                                      opacity: 0,
+                                      scale: 0.95,
+                                      translateX: "-50%",
+                                      translateY: "-50%",
+                                  }}
+                                  animate={{
+                                      opacity: 1,
+                                      scale: 1,
+                                      translateX: "-50%",
+                                      translateY: "-50%",
+                                  }}
+                                  exit={{
+                                      opacity: 0,
+                                      scale: 0.95,
+                                      translateX: "-50%",
+                                      translateY: "-50%",
+                                  }}
+                                  transition={{
+                                      ease: cubicBezier,
+                                      duration: 0.3,
+                                  }}
+                                  className={c}
+                              >
+                                  {children}
+                              </motion.div>
+                          )}
                       </>
                   ) : null}
               </AnimatePresence>,
