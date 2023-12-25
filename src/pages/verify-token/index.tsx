@@ -65,7 +65,11 @@ const VerifyToken: FC<IVerifyToken> = () => {
             className="p-5"
             initial={{ translateX: "0%" }}
             animate={{ translateX: "0%" }}
-            exit={{ translateX: "-100%", position: "absolute" }}
+            exit={
+                qrCodeScanned
+                    ? { translateX: "-100%", position: "absolute" }
+                    : {}
+            }
             transition={{ ease: cubicBezier, duration: 0.5 }}
         >
             <div
