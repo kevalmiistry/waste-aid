@@ -8,7 +8,7 @@ export interface WAPost {
     hasTarget: boolean
     targetAmount: number | null
     collectedAmount: number | null
-    amountType: string | null
+    amountType: string
     hasDeadline: boolean
     startDate: Date | null
     endDate: Date | null

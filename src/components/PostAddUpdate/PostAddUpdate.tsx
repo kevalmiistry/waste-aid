@@ -127,7 +127,7 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
                 address: data.address,
                 hasTarget: data.hasTarget,
                 targetAmount: data.hasTarget ? data.targetAmount : null,
-                amountType: data.hasTarget ? data.amountType : null,
+                amountType: data.amountType,
                 hasDeadline: data.hasDeadline,
                 startDate:
                     data.hasDeadline && typeof data.startDate === "string"

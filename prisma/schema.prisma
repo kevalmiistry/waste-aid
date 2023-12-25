@@ -15,7 +15,7 @@ model Post {
     hasTarget       Boolean      @default(false)
     targetAmount    Int?
     collectedAmount Int?
-    amountType      String?
+    amountType      String
     hasDeadline     Boolean      @default(false)
     startDate       DateTime?
     endDate         DateTime?
