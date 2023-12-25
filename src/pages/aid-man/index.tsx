@@ -2,19 +2,24 @@ import { useState, type FC, useEffect } from "react"
 import { Sparkles } from "lucide-react"
 import { motion } from "framer-motion"
 import { api } from "~/utils/api"
+import InfinitePostsFeed from "~/components/InfinitePostsFeed"
 import PostAddUpdate from "~/components/PostAddUpdate/PostAddUpdate"
-import PostSkeleton from "~/components/PostSkeleton"
 import Modal from "~/components/Modal/Modal"
-import Post from "~/components/Post/Post"
-import Image from "next/image"
 
 interface AidManProps {}
 const AidMan: FC<AidManProps> = () => {
-    const { data, isLoading, refetch } = api.post.getAMPosts.useQuery()
+    const posts = api.post.getAMPosts.useInfiniteQuery(
+        {},
+        {
+            getNextPageParam: (page) => page.nextCursor,
+        }
+    )
+
     const [modalOpen, setModalOpen] = useState(false)
     const [selectedPost, setSelectedPost] = useState<string | null>(null)
+
     const refetchPosts = async (): Promise<void> => {
-        await refetch()
+        await posts.refetch()
     }
 
     useEffect(() => {
@@ -35,44 +40,19 @@ const AidMan: FC<AidManProps> = () => {
                     Add Post <Sparkles size={"20px"} />
                 </motion.button>
             </div>
-            {isLoading ? (
-                <div className="p-8">
-                    <PostSkeleton />
-                </div>
-            ) : (
-                <div className="p-1 md:p-5">
-                    {data && data?.length > 0 ? (
-                        data?.map((post) => (
-                            <Post
-                                key={post.uuid}
-                                refetchPosts={refetchPosts}
-                                setModalOpen={setModalOpen}
-                                setSelectedPost={setSelectedPost}
-                                showControls
-                                {...post}
-                            />
-                        ))
-                    ) : (
-                        <div className="justify-starts flex flex-col items-center gap-28">
-                            <p className="mt-5 text-center">
-                                Oops! there is no post yet.{" "}
-                                <button
-                                    className="font-medium text-blue-600 underline"
-                                    onClick={() => setModalOpen(true)}
-                                >
-                                    Create One?
-                                </button>
-                            </p>
-                            <Image
-                                src={"/nothing-to-see.png"}
-                                alt="nothing to see"
-                                width={300}
-                                height={300}
-                            />
-                        </div>
-                    )}
-                </div>
-            )}
+            <div className="p-1 md:p-5">
+                <InfinitePostsFeed
+                    posts={posts.data?.pages.flatMap((page) => page.posts)}
+                    isError={posts.isError}
+                    isLoading={posts.isLoading}
+                    hasMore={posts.hasNextPage}
+                    fetchMorePosts={posts.fetchNextPage}
+                    setModalOpen={setModalOpen}
+                    setSelectedPost={setSelectedPost}
+                    refetchPosts={refetchPosts}
+                    isAidmanFeed
+                />
+            </div>
 
             <Modal
                 open={modalOpen}

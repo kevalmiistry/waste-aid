@@ -42,6 +42,7 @@ const Post: FC<IPostCardProps> = ({
     const [selectedItem, setSelectedItem] = useState(0)
     const [fullViewOpen, setFullViewOpen] = useState(false)
     const [deleteClicked, setDeleteClicked] = useState(false)
+    const [postDeleted, setPostDeleted] = useState(false)
 
     const handleDelete = () => {
         if (deleteClicked) {
@@ -49,7 +50,9 @@ const Post: FC<IPostCardProps> = ({
                 { uuid: uuid },
                 {
                     async onSuccess() {
+                        setPostDeleted(true)
                         await refetchPosts()
+
                         notify({
                             show: true,
                             message: "Post Deleted! :D",
@@ -76,24 +79,6 @@ const Post: FC<IPostCardProps> = ({
     return (
         <div className="border-b border-t border-[2] p-4 text-[#333]">
             {/* view full image in overlay */}
-            {/* <AnimatePresence>
-                {fullViewOpen ? (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ ease: cubicBezier, duration: 0.3 }}
-                        className="absolute inset-0 z-10 flex items-center justify-center bg-[#000000BB]"
-                        onClick={() => setFullViewOpen(false)}
-                    >
-                        <img
-                            src={PostImages[selectedItem]?.imageURL}
-                            alt={`image ${selectedItem + 1}`}
-                            className="max-h-[80%] max-w-[80%] object-contain"
-                        />
-                    </motion.div>
-                ) : null}
-            </AnimatePresence> */}
             <Modal
                 open={fullViewOpen}
                 onClose={() => setFullViewOpen(false)}
@@ -150,7 +135,7 @@ const Post: FC<IPostCardProps> = ({
                                     }}
                                     className="font-medium"
                                 >
-                                    Confirm!
+                                    {postDeleted ? "Deleted!" : "Confirm!"}
                                 </motion.small>
                             )
                         ) : (

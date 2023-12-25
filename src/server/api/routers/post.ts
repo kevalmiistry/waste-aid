@@ -1,5 +1,10 @@
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc"
-import { TRPCError } from "@trpc/server"
+import {
+    type createTRPCContext,
+    createTRPCRouter,
+    protectedProcedure,
+} from "~/server/api/trpc"
+import type { Prisma } from "@prisma/client"
+import { TRPCError, type inferAsyncReturnType } from "@trpc/server"
 import { z } from "zod"
 
 export const postRouter = createTRPCRouter({
@@ -35,40 +40,25 @@ export const postRouter = createTRPCRouter({
             }
         }),
 
-    getAMPosts: protectedProcedure.query(async ({ ctx }) => {
-        return await ctx.prisma.post.findMany({
-            include: {
-                _count: {
-                    select: {
-                        donations: true,
-                    },
+    getAMPosts: protectedProcedure
+        .input(
+            z.object({
+                limit: z.number().optional(),
+                cursor: z
+                    .object({ uuid: z.string(), createdAt: z.date() })
+                    .optional(),
+            })
+        )
+        .query(async ({ ctx, input: { cursor, limit = 4 } }) => {
+            return await getInfinitePosts({
+                ctx,
+                cursor,
+                limit,
+                whereClause: {
+                    am_id: ctx.session.user.id,
                 },
-                PostImages: {
-                    select: {
-                        imageURL: true,
-                        uuid: true,
-                    },
-                },
-                donations: {
-                    select: {
-                        donator: {
-                            select: {
-                                image: true,
-                            },
-                        },
-                    },
-                    distinct: "donator_id",
-                    take: 3,
-                },
-            },
-            where: {
-                am_id: ctx.session.user.id,
-            },
-            orderBy: {
-                updatedAt: "desc",
-            },
-        })
-    }),
+            })
+        }),
 
     savePostImageURLs: protectedProcedure
         .input(
@@ -186,50 +176,69 @@ export const postRouter = createTRPCRouter({
             })
         )
         .query(async ({ ctx, input: { cursor, limit = 4 } }) => {
-            const posts = await ctx.prisma.post.findMany({
-                take: limit + 1,
-                orderBy: {
-                    updatedAt: "desc",
-                },
-                cursor: cursor ? { createdAt_uuid: cursor } : undefined,
-                include: {
-                    _count: {
-                        select: {
-                            donations: true,
-                        },
-                    },
-                    PostImages: {
-                        select: {
-                            imageURL: true,
-                            uuid: true,
-                        },
-                    },
-                    donations: {
-                        select: {
-                            donator: {
-                                select: {
-                                    image: true,
-                                },
-                            },
-                        },
-                        distinct: "donator_id",
-                        take: 3,
-                    },
-                },
+            return await getInfinitePosts({
+                ctx,
+                cursor,
+                limit,
             })
-
-            let nextCursor: typeof cursor | undefined
-
-            if (posts.length > limit) {
-                const lastItem = posts.pop()
-                if (lastItem != null) {
-                    nextCursor = {
-                        uuid: lastItem.uuid,
-                        createdAt: lastItem.createdAt,
-                    }
-                }
-            }
-
-            return { posts, nextCursor }
         }),
 })
+
+const getInfinitePosts = async ({
+    whereClause,
+    ctx,
+    limit,
+    cursor,
+}: {
+    whereClause?: Prisma.PostWhereInput
+    limit: number
+    cursor: { uuid: string; createdAt: Date } | undefined
+    ctx: inferAsyncReturnType<typeof createTRPCContext>
+}) => {
+    const posts = await ctx.prisma.post.findMany({
+        take: limit + 1,
+        orderBy: {
+            updatedAt: "desc",
+        },
+        cursor: cursor ? { createdAt_uuid: cursor } : undefined,
+        where: whereClause,
+        include: {
+            _count: {
+                select: {
+                    donations: true,
+                },
+            },
+            PostImages: {
+                select: {
+                    imageURL: true,
+                    uuid: true,
+                },
+            },
+            donations: {
+                select: {
+                    donator: {
+                        select: {
+                            image: true,
+                        },
+                    },
+                },
+                distinct: "donator_id",
+                take: 3,
+            },
+        },
+    })
+
+    let nextCursor: typeof cursor | undefined
+
+    if (posts.length > limit) {
+        const lastItem = posts.pop()
+        if (lastItem != null) {
+            nextCursor = {
+                uuid: lastItem.uuid,
+                createdAt: lastItem.createdAt,
+            }
+        }
+    }
+
+    return { posts, nextCursor }
+}
