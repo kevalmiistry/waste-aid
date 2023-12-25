@@ -30,7 +30,7 @@ const AidMan: FC<AidManProps> = () => {
 
     return (
         <>
-            <div className="flex justify-center pb-4 pt-4 md:pb-0 md:pt-5">
+            <div className="flex justify-center pb-4 pt-4">
                 <motion.button
                     initial={{ translateY: "-100%" }}
                     animate={{ translateY: "0%" }}
@@ -40,19 +40,18 @@ const AidMan: FC<AidManProps> = () => {
                     Add Post <Sparkles size={"20px"} />
                 </motion.button>
             </div>
-            <div className="p-1 md:p-5">
-                <InfinitePostsFeed
-                    posts={posts.data?.pages.flatMap((page) => page.posts)}
-                    isError={posts.isError}
-                    isLoading={posts.isLoading}
-                    hasMore={posts.hasNextPage}
-                    fetchMorePosts={posts.fetchNextPage}
-                    setModalOpen={setModalOpen}
-                    setSelectedPost={setSelectedPost}
-                    refetchPosts={refetchPosts}
-                    isAidmanFeed
-                />
-            </div>
+
+            <InfinitePostsFeed
+                posts={posts.data?.pages.flatMap((page) => page.posts)}
+                isError={posts.isError}
+                isLoading={posts.isLoading}
+                hasMore={posts.hasNextPage}
+                fetchMorePosts={posts.fetchNextPage}
+                setModalOpen={setModalOpen}
+                setSelectedPost={setSelectedPost}
+                refetchPosts={refetchPosts}
+                isAidmanFeed
+            />
 
             <Modal
                 open={modalOpen}

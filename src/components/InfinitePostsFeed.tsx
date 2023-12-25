@@ -31,7 +31,7 @@ const InfinitePostsFeed: FC<IInfinitePostsFeed> = ({
 }) => {
     if (isLoading) {
         return (
-            <div className="flex flex-col gap-7 p-5">
+            <div className="flex flex-col gap-7 py-5">
                 <PostSkeleton />
                 <PostSkeleton />
                 <PostSkeleton />
@@ -66,26 +66,24 @@ const InfinitePostsFeed: FC<IInfinitePostsFeed> = ({
     if (isError) return <p>Error...</p>
 
     return (
-        <div className="p-1">
-            <InfiniteScroll
-                dataLength={posts.length}
-                next={() => void fetchMorePosts()}
-                hasMore={hasMore ?? false}
-                loader={<LoadingMore />}
-                endMessage={<EndMessage />}
-            >
-                {posts.map((post) => (
-                    <Post
-                        showControls
-                        key={post.uuid}
-                        setSelectedPost={setSelectedPost}
-                        setModalOpen={setModalOpen}
-                        refetchPosts={refetchPosts}
-                        {...post}
-                    />
-                ))}
-            </InfiniteScroll>
-        </div>
+        <InfiniteScroll
+            dataLength={posts.length}
+            next={() => void fetchMorePosts()}
+            hasMore={hasMore ?? false}
+            loader={<LoadingMore />}
+            endMessage={<EndMessage />}
+        >
+            {posts.map((post) => (
+                <Post
+                    showControls
+                    key={post.uuid}
+                    setSelectedPost={setSelectedPost}
+                    setModalOpen={setModalOpen}
+                    refetchPosts={refetchPosts}
+                    {...post}
+                />
+            ))}
+        </InfiniteScroll>
     )
 }
 

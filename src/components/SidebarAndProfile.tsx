@@ -41,9 +41,9 @@ const SidebarAndProfile: FC<ISidebarAndProfile> = ({ children }) => {
 
                 <div
                     aria-label="main-section"
-                    className="z-[1] flex-[3] border-l-[2px] border-r-[2px] pb-16 md:pb-0"
+                    className="z-[1] flex-[3] pb-16 md:border-l-[2px] md:border-r-[2px] md:pb-0"
                 >
-                    <div className="">
+                    <div className="px-0 md:px-4">
                         <AnimatePresence>{children}</AnimatePresence>
                     </div>
                 </div>

@@ -14,7 +14,7 @@ const Home = () => {
 
     if (status === "loading") {
         return (
-            <main className="flex flex-col gap-7 p-5">
+            <main className="flex flex-col gap-7 py-5">
                 <PostSkeleton />
                 <PostSkeleton />
                 <PostSkeleton />

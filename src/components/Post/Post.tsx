@@ -77,7 +77,7 @@ const Post: FC<IPostCardProps> = ({
     }
 
     return (
-        <div className="border-b border-t border-[2] p-4 text-[#333]">
+        <div className="border-b border-t border-[2] py-4 text-[#333]">
             {/* view full image in overlay */}
             <Modal
                 open={fullViewOpen}
@@ -94,7 +94,7 @@ const Post: FC<IPostCardProps> = ({
 
             {/* Edit and Delete buttons */}
             {showControls && (
-                <div className="flex items-center justify-end gap-2 pb-3">
+                <div className="flex items-center justify-end gap-2 px-3 pb-3 md:px-0">
                     <button
                         disabled={isLoading}
                         className={`flex h-[2rem] items-center justify-center rounded-full p-2 ${
@@ -147,7 +147,7 @@ const Post: FC<IPostCardProps> = ({
 
             {/* image carousel */}
             <Carousel
-                className="aspect-[16/9] overflow-hidden rounded-2xl"
+                className="aspect-[16/9] overflow-hidden md:rounded-2xl"
                 swipeable
                 emulateTouch
                 infiniteLoop
@@ -191,52 +191,56 @@ const Post: FC<IPostCardProps> = ({
                 ))}
             </div>
 
-            <h2 className="mt-5 text-2xl font-semibold">{title}</h2>
-            <p className="line-clamp-2 text-[#555]">{description}</p>
+            <div className="px-5 md:px-0">
+                <h2 className="mt-5 text-2xl font-semibold">{title}</h2>
+                <p className="line-clamp-2 text-[#555]">{description}</p>
 
-            <div className="mt-4 flex gap-4 text-lg">
-                <div className="flex-1">
-                    <p className="font-light text-[#888]">Collected</p>
-                    <p className="font-satoshi text-2xl font-medium">
-                        {collectedAmount ?? 0}
-                        {hasTarget && (
-                            <span className="text-base font-normal text-[#666]">
-                                {" "}
-                                /{" "}
-                                {targetAmount + " " + amountType?.toUpperCase()}
-                            </span>
-                        )}
-                    </p>
+                <div className="mt-4 flex gap-4 text-lg">
+                    <div className="flex-1">
+                        <p className="font-light text-[#888]">Collected</p>
+                        <p className="font-satoshi text-2xl font-medium">
+                            {collectedAmount ?? 0}
+                            {hasTarget && (
+                                <span className="text-base font-normal text-[#666]">
+                                    {" "}
+                                    /{" "}
+                                    {targetAmount +
+                                        " " +
+                                        amountType?.toUpperCase()}
+                                </span>
+                            )}
+                        </p>
+                    </div>
+                    <div className="flex-1">
+                        <p className="font-light text-[#888]">By</p>
+                        <p className="font-satoshi flex items-center gap-1 text-2xl font-medium">
+                            {_count.donations} <Users2 />
+                        </p>
+                    </div>
                 </div>
-                <div className="flex-1">
-                    <p className="font-light text-[#888]">By</p>
-                    <p className="font-satoshi flex items-center gap-1 text-2xl font-medium">
-                        {_count.donations} <Users2 />
+                {hasDeadline && (
+                    <p className="mt-4 font-light text-[#888]">
+                        Last Date:{" "}
+                        <span className="font-satoshi font-medium uppercase text-[#333]">
+                            {moment(endDate).format("DD MMM YY")}
+                        </span>
                     </p>
-                </div>
-            </div>
-            {hasDeadline && (
-                <p className="mt-4 font-light text-[#888]">
-                    Last Date:{" "}
-                    <span className="font-satoshi font-medium uppercase text-[#333]">
-                        {moment(endDate).format("DD MMM YY")}
-                    </span>
-                </p>
-            )}
+                )}
 
-            <div
-                aria-label="footer"
-                className="mb-3 mt-5 flex items-center justify-between"
-            >
-                <small className="font-satoshi uppercase">
-                    {moment(createdAt).format("DD MMM YY")}
-                </small>
-                <Link
-                    href={`/post/${uuid}`}
-                    className="btn-primary rounded-full p-1 px-3 text-sm"
+                <div
+                    aria-label="footer"
+                    className="mb-3 mt-5 flex items-center justify-between pr-3"
                 >
-                    Know more!
-                </Link>
+                    <small className="font-satoshi uppercase">
+                        {moment(createdAt).format("DD MMM YY")}
+                    </small>
+                    <Link
+                        href={`/post/${uuid}`}
+                        className="btn-primary rounded-full p-1 px-3 text-sm"
+                    >
+                        Know more!
+                    </Link>
+                </div>
             </div>
         </div>
     )
