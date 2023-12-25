@@ -1,26 +1,14 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import type { PostTypes } from "../PostAddUpdate/PostAddUpdate"
+import type { zPostTypes } from "../PostAddUpdate/PostAddUpdate"
 import type { FC } from "react"
 import { Controller, type Control } from "react-hook-form"
 import Select, { type StylesConfig } from "react-select"
 
 interface IRHFSelect {
-    control: Control<PostTypes>
-    name:
-        | "title"
-        | "description"
-        | "hasTarget"
-        | "status"
-        | "targetAmount"
-        | "collectedAmount"
-        | "amountType"
-        | "hasDeadline"
-        | "startDate"
-        | "endDate"
-        | "metaData"
-        | "address"
+    control: Control<zPostTypes>
+    name: keyof zPostTypes
     options: Record<string, string>[]
     isMulti?: boolean
     valueKey?: string

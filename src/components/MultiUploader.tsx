@@ -18,25 +18,29 @@ import { motion } from "framer-motion"
 
 interface TProps {
     setImagesUploading: Dispatch<SetStateAction<boolean>>
+    files: File[]
+    setFiles: Dispatch<SetStateAction<File[]>>
 }
 
 export const MultiUploader = forwardRef<TMultiUploaderHandle, TProps>(
-    function MultiUploader({ setImagesUploading }, ref) {
-        const [files, setFiles] = useState<File[]>([])
+    function MultiUploader({ setImagesUploading, files, setFiles }, ref) {
         const [errMsg, setErrMsg] = useState("")
 
-        const onDrop = useCallback((acceptedFiles: FileWithPath[]) => {
-            setFiles((prev) => {
-                const selectedFiles = [...prev, ...acceptedFiles]
-                if (selectedFiles.length > 10) {
-                    setErrMsg("Oops! You can't select more than 10 files.")
-                    return prev
-                } else {
-                    setErrMsg("")
-                    return selectedFiles
-                }
-            })
-        }, [])
+        const onDrop = useCallback(
+            (acceptedFiles: FileWithPath[]) => {
+                setFiles((prev) => {
+                    const selectedFiles = [...prev, ...acceptedFiles]
+                    if (selectedFiles.length > 10) {
+                        setErrMsg("Oops! You can't select more than 10 files.")
+                        return prev
+                    } else {
+                        setErrMsg("")
+                        return selectedFiles
+                    }
+                })
+            },
+            [setFiles]
+        )
 
         const { startUpload, permittedFileInfo } = useUploadThing(
             "imageUploader",
@@ -44,7 +48,6 @@ export const MultiUploader = forwardRef<TMultiUploaderHandle, TProps>(
                 onClientUploadComplete: (data) => {
                     if (data) {
                         setImagesUploading(false)
-                        setFiles([])
                     }
                 },
                 onUploadError: (error) => {

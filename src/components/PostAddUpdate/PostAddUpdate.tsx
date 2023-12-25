@@ -1,18 +1,18 @@
+import type { DefaultValues, SubmitHandler } from "react-hook-form"
 import type { FC, Dispatch, SetStateAction } from "react"
 import type { UploadFileResponse } from "uploadthing/client"
-import type { DefaultValues, SubmitHandler } from "react-hook-form"
-import { useNotifierStore } from "~/stores/notifier"
 import { useRef, useState } from "react"
+import { useNotifierStore } from "~/stores/notifier"
 import { MultiUploader } from "../MultiUploader"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { DevTool } from "@hookform/devtools"
 import { useForm } from "react-hook-form"
+import { twMerge } from "tailwind-merge"
 import { api } from "~/utils/api"
 import { X } from "lucide-react"
 import { z } from "zod"
 import RHFSelect from "../RHFSelect/RHFSelect"
 import moment from "moment"
-import { twMerge } from "tailwind-merge"
 
 const amountTypeOptions = [
     { value: "kg", label: "KG" },
@@ -27,20 +27,22 @@ export type TMultiUploaderHandle = {
     uploadAll: () => Promise<UploadFileResponse[] | undefined>
 }
 
-export type PostTypes = z.infer<typeof zPostSchema>
+export type zPostTypes = z.infer<typeof zPostSchema>
 
 interface IPostAddUpdate {
     setModalOpen: Dispatch<SetStateAction<boolean>>
-    refetchPosts: () => Promise<void>
+    refetchPosts?: () => Promise<void>
     selectedPost: string | null
 }
 const PostAddUpdate: FC<IPostAddUpdate> = ({
     setModalOpen,
-    refetchPosts,
+    refetchPosts = () => null,
     selectedPost,
 }) => {
     const { notify } = useNotifierStore()
     const uploaderRef = useRef<TMultiUploaderHandle | null>(null)
+    const [files, setFiles] = useState<File[]>([])
+
     const [imagesUploading, setImagesUploading] = useState(false)
 
     const getPost = api.post.getOneAMPost.useMutation()
@@ -95,7 +97,7 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
                 metaData,
                 status,
                 address,
-            } as DefaultValues<PostTypes>
+            } as DefaultValues<zPostTypes>
         } else {
             return undefined
         }
@@ -109,12 +111,12 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
         setValue,
         reset,
         formState: { errors, isLoading },
-    } = useForm<PostTypes>({
-        defaultValues: fetchPostData as DefaultValues<PostTypes>,
+    } = useForm<zPostTypes>({
+        defaultValues: fetchPostData as DefaultValues<zPostTypes>,
         resolver: zodResolver(zPostSchema),
     })
 
-    const onSubmit: SubmitHandler<PostTypes> = async (data) => {
+    const onSubmit: SubmitHandler<zPostTypes> = async (data) => {
         try {
             // upload all imgage & get response
             const uploadedFiles = await uploaderRef.current?.uploadAll()
@@ -145,20 +147,20 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
                 }
                 updatePostMutate(updatePayload, {
                     async onSuccess() {
+                        await refetchPosts()
                         notify({
                             show: true,
                             message: "Post Updated! :D",
                             status: "success",
                             duration: 5000,
                         })
-                        await refetchPosts()
                         reset()
                         setModalOpen(false)
                     },
                 })
             } else {
                 createPostMutate(payloadData, {
-                    onSuccess(data) {
+                    async onSuccess(data) {
                         if (uploadedFiles && uploadedFiles.length > 0) {
                             const imageURLsPayload = uploadedFiles.map(
                                 (item) => ({
@@ -175,15 +177,13 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
                                 },
                             })
                         }
-                    },
-                    async onSettled() {
+                        await refetchPosts()
                         notify({
                             show: true,
                             message: "New Post Created! :D",
                             status: "success",
                             duration: 5000,
                         })
-                        await refetchPosts()
                         reset()
                         setModalOpen(false)
                     },
@@ -226,10 +226,14 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
                 ) : (
                     <>
                         {!selectedPost && (
-                            <MultiUploader
-                                ref={uploaderRef}
-                                setImagesUploading={setImagesUploading}
-                            />
+                            <>
+                                <MultiUploader
+                                    ref={uploaderRef}
+                                    setImagesUploading={setImagesUploading}
+                                    files={files}
+                                    setFiles={setFiles}
+                                />
+                            </>
                         )}
                         <form
                             className="flex flex-col gap-3 px-1"
@@ -286,8 +290,7 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
                                     options={amountTypeOptions}
                                 />
                                 <small className="text-red-500">
-                                    {errors?.targetAmount &&
-                                        errors?.amountType?.message}
+                                    {errors?.amountType?.message}
                                 </small>
                             </div>
 
@@ -545,17 +548,21 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
 
 const zPostSchema = z
     .object({
+        PostImages: z.array(z.unknown()).nullable().optional(),
         title: z
             .string()
             .min(2, { message: "Please write lil long title" })
             .max(100, { message: "Title is too long" }),
         description: z.string().nullable().default(null),
+        amountType: z
+            .string()
+            .min(1, { message: "Please Select a Amount Type" })
+            .default(""),
         hasTarget: z.boolean({
             errorMap: () => ({ message: "Please select any one of these" }),
         }),
         targetAmount: z.number().or(z.nan()).nullable().default(null),
         collectedAmount: z.number().nullable().default(null),
-        amountType: z.string().nullable().default(null),
         hasDeadline: z.boolean({
             errorMap: () => ({ message: "Please select any one of these" }),
         }),
@@ -581,18 +588,6 @@ const zPostSchema = z
         {
             message: "Please Enter a Valid Amount",
             path: ["targetAmount"],
-        }
-    )
-    .refine(
-        ({ hasTarget, amountType }) => {
-            if (hasTarget === true) {
-                return !!amountType
-            }
-            return true
-        },
-        {
-            message: "Please Select a Amount Type",
-            path: ["amountType"],
         }
     )
     .refine(
