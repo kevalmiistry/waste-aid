@@ -48,6 +48,8 @@ model Donations {
     reached      Boolean   @default(false)
     createdAt    DateTime  @default(now())
     reachedDate  DateTime?
+
+    @@unique([createdAt, uuid])
 }
 
 // Necessary for Next auth

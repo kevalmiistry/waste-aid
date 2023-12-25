@@ -37,3 +37,16 @@ export interface WAPostPostImages {
 export interface WAPostPostDonationsCount {
     donations: number
 }
+
+export type WADonationPost = Omit<WAPost, "donations" | "PostImages" | "_count">
+
+export interface WADonation {
+    uuid: string
+    post_id: string
+    donator_id: string
+    donatedAmout: number | null
+    reached: boolean
+    createdAt: Date
+    reachedDate: Date | null
+    post: WADonationPost
+}

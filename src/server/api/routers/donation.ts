@@ -1,5 +1,10 @@
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc"
-import { TRPCError } from "@trpc/server"
+import {
+    type createTRPCContext,
+    createTRPCRouter,
+    protectedProcedure,
+} from "~/server/api/trpc"
+import type { Prisma } from "@prisma/client"
+import { TRPCError, type inferAsyncReturnType } from "@trpc/server"
 import { z } from "zod"
 
 export const donationRouter = createTRPCRouter({
@@ -78,8 +83,11 @@ export const donationRouter = createTRPCRouter({
             }
         }),
 
-    listDonations: protectedProcedure.query(async ({ ctx }) => {
-        return await ctx.prisma.donations.findMany({
+    listInitialDonations: protectedProcedure.query(async ({ ctx }) => {
+        const totalCount = await ctx.prisma.donations.count()
+
+        const donations = await ctx.prisma.donations.findMany({
+            take: 3,
             where: {
                 donator_id: ctx.session.user.id,
             },
@@ -90,5 +98,66 @@ export const donationRouter = createTRPCRouter({
                 createdAt: "desc",
             },
         })
+
+        const remainingDonations = totalCount - donations.length
+
+        return { remainingDonations, donations }
     }),
+
+    listInfiniteDonations: protectedProcedure
+        .input(
+            z.object({
+                limit: z.onumber(),
+                cursor: z
+                    .object({ uuid: z.string(), createdAt: z.date() })
+                    .optional(),
+            })
+        )
+        .query(async ({ ctx, input: { limit = 8, cursor } }) => {
+            return await getInfiniteDonations({
+                ctx,
+                cursor,
+                limit,
+                whereClause: {
+                    donator_id: ctx.session.user.id,
+                },
+            })
+        }),
 })
+
+const getInfiniteDonations = async ({
+    whereClause,
+    ctx,
+    limit,
+    cursor,
+}: {
+    whereClause?: Prisma.DonationsWhereInput
+    limit: number
+    cursor: { uuid: string; createdAt: Date } | undefined
+    ctx: inferAsyncReturnType<typeof createTRPCContext>
+}) => {
+    const donations = await ctx.prisma.donations.findMany({
+        include: {
+            post: true,
+        },
+        where: whereClause,
+        cursor: cursor ? { createdAt_uuid: cursor } : undefined,
+        orderBy: {
+            createdAt: "desc",
+        },
+    })
+
+    let nextCursor: typeof cursor | undefined
+
+    if (donations.length > limit) {
+        const lastItem = donations.pop()
+        if (lastItem != null) {
+            nextCursor = {
+                uuid: lastItem.uuid,
+                createdAt: lastItem.createdAt,
+            }
+        }
+    }
+
+    return { donations, nextCursor }
+}
