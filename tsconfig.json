@@ -17,6 +17,7 @@
         "incremental": true,
         "noUncheckedIndexedAccess": true,
         "baseUrl": ".",
+        // "noErrorTruncation": true,
         "paths": {
             "~/*": ["./src/*"]
         }
