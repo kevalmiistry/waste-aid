@@ -3,7 +3,7 @@ import { ImageResponse } from "@vercel/og"
 import moment from "moment"
 
 export const config = {
-    runtime: "experimental-edge",
+    runtime: "edge",
 }
 
 export default function handler(req: NextRequest) {
