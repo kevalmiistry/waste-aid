@@ -44,13 +44,13 @@ export default function handler(req: NextRequest) {
                 />
 
                 <div tw="pl-5 absolute top-0 left-0 z-10 flex flex-col">
-                    <p tw="text-5xl font-semibold" style={{ width: "77%" }}>
+                    <p tw="text-6xl font-semibold" style={{ width: "80%" }}>
                         {title.length > 50
                             ? title.substring(0, 50) + "..."
                             : title}
                     </p>
                     <p
-                        tw="font-medium text-2xl text-gray-600"
+                        tw="font-medium text-3xl text-gray-600"
                         style={{ width: "70%" }}
                     >
                         {description.length > 120
@@ -61,15 +61,15 @@ export default function handler(req: NextRequest) {
                         <img
                             src={ampfp}
                             alt="pfp"
-                            style={{ width: "80px", height: "80px" }}
-                            tw="rounded-full border border-[#96d905]"
+                            style={{ width: "100px", height: "100px" }}
+                            tw="rounded-full border-2 border-[#96d905]"
                         />
-                        <p tw="ml-5 text-3xl p-0">{am_name}</p>
+                        <p tw="ml-5 text-4xl p-0">{am_name}</p>
                     </div>
                     {createdAt && (
-                        <p tw="mt-6 text-xl flex items-end text-gray-500">
+                        <p tw="mt-6 text-2xl flex items-end text-gray-500">
                             Post on:
-                            <span tw="ml-1 text-2xl text-gray-800">
+                            <span tw="ml-1 text-3xl text-gray-800">
                                 {moment(createdAt).format("DD MMM YY")}
                             </span>
                         </p>
