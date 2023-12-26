@@ -140,6 +140,12 @@ export const postRouter = createTRPCRouter({
                     uuid: input.pid,
                 },
                 include: {
+                    aidman: {
+                        select: {
+                            image: true,
+                            name: true,
+                        },
+                    },
                     _count: {
                         select: {
                             donations: true,
@@ -203,6 +209,12 @@ const getInfinitePosts = async ({
         cursor: cursor ? { createdAt_uuid: cursor } : undefined,
         where: whereClause,
         include: {
+            aidman: {
+                select: {
+                    image: true,
+                    name: true,
+                },
+            },
             _count: {
                 select: {
                     donations: true,
