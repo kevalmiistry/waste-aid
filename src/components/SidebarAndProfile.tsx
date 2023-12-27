@@ -13,12 +13,12 @@ const SidebarAndProfile: FC<ISidebarAndProfile> = ({ children }) => {
     const [openProfile, setOpenProfile] = useState(false)
 
     return (
-        <div className="min-h-screen">
+        <div className="min-h-dvh">
             <Notification />
-            <div className="relative flex min-h-screen">
+            <div className="min-h-dvh relative flex">
                 <div
                     aria-label="sidebar"
-                    className={`left-0 right-0 z-[2] hidden border-t bg-white p-5 text-xl font-medium shadow-[3px_-15px_82px_-25px_rgba(0,0,0,0.5)] transition-all md:sticky md:left-0 md:top-0 md:z-[2] md:block md:h-screen md:flex-[1.5] md:p-4 md:shadow-none`}
+                    className={`md:h-dvh left-0 right-0 z-[2] hidden border-t bg-white p-5 text-xl font-medium shadow-[3px_-15px_82px_-25px_rgba(0,0,0,0.5)] transition-all md:sticky md:left-0 md:top-0 md:z-[2] md:block md:flex-[1.5] md:p-4 md:shadow-none`}
                 >
                     <div className="flex justify-end">
                         <X size={"1.75rem"} className="md:hidden" />
@@ -50,7 +50,7 @@ const SidebarAndProfile: FC<ISidebarAndProfile> = ({ children }) => {
 
                 <div
                     aria-label="profile"
-                    className={`fixed left-0 right-0 z-[2] bg-white transition-all md:sticky md:left-0 md:top-0 md:z-[2] md:h-screen md:flex-[2] ${
+                    className={`md:h-dvh fixed left-0 right-0 z-[2] bg-white transition-all md:sticky md:left-0 md:top-0 md:z-[2] md:flex-[2] ${
                         openProfile ? "top-0" : "-top-full"
                     }`}
                 >
