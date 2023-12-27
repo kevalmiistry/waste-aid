@@ -9,15 +9,15 @@ export const config = {
 export default function handler(req: NextRequest) {
     const { searchParams } = new URL(req.url)
     const title = searchParams.get("title") ?? ""
-    const description = searchParams.get("amp;description") ?? ""
-    const am_name = searchParams.get("amp;am_name") ?? ""
+    const description = searchParams.get("description") ?? ""
+    const am_name = searchParams.get("am_name") ?? ""
     const postimg =
-        searchParams.get("amp;postimg") ??
+        searchParams.get("postimg") ??
         "https://www.ct1.com/wp-content/plugins/js_composer/assets/vc/no_image.png"
-    const ampfp = searchParams.get("amp;ampfp")
-        ? `https://wsrv.nl/?url=${searchParams.get("amp;ampfp")}`
+    const ampfp = searchParams.get("ampfp")
+        ? `https://wsrv.nl/?url=${searchParams.get("ampfp")}`
         : "https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250"
-    const createdAt = searchParams.get("amp;createdAt") ?? ""
+    const createdAt = searchParams.get("createdAt") ?? ""
 
     return new ImageResponse(
         (
