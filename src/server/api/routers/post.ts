@@ -2,6 +2,7 @@ import {
     type createTRPCContext,
     createTRPCRouter,
     protectedProcedure,
+    publicProcedure,
 } from "~/server/api/trpc"
 import type { Prisma } from "@prisma/client"
 import { TRPCError, type inferAsyncReturnType } from "@trpc/server"
@@ -132,7 +133,7 @@ export const postRouter = createTRPCRouter({
             })
         }),
 
-    getOnePost: protectedProcedure
+    getOnePost: publicProcedure
         .input(z.object({ pid: z.string() }))
         .query(async ({ ctx, input }) => {
             return await ctx.prisma.post.findFirst({
