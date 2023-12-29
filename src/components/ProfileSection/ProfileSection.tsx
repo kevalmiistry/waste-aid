@@ -9,7 +9,7 @@ const ProfileSection: FC<IProfileSection> = () => {
     const change = useDonationStore((state) => state.renderer)
 
     return (
-        <div className="flex h-screen w-full flex-col items-center gap-3 p-4 pt-10">
+        <div className="flex h-[50vh] w-full flex-col items-center gap-3 p-4 pt-4 md:pt-10">
             <ProfileInfo />
 
             <ProfileDonations key={change} />
