@@ -1,6 +1,7 @@
 import { Home, Recycle, ScanLine, UserCircle2, X } from "lucide-react"
 import { useState, type FC, type ReactNode } from "react"
 import { AnimatePresence } from "framer-motion"
+import { twMerge } from "tailwind-merge"
 import ProfileSection from "./ProfileSection/ProfileSection"
 import Notification from "./Notification/Notification"
 import Link from "next/link"
@@ -50,11 +51,24 @@ const SidebarAndProfile: FC<ISidebarAndProfile> = ({ children }) => {
 
                 <div
                     aria-label="profile"
-                    className={`md:h-dvh fixed left-0 right-0 z-[2] bg-white transition-all md:sticky md:left-0 md:top-0 md:z-[2] md:flex-[2] ${
-                        openProfile ? "top-0" : "-top-[150%]"
-                    }`}
+                    className={twMerge(
+                        "md:h-dvh fixed left-0 right-0 z-[2] h-3/4 bg-white transition-all md:sticky md:left-0 md:top-0 md:z-[2] md:flex-[2]",
+                        openProfile
+                            ? "bottom-0 overflow-auto rounded-t-2xl shadow-2xl"
+                            : "-bottom-[150%] shadow-none"
+                    )}
                 >
-                    <ProfileSection setOpenProfile={setOpenProfile} />
+                    <button
+                        className={twMerge(
+                            "fixed -bottom-[150%] right-5 z-10 md:hidden",
+                            openProfile ? "bottom-[70%]" : "-bottom-[150%]"
+                        )}
+                        onClick={() => setOpenProfile(false)}
+                    >
+                        <X size={"1.75rem"} color="#333" />
+                    </button>
+
+                    <ProfileSection />
                 </div>
             </div>
 
