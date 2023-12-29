@@ -51,7 +51,7 @@ const SidebarAndProfile: FC<ISidebarAndProfile> = ({ children }) => {
                 <div
                     aria-label="profile"
                     className={`md:h-dvh fixed left-0 right-0 z-[2] bg-white transition-all md:sticky md:left-0 md:top-0 md:z-[2] md:flex-[2] ${
-                        openProfile ? "top-0" : "-top-full"
+                        openProfile ? "top-0" : "-top-[150%]"
                     }`}
                 >
                     <ProfileSection setOpenProfile={setOpenProfile} />
