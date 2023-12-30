@@ -4,7 +4,6 @@ import { AnimatePresence } from "framer-motion"
 import { twMerge } from "tailwind-merge"
 import { Drawer } from "vaul"
 import ProfileSection from "./ProfileSection/ProfileSection"
-import Notification from "./Notification/Notification"
 import Link from "next/link"
 
 interface ISidebarAndProfile {
@@ -16,7 +15,6 @@ const SidebarAndProfile: FC<ISidebarAndProfile> = ({ children }) => {
 
     return (
         <div className="min-h-[100dvh]">
-            <Notification />
             <div className="relative flex min-h-[100dvh]">
                 <div
                     aria-label="sidebar"

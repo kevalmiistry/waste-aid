@@ -1,11 +1,11 @@
 import type { FC, Dispatch, SetStateAction } from "react"
 import type { WAPost } from "~/@types"
 import { Expand, Pencil, Trash, Users2, X } from "lucide-react"
-import { useNotifierStore } from "~/stores/notifier"
 import { cubicBezier } from "~/utils/constants"
 import { Carousel } from "react-responsive-carousel"
 import { useState } from "react"
 import { motion } from "framer-motion"
+import { toast } from "sonner"
 import { api } from "~/utils/api"
 import moment from "moment"
 import Modal from "../Modal/Modal"
@@ -36,7 +36,6 @@ const Post: FC<IPostCardProps> = ({
     setModalOpen = () => null,
     setSelectedPost = () => null,
 }) => {
-    const { notify } = useNotifierStore()
     const { mutate: deletePostMutate, isLoading } =
         api.post.deletePost.useMutation()
 
@@ -52,14 +51,8 @@ const Post: FC<IPostCardProps> = ({
                 {
                     async onSuccess() {
                         setPostDeleted(true)
+                        toast.success("Post Deleted! :D")
                         await refetchPosts()
-
-                        notify({
-                            show: true,
-                            message: "Post Deleted! :D",
-                            status: "success",
-                            duration: 5000,
-                        })
                     },
                 }
             )
