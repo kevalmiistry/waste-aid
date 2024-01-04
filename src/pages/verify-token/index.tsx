@@ -72,6 +72,9 @@ const VerifyToken: FC<IVerifyToken> = () => {
             }
             transition={{ ease: cubicBezier, duration: 0.5 }}
         >
+            <h1 className="mb-2 text-center text-2xl font-medium">
+                Scan QR Code
+            </h1>
             <div
                 aria-label="QR Code scanner wrapper"
                 className="relative w-full overflow-hidden rounded-3xl md:mx-auto md:w-1/2"
@@ -79,13 +82,12 @@ const VerifyToken: FC<IVerifyToken> = () => {
                 <video
                     ref={ref}
                     aria-label="QR Code scanner cam"
-                    className="aspect-square w-full rounded-3xl object-fill"
+                    className="aspect-[9/14] w-full rounded-3xl object-fill md:aspect-square"
                 />
-                <div className="absolute left-8 top-8 z-[2] h-1/6 w-1/6 border-l-4 border-t-4 border-primary opacity-80" />
-                <div className="absolute right-8 top-8 z-[2] h-1/6 w-1/6 border-r-4 border-t-4 border-primary opacity-80" />
-                <div className="absolute bottom-8 left-8 z-[2] h-1/6 w-1/6 border-b-4 border-l-4 border-primary opacity-80" />
-                <div className="absolute bottom-8 right-8 z-[2] h-1/6 w-1/6 border-b-4 border-r-4 border-primary opacity-80" />
-
+                <div className="absolute left-8 top-8 z-[2] h-[10%] w-1/6 border-l-4 border-t-4 border-primary opacity-80" />
+                <div className="absolute right-8 top-8 z-[2] h-[10%] w-1/6 border-r-4 border-t-4 border-primary opacity-80" />
+                <div className="absolute bottom-8 left-8 z-[2] h-[10%] w-1/6 border-b-4 border-l-4 border-primary opacity-80" />
+                <div className="absolute bottom-8 right-8 z-[2] h-[10%] w-1/6 border-b-4 border-r-4 border-primary opacity-80" />
                 {isLoading && (
                     <div className="z-1 absolute inset-0 flex items-center justify-center bg-black opacity-75">
                         <span className="loader loader-primary loader-xl" />

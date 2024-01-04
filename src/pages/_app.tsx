@@ -5,6 +5,7 @@ import type { NextPage } from "next"
 import { SessionProvider } from "next-auth/react"
 import { SkeletonTheme } from "react-loading-skeleton"
 import { useRouter } from "next/router"
+import { Toaster } from "sonner"
 import { api } from "~/utils/api"
 import SidebarAndProfile from "~/components/SidebarAndProfile"
 import NextTopLoader from "nextjs-toploader"
@@ -32,6 +33,7 @@ const MyApp = ({
             <SessionProvider session={session}>
                 <SkeletonTheme baseColor="#f2f2f2" highlightColor="#ebebeb">
                     <NextTopLoader />
+                    <Toaster richColors />
                     <SidebarAndProfile>
                         {React.cloneElement(page, { key: router.route })}
                     </SidebarAndProfile>
@@ -43,6 +45,7 @@ const MyApp = ({
         <SessionProvider session={session}>
             <SkeletonTheme baseColor="#f2f2f2" highlightColor="#ebebeb">
                 <NextTopLoader color="rgb(150, 217, 5)" />
+                <Toaster richColors />
                 <Component {...pageProps} />
             </SkeletonTheme>
         </SessionProvider>

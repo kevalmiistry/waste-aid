@@ -2,12 +2,12 @@ import type { DefaultValues, SubmitHandler } from "react-hook-form"
 import type { FC, Dispatch, SetStateAction } from "react"
 import type { UploadFileResponse } from "uploadthing/client"
 import { useRef, useState } from "react"
-import { useNotifierStore } from "~/stores/notifier"
 import { MultiUploader } from "../MultiUploader"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { DevTool } from "@hookform/devtools"
 import { useForm } from "react-hook-form"
 import { twMerge } from "tailwind-merge"
+import { toast } from "sonner"
 import { api } from "~/utils/api"
 import { X } from "lucide-react"
 import { z } from "zod"
@@ -39,7 +39,6 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
     refetchPosts = () => null,
     selectedPost,
 }) => {
-    const { notify } = useNotifierStore()
     const uploaderRef = useRef<TMultiUploaderHandle | null>(null)
     const [files, setFiles] = useState<File[]>([])
 
@@ -147,15 +146,10 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
                 }
                 updatePostMutate(updatePayload, {
                     async onSuccess() {
-                        await refetchPosts()
-                        notify({
-                            show: true,
-                            message: "Post Updated! :D",
-                            status: "success",
-                            duration: 5000,
-                        })
                         reset()
                         setModalOpen(false)
+                        toast.success("Post Updated! :D")
+                        await refetchPosts()
                     },
                 })
             } else {
@@ -177,15 +171,10 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
                                 },
                             })
                         }
-                        await refetchPosts()
-                        notify({
-                            show: true,
-                            message: "New Post Created! :D",
-                            status: "success",
-                            duration: 5000,
-                        })
                         reset()
                         setModalOpen(false)
+                        toast.success("New Post Created! :D")
+                        await refetchPosts()
                     },
                 })
             }
