@@ -25,7 +25,7 @@ const ProfileDonations: FC<IProfileDonations> = () => {
             </div>
             <div className="flex items-center justify-center py-3">
                 <Link
-                    href={`/mydonations`}
+                    href={`/my-donations`}
                     className="btn-primary rounded-full text-sm"
                 >
                     + {data.remainingDonations}

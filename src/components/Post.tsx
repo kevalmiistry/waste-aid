@@ -8,7 +8,7 @@ import { motion } from "framer-motion"
 import { toast } from "sonner"
 import { api } from "~/utils/api"
 import moment from "moment"
-import Modal from "../Modal/Modal"
+import Modal from "./Modal"
 import Link from "next/link"
 import "react-responsive-carousel/lib/styles/carousel.min.css" // requires a loader
 

@@ -19,7 +19,7 @@ import { prisma } from "~/server/db"
 import { api } from "~/utils/api"
 import SuperJSON from "superjson"
 import moment from "moment"
-import Modal from "~/components/Modal/Modal"
+import Modal from "~/components/Modal"
 import "react-responsive-carousel/lib/styles/carousel.min.css"
 import Head from "next/head"
 

@@ -21,7 +21,7 @@ const ProfileInfo: FC<IProfileInfo> = () => {
                 src={
                     session?.user?.image
                         ? `//wsrv.nl/?url=${session?.user?.image}`
-                        : "https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250"
+                        : "https://w7.pngwing.com/pngs/753/432/png-transparent-user-profile-2018-in-sight-user-conference-expo-business-default-business-angle-service-people-thumbnail.png"
                 }
                 className="h-[100px] w-[100px] rounded-full border-2"
                 alt="profile-img"

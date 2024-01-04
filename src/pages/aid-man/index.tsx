@@ -3,8 +3,8 @@ import { Sparkles } from "lucide-react"
 import { motion } from "framer-motion"
 import { api } from "~/utils/api"
 import InfinitePostsFeed from "~/components/InfinitePostsFeed"
-import PostAddUpdate from "~/components/PostAddUpdate/PostAddUpdate"
-import Modal from "~/components/Modal/Modal"
+import PostAddUpdate from "~/components/PostAddUpdate"
+import Modal from "~/components/Modal"
 
 interface AidManProps {}
 const AidMan: FC<AidManProps> = () => {
