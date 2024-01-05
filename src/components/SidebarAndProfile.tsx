@@ -3,7 +3,7 @@ import { useState, type FC, type ReactNode } from "react"
 import { AnimatePresence } from "framer-motion"
 import { useRouter } from "next/router"
 import { twMerge } from "tailwind-merge"
-import { WALogo } from "./WALogo"
+import { WAFullLogo } from "./WALogos"
 import { Drawer } from "vaul"
 import ProfileSection from "./ProfileSection/ProfileSection"
 import Link from "next/link"
@@ -16,7 +16,7 @@ const MENUS = [
     {
         label: "Home",
         icon: <Home size={"1.5rem"} />,
-        link: "/",
+        link: "/home",
     },
     {
         label: "Aid-Man",
@@ -49,7 +49,7 @@ const SidebarAndProfile: FC<ISidebarAndProfile> = ({ children }) => {
                             <X size={"1.75rem"} className="md:hidden" />
                         </div>
 
-                        <WALogo className="mt-2" />
+                        <WAFullLogo className="mt-2" />
 
                         <ul className="mt-10 flex flex-col items-start gap-2 text-xl font-medium">
                             {MENUS.map((menu) => (
@@ -81,7 +81,7 @@ const SidebarAndProfile: FC<ISidebarAndProfile> = ({ children }) => {
                                 aria-label="mobile-view-bottom-bar"
                                 className="fixed bottom-0 left-0 right-0 z-[10] flex justify-around border bg-white p-3 md:hidden"
                             >
-                                <Link href={"/"}>
+                                <Link href={"/home"}>
                                     <Home />
                                 </Link>
                                 <Link href={"/aid-man"}>
