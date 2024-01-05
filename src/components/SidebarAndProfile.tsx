@@ -1,7 +1,9 @@
 import { Home, Recycle, ScanLine, UserCircle2, X } from "lucide-react"
 import { useState, type FC, type ReactNode } from "react"
 import { AnimatePresence } from "framer-motion"
+import { useRouter } from "next/router"
 import { twMerge } from "tailwind-merge"
+import { WALogo } from "./WALogo"
 import { Drawer } from "vaul"
 import ProfileSection from "./ProfileSection/ProfileSection"
 import Link from "next/link"
@@ -10,33 +12,62 @@ interface ISidebarAndProfile {
     children: ReactNode
 }
 
+const MENUS = [
+    {
+        label: "Home",
+        icon: <Home size={"1.5rem"} />,
+        link: "/",
+    },
+    {
+        label: "Aid-Man",
+        icon: <Recycle size={"1.5rem"} />,
+        link: "/aid-man",
+    },
+    {
+        label: "Scan QR",
+        icon: <ScanLine size={"1.5rem"} />,
+        link: "/verify-token",
+    },
+]
+
 const SidebarAndProfile: FC<ISidebarAndProfile> = ({ children }) => {
     const [openProfile, setOpenProfile] = useState(false)
+    const { pathname } = useRouter()
+
+    const getActiveLinkClassName = (link: string) =>
+        pathname === link ? "bg-slate-100 font-semibold" : ""
 
     return (
         <div className="min-h-[100dvh]">
             <div className="relative flex min-h-[100dvh]">
                 <div
                     aria-label="sidebar"
-                    className={`md:h-dvh left-0 right-0 z-[2] hidden border-t bg-white p-5 text-xl font-medium shadow-[3px_-15px_82px_-25px_rgba(0,0,0,0.5)] transition-all md:sticky md:left-0 md:top-0 md:z-[2] md:block md:flex-[1.5] md:p-4 md:shadow-none`}
+                    className={`md:h-dvh left-0 right-0 z-[2] hidden border-t bg-white p-5 text-xl font-medium shadow-[3px_-15px_82px_-25px_rgba(0,0,0,0.5)] transition-all md:sticky md:left-0 md:top-0 md:z-[2] md:flex md:flex-[1.5] md:justify-center md:p-4 md:shadow-none`}
                 >
-                    <div className="flex justify-end">
-                        <X size={"1.75rem"} className="md:hidden" />
+                    <div aria-label="wrapper" className="w-fit">
+                        <div className="flex justify-end">
+                            <X size={"1.75rem"} className="md:hidden" />
+                        </div>
+
+                        <WALogo className="mt-2" />
+
+                        <ul className="mt-10 flex flex-col items-start gap-2 text-xl font-medium">
+                            {MENUS.map((menu) => (
+                                <li key={menu.link}>
+                                    <Link
+                                        href={menu.link}
+                                        className={twMerge(
+                                            "flex items-center gap-2 rounded-full px-6 py-3 transition-all duration-300 hover:bg-slate-100",
+                                            getActiveLinkClassName(menu.link)
+                                        )}
+                                    >
+                                        {menu.icon}
+                                        {menu.label}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
                     </div>
-                    <ul className="flex flex-col items-center gap-4">
-                        <Link href={"/"}>
-                            <li>Home</li>
-                        </Link>
-                        <Link href={"/aid-man"}>
-                            <li>Aid-Man</li>
-                        </Link>
-                        <Link href={"/verify-token"}>
-                            <li>Scan QR</li>
-                        </Link>
-                        <Link href={"/welcome"}>
-                            <li>Welcome</li>
-                        </Link>
-                    </ul>
                 </div>
 
                 <div
