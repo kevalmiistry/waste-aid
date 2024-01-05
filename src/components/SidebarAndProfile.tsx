@@ -42,7 +42,7 @@ const SidebarAndProfile: FC<ISidebarAndProfile> = ({ children }) => {
             <div className="relative flex min-h-[100dvh]">
                 <div
                     aria-label="sidebar"
-                    className={`md:h-dvh left-0 right-0 z-[2] hidden border-t bg-white p-5 text-xl font-medium shadow-[3px_-15px_82px_-25px_rgba(0,0,0,0.5)] transition-all md:sticky md:left-0 md:top-0 md:z-[2] md:flex md:flex-[1.5] md:justify-center md:p-4 md:shadow-none`}
+                    className={`md:h-dvh left-0 right-0 z-[2] hidden border-t bg-white p-5 text-xl font-medium shadow-[3px_-15px_82px_-25px_rgba(0,0,0,0.5)] transition-all md:sticky md:left-0 md:top-0 md:z-[2] md:flex md:h-screen md:flex-[1.5] md:justify-center md:p-4 md:shadow-none`}
                 >
                     <div aria-label="wrapper" className="w-fit">
                         <div className="flex justify-end">
