@@ -81,27 +81,6 @@ export const getServerSideProps = async (
 const ViewPost = (
     props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) => {
-    const encodeObjectToUrl = (obj: Record<string, string>) => {
-        return Object.entries(obj)
-            .map(
-                ([key, value]) =>
-                    `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
-            )
-            .join("&")
-    }
-
-    const objForOGImage = {
-        title: props.data.title,
-        description: props.data?.description ?? "",
-        am_name: props.data.aidman.name ?? "",
-        postimg: props.data.PostImages[0]?.imageURL ?? "",
-        ampfp: props.data.aidman.image ?? "",
-        createdAt: props.data.createdAt,
-    }
-
-    const ogImgURL =
-        process.env.NEXTAUTH_URL + "/api/og?" + encodeObjectToUrl(objForOGImage)
-
     const { data } = props
 
     const handleDonationRender = useDonationStore(
@@ -144,6 +123,7 @@ const ViewPost = (
         startDate,
         address,
         uuid,
+        aidman,
     } = data
 
     const saveBase64AsFile = (base64: string, fileName: string): void => {
@@ -201,10 +181,33 @@ const ViewPost = (
         )
     }
 
+    // prepare OG Image URL
+    const encodeObjectToUrl = (obj: Record<string, string>) => {
+        return Object.entries(obj)
+            .map(
+                ([key, value]) =>
+                    `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+            )
+            .join("&")
+    }
+
+    const objForOGImage = {
+        title: title,
+        description: props.data?.description ?? "",
+        am_name: aidman.name ?? "",
+        postimg: PostImages[0]?.imageURL ?? "",
+        ampfp: aidman.image ?? "",
+        createdAt: createdAt,
+    }
+
+    const ogImgURL =
+        process.env.NEXTAUTH_URL + "/api/og?" + encodeObjectToUrl(objForOGImage)
+
     return (
         <>
             <Head>
-                <title>{props.data.title}</title>
+                <title>{title}</title>
+                <meta name="description" content={description ?? ""} />
                 <meta property="og:image" content={ogImgURL} />
                 <meta property="twitter:image" content={ogImgURL} />
             </Head>
