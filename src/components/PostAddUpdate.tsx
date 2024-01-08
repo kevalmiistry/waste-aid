@@ -115,11 +115,8 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
         resolver: zodResolver(zPostSchema),
     })
 
-    const onSubmit: SubmitHandler<zPostTypes> = async (data) => {
+    const onSubmit: SubmitHandler<zPostTypes> = (data) => {
         try {
-            // upload all imgage & get response
-            const uploadedFiles = await uploaderRef.current?.uploadAll()
-
             const payloadData = {
                 title: data.title,
                 description: data.description ?? "",
@@ -151,10 +148,17 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
                         toast.success("Post Updated! :D")
                         await refetchPosts()
                     },
+                    onError(error) {
+                        toast.error(error.message)
+                    },
                 })
             } else {
                 createPostMutate(payloadData, {
                     async onSuccess(data) {
+                        // upload all imgage & get response
+                        const uploadedFiles =
+                            await uploaderRef.current?.uploadAll()
+
                         if (uploadedFiles && uploadedFiles.length > 0) {
                             const imageURLsPayload = uploadedFiles.map(
                                 (item) => ({
@@ -175,6 +179,9 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
                         setModalOpen(false)
                         toast.success("New Post Created! :D")
                         await refetchPosts()
+                    },
+                    onError(error) {
+                        toast.error(error.message)
                     },
                 })
             }
@@ -576,6 +583,23 @@ const zPostSchema = z
         },
         {
             message: "Please Enter a Valid Amount",
+            path: ["targetAmount"],
+        }
+    )
+    .refine(
+        ({ hasTarget, targetAmount }) => {
+            if (hasTarget === true) {
+                return (
+                    typeof targetAmount === "number" &&
+                    !isNaN(targetAmount) &&
+                    targetAmount > 0 &&
+                    targetAmount < 1000000000
+                )
+            }
+            return true
+        },
+        {
+            message: "The Amount cannot be 1000000000 or more",
             path: ["targetAmount"],
         }
     )
