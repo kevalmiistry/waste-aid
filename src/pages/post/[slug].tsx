@@ -20,11 +20,11 @@ import { api } from "~/utils/api"
 import SuperJSON from "superjson"
 import moment from "moment"
 import Modal from "~/components/Modal"
-import "react-responsive-carousel/lib/styles/carousel.min.css"
 import Head from "next/head"
+import "react-responsive-carousel/lib/styles/carousel.min.css"
 
 export const getServerSideProps = async (
-    context: GetServerSidePropsContext<{ pid: string }>
+    context: GetServerSidePropsContext<{ slug: string }>
 ) => {
     const session = await getServerAuthSession(context)
 
@@ -38,7 +38,7 @@ export const getServerSideProps = async (
     })
 
     try {
-        const id = context.params?.pid ?? ""
+        const id = context.params?.slug ?? ""
         const data = await helpers.post.getOnePost.fetch({ pid: id })
 
         if (data === null) {
