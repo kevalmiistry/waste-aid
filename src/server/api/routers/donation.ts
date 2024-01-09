@@ -5,6 +5,7 @@ import {
 } from "~/server/api/trpc"
 import type { Prisma } from "@prisma/client"
 import { TRPCError, type inferAsyncReturnType } from "@trpc/server"
+import { sendTokenVerifiedMail } from "~/server/sendMail"
 import { z } from "zod"
 
 export const donationRouter = createTRPCRouter({
@@ -75,6 +76,24 @@ export const donationRouter = createTRPCRouter({
                     uuid: donationWithPost.post.uuid,
                 },
             })
+
+            const donator = await ctx.prisma.user.findUnique({
+                where: {
+                    id: donationWithPost.donator_id,
+                },
+            })
+
+            if (donator?.email) {
+                await sendTokenVerifiedMail({
+                    amount: Number(donationWithPost.donatedAmout),
+                    name: donator?.name ?? "",
+                    amountType: donationWithPost.post.amountType,
+                    description: donationWithPost.post.description ?? "",
+                    title: donationWithPost.post.title,
+                    post_link: `${process.env.NEXTAUTH_URL}/post/${donationWithPost.post_id}`,
+                    receiverEmail: donator?.email,
+                })
+            }
 
             return {
                 oldAmount,
