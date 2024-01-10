@@ -9,6 +9,7 @@ interface sendTokenVerifiedMailArgs {
     amount: number
     amountType: string
     post_link: string
+    post_img_link: string
     receiverEmail: string
 }
 export const sendTokenVerifiedMail = async ({
@@ -17,6 +18,7 @@ export const sendTokenVerifiedMail = async ({
     description,
     name,
     post_link,
+    post_img_link,
     title,
     receiverEmail,
 }: sendTokenVerifiedMailArgs) => {
@@ -36,6 +38,7 @@ export const sendTokenVerifiedMail = async ({
                 description,
                 name,
                 post_link,
+                post_img_link,
                 title,
             }),
             { pretty: true }

@@ -37,7 +37,11 @@ export const donationRouter = createTRPCRouter({
                     uuid: input.donation_id,
                 },
                 include: {
-                    post: true,
+                    post: {
+                        include: {
+                            PostImages: true,
+                        },
+                    },
                 },
             })
 
@@ -91,6 +95,8 @@ export const donationRouter = createTRPCRouter({
                     description: donationWithPost.post.description ?? "",
                     title: donationWithPost.post.title,
                     post_link: `${process.env.NEXTAUTH_URL}/post/${donationWithPost.post_id}`,
+                    post_img_link:
+                        donationWithPost.post.PostImages[0]?.imageURL ?? "",
                     receiverEmail: donator?.email,
                 })
             }
