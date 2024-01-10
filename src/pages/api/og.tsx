@@ -46,7 +46,7 @@ export default async function handler(req: NextRequest) {
                     style={{
                         width: "100%",
                         height: "100%",
-                        objectFit: "cover",
+                        objectFit: "contain",
                         objectPosition: "center",
                     }}
                 />
@@ -64,7 +64,11 @@ export default async function handler(req: NextRequest) {
                     {/* Title */}
                     <p
                         tw="text-6xl"
-                        style={{ width: "80%", fontFamily: "Satoshi Bold" }}
+                        style={{
+                            width: "80%",
+                            fontFamily: "Satoshi Bold",
+                            wordBreak: "break-all",
+                        }}
                     >
                         {title.length > 50
                             ? title.substring(0, 50) + "..."
@@ -74,7 +78,10 @@ export default async function handler(req: NextRequest) {
                     {/* Description */}
                     <p
                         tw="font-medium text-3xl text-gray-600"
-                        style={{ width: "70%" }}
+                        style={{
+                            width: "70%",
+                            wordBreak: "break-all",
+                        }}
                     >
                         {description.length > 120
                             ? description.substring(0, 120) + "..."
@@ -86,11 +93,11 @@ export default async function handler(req: NextRequest) {
                         <img
                             src={ampfp}
                             alt="pfp"
-                            style={{ width: "100px", height: "100px" }}
+                            style={{ width: "60px", height: "60px" }}
                             tw="rounded-full border-2 border-[#96d905]"
                         />
                         <p
-                            tw="ml-5 text-4xl p-0"
+                            tw="ml-3 text-3xl p-0"
                             style={{ fontFamily: "Satoshi Medium" }}
                         >
                             {am_name}
@@ -102,7 +109,7 @@ export default async function handler(req: NextRequest) {
                         <p tw="mt-6 text-2xl flex items-end text-gray-500">
                             Post on:
                             <span
-                                tw="ml-1 text-3xl text-gray-800"
+                                tw="ml-1 text-2xl text-gray-800"
                                 style={{ fontFamily: "Satoshi Medium" }}
                             >
                                 {moment(createdAt).format("DD MMM YY")}
@@ -112,7 +119,7 @@ export default async function handler(req: NextRequest) {
 
                     {/* WA Logo */}
                     <div
-                        tw={"h-[70px] w-[288px] flex absolute left-5 bottom-5"}
+                        tw={"h-[50px] w-[195px] flex absolute left-5 bottom-5"}
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
