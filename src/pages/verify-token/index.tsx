@@ -69,13 +69,9 @@ const VerifyToken: FC<IVerifyToken> = () => {
             <motion.main
                 key={"verify-token"}
                 className="p-5"
-                initial={{ translateX: "0%" }}
-                animate={{ translateX: "0%" }}
-                exit={
-                    qrCodeScanned
-                        ? { translateX: "-100%", position: "absolute" }
-                        : {}
-                }
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0, position: "absolute" }}
                 transition={{ ease: cubicBezier, duration: 0.5 }}
             >
                 <h1 className="mb-2 text-center text-2xl font-medium">
