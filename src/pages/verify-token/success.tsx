@@ -1,6 +1,7 @@
 import { useState, type FC, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
 import { cubicBezier } from "~/utils/constants"
+import { WAFullLogo } from "~/components/WALogos"
 import { motion } from "framer-motion"
 import Link from "next/link"
 
@@ -39,10 +40,18 @@ const Success: FC<ISuccessProps> = () => {
             key={"success"}
             className="flex h-screen flex-col items-center gap-8 p-5"
         >
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ ease: cubicBezier, duration: 0.5, delay: 0.2 }}
+            >
+                <WAFullLogo className="my-4 block h-[36px] w-fit pl-4 md:hidden" />
+            </motion.div>
+
             <motion.img
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ ease: cubicBezier, duration: 0.5, delay: 0 }}
+                transition={{ ease: cubicBezier, duration: 0.5, delay: 0.3 }}
                 src="/success.svg"
                 alt="Success"
                 className="w-3/4 md:w-1/2"
@@ -50,7 +59,7 @@ const Success: FC<ISuccessProps> = () => {
             <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ ease: cubicBezier, duration: 0.5, delay: 0.1 }}
+                transition={{ ease: cubicBezier, duration: 0.5, delay: 0.4 }}
                 className="text-lg font-medium"
             >
                 QR Code scanned Successfully! 🙌
@@ -59,7 +68,7 @@ const Success: FC<ISuccessProps> = () => {
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ ease: cubicBezier, duration: 0.5, delay: 0.2 }}
+                transition={{ ease: cubicBezier, duration: 0.5, delay: 0.5 }}
                 className="number-animation flex items-center gap-2"
             >
                 <span className="font-satoshi rounded-md bg-gray-200 px-3 py-1 text-2xl font-semibold">
@@ -72,7 +81,7 @@ const Success: FC<ISuccessProps> = () => {
             <motion.span
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ ease: cubicBezier, duration: 0.5, delay: 0.3 }}
+                transition={{ ease: cubicBezier, duration: 0.5, delay: 0.6 }}
             >
                 <Link href={"/verify-token"} className="btn-primary mt-12">
                     Go Back

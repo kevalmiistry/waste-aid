@@ -1,6 +1,7 @@
 import type { FC } from "react"
 import { Flashlight, FlashlightOff } from "lucide-react"
 import { cubicBezier } from "~/utils/constants"
+import { WAFullLogo } from "~/components/WALogos"
 import { useRouter } from "next/navigation"
 import { useZxing } from "react-zxing"
 import { useState } from "react"
@@ -68,13 +69,15 @@ const VerifyToken: FC<IVerifyToken> = () => {
             </Head>
             <motion.main
                 key={"verify-token"}
-                className="p-5"
+                className="px-5"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0, position: "absolute" }}
                 transition={{ ease: cubicBezier, duration: 0.5 }}
             >
-                <h1 className="mb-2 text-center text-2xl font-medium">
+                <WAFullLogo className="my-4 block h-[36px] w-fit pl-4 md:hidden" />
+
+                <h1 className="mb-2 border-t pt-4 text-2xl font-medium">
                     Scan QR Code
                 </h1>
                 <div

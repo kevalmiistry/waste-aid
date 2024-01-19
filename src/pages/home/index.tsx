@@ -30,7 +30,7 @@ const Home = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <main>
-                <WAFullLogo className="my-4 block md:hidden" />
+                <WAFullLogo className="my-4 block h-[36px] w-fit pl-4 md:hidden" />
                 <h1 className="my-2 hidden text-2xl font-medium md:block">
                     Feed:
                 </h1>
