@@ -1,5 +1,6 @@
 import type { FC } from "react"
-import { useSession } from "next-auth/react"
+import { signOut, useSession } from "next-auth/react"
+import { LogOut } from "lucide-react"
 import Skeleton from "react-loading-skeleton"
 
 interface IProfileInfo {}
@@ -26,8 +27,17 @@ const ProfileInfo: FC<IProfileInfo> = () => {
                 className="h-[100px] w-[100px] rounded-full border-2"
                 alt="profile-img"
             />
-            <p className="text-xl font-medium text-gray-600">
+            <p className="relative flex items-center gap-2 text-xl font-medium text-gray-600">
                 {session?.user?.name}
+                <button
+                    type="button"
+                    className="absolute -right-8 cursor-pointer rounded-full p-1.5 transition-all hover:bg-gray-200"
+                    onClick={() =>
+                        void signOut({ redirect: true, callbackUrl: "/" })
+                    }
+                >
+                    <LogOut size={"1rem"} strokeWidth={"3px"} />
+                </button>
             </p>
         </>
     )
