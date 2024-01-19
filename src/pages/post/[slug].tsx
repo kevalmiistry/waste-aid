@@ -215,6 +215,27 @@ const ViewPost = (
                 <h2 className="mb-2 px-5 text-2xl font-medium text-[#333] md:px-0">
                     Post Details:
                 </h2>
+
+                {/* Aid-man Details */}
+                <div className="mb-2 flex items-center gap-2">
+                    {aidman.image && (
+                        <img
+                            src={`//wsrv.nl/?url=${aidman.image}`}
+                            alt={
+                                aidman.name
+                                    ? `${aidman.name} profile pic`
+                                    : "profile pic"
+                            }
+                            className="h-[40px] w-[40px] rounded-full border-2"
+                        />
+                    )}
+                    {aidman.name && (
+                        <span className="font-medium text-[#333]">
+                            {aidman.name}
+                        </span>
+                    )}
+                </div>
+
                 {/* view full image in overlay */}
                 <AnimatePresence>
                     {fullViewOpen ? (

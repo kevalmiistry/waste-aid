@@ -31,6 +31,7 @@ const Post: FC<IPostCardProps> = ({
     hasDeadline,
     createdAt,
     uuid,
+    aidman,
     isAidmanFeed = false,
     refetchPosts = () => null,
     setModalOpen = () => null,
@@ -143,6 +144,26 @@ const Post: FC<IPostCardProps> = ({
                     </button>
                 </div>
             )}
+
+            {/* Aid-man Details */}
+            <div className="mb-2 flex items-center gap-2">
+                {aidman.image && (
+                    <img
+                        src={`//wsrv.nl/?url=${aidman.image}`}
+                        alt={
+                            aidman.name
+                                ? `${aidman.name} profile pic`
+                                : "profile pic"
+                        }
+                        className="h-[40px] w-[40px] rounded-full border-2"
+                    />
+                )}
+                {aidman.name && (
+                    <span className="font-medium text-[#333]">
+                        {aidman.name}
+                    </span>
+                )}
+            </div>
 
             {/* image carousel */}
             <Carousel
