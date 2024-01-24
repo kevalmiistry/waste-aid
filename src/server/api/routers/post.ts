@@ -6,6 +6,7 @@ import {
 } from "~/server/api/trpc"
 import type { Prisma } from "@prisma/client"
 import { TRPCError, type inferAsyncReturnType } from "@trpc/server"
+import { utapi } from "~/server/uploadthing"
 import { z } from "zod"
 
 export const postRouter = createTRPCRouter({
@@ -79,7 +80,19 @@ export const postRouter = createTRPCRouter({
     deletePost: protectedProcedure
         .input(z.object({ uuid: z.string() }))
         .mutation(async ({ ctx, input }) => {
-            return await ctx.prisma.post.delete({ where: { uuid: input.uuid } })
+            const post = await ctx.prisma.post.delete({
+                where: { uuid: input.uuid },
+                include: {
+                    PostImages: true,
+                },
+            })
+            const images = post.PostImages.map((image) =>
+                image.imageURL.replace("https://utfs.io/f/", "")
+            )
+
+            await utapi.deleteFiles(images)
+
+            return post
         }),
 
     updatePost: protectedProcedure
