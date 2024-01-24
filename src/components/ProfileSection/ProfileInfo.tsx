@@ -30,6 +30,7 @@ const ProfileInfo: FC<IProfileInfo> = () => {
             <p className="relative flex items-center gap-2 text-xl font-medium text-gray-600">
                 {session?.user?.name}
                 <button
+                    title="Logout"
                     type="button"
                     className="absolute -right-8 cursor-pointer rounded-full p-1.5 transition-all hover:bg-gray-200"
                     onClick={() =>
