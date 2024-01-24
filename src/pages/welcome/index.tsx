@@ -108,7 +108,7 @@ const Welcome: NextPageWithLayout<IWelcome> = () => {
                     {STEPS.map((step) => (
                         <div
                             key={step.alt}
-                            className="relative z-10 flex max-w-full items-center gap-4 rounded-xl border-2 border-[#333] bg-white p-3 shadow-[4px_5px_0px_0px_#333] odd:flex-row-reverse md:block md:aspect-square md:max-w-[220px]"
+                            className="relative z-10 flex max-w-full items-center gap-4 rounded-xl border-2 border-[#333] bg-white p-3 shadow-[4px_5px_0px_0px_#333] odd:flex-row-reverse md:block md:aspect-[10/7] md:max-w-[280px]"
                         >
                             <img
                                 src={step.src}
