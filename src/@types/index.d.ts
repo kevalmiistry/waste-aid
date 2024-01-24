@@ -44,7 +44,10 @@ export interface WAPostPostDonationsCount {
     donations: number
 }
 
-export type WADonationPost = Omit<WAPost, "donations" | "PostImages" | "_count">
+export type WADonationPost = Omit<
+    WAPost,
+    "donations" | "PostImages" | "_count" | "aidman"
+>
 
 export interface WADonation {
     uuid: string
