@@ -1,9 +1,10 @@
 import { Home, Recycle, ScanLine, UserCircle2, X } from "lucide-react"
 import { useState, type FC, type ReactNode } from "react"
 import { AnimatePresence } from "framer-motion"
+import { useSession } from "next-auth/react"
+import { WAFullLogo } from "./WALogos"
 import { useRouter } from "next/router"
 import { twMerge } from "tailwind-merge"
-import { WAFullLogo } from "./WALogos"
 import { Drawer } from "vaul"
 import ProfileSection from "./ProfileSection/ProfileSection"
 import Link from "next/link"
@@ -33,6 +34,7 @@ const MENUS = [
 const SidebarAndProfile: FC<ISidebarAndProfile> = ({ children }) => {
     const [openProfile, setOpenProfile] = useState(false)
     const { pathname } = useRouter()
+    const { status } = useSession()
 
     const getActiveLinkClassName = (link: string) =>
         pathname === link ? "bg-slate-100 font-semibold" : ""
@@ -52,20 +54,24 @@ const SidebarAndProfile: FC<ISidebarAndProfile> = ({ children }) => {
                         <WAFullLogo className="mt-2" />
 
                         <ul className="mt-10 flex flex-col items-start gap-2 text-xl font-medium">
-                            {MENUS.map((menu) => (
-                                <li key={menu.link}>
-                                    <Link
-                                        href={menu.link}
-                                        className={twMerge(
-                                            "flex items-center gap-2 rounded-full px-6 py-3 transition-all duration-300 hover:bg-slate-100",
-                                            getActiveLinkClassName(menu.link)
-                                        )}
-                                    >
-                                        {menu.icon}
-                                        {menu.label}
-                                    </Link>
-                                </li>
-                            ))}
+                            {MENUS.filter(() => status === "authenticated").map(
+                                (menu) => (
+                                    <li key={menu.link}>
+                                        <Link
+                                            href={menu.link}
+                                            className={twMerge(
+                                                "flex items-center gap-2 rounded-full px-6 py-3 transition-all duration-300 hover:bg-slate-100",
+                                                getActiveLinkClassName(
+                                                    menu.link
+                                                )
+                                            )}
+                                        >
+                                            {menu.icon}
+                                            {menu.label}
+                                        </Link>
+                                    </li>
+                                )
+                            )}
                         </ul>
                     </div>
                 </div>
