@@ -133,7 +133,11 @@ const ViewPost = (
     return (
         <>
             <Head>
-                <title>{title}</title>
+                <title>
+                    {aidman.name
+                        ? `${aidman.name}'s Post | Waste-Aid`
+                        : "Waste-Aid"}
+                </title>
                 <meta name="description" content={description ?? ""} />
                 <meta property="og:image" content={ogImgURL} />
                 <meta property="twitter:image" content={ogImgURL} />
