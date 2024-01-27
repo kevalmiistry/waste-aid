@@ -144,7 +144,7 @@ const ViewPost = (
                 </h2>
 
                 {/* Aid-man Details */}
-                <div className="mb-2 flex items-center gap-2">
+                <div className="mb-2 ml-3 flex items-center gap-2 md:ml-0">
                     {aidman.image && (
                         <img
                             src={`//wsrv.nl/?url=${aidman.image}`}
