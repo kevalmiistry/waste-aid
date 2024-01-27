@@ -93,77 +93,102 @@ const Post: FC<IPostCardProps> = ({
             </Modal>
 
             {/* Edit and Delete buttons */}
-            {isAidmanFeed && (
-                <div className="flex items-center justify-end gap-2 px-3 pb-3 md:px-0">
-                    <button
-                        disabled={isLoading}
-                        className={`flex h-[2rem] items-center justify-center rounded-full p-2 ${
-                            deleteClicked ? "bg-gray-500" : "bg-[#33b5e5]"
-                        }`}
-                        onClick={handleEdit}
-                    >
-                        {deleteClicked ? (
-                            <X size={"1rem"} strokeWidth="2px" color="#fff" />
-                        ) : (
-                            <Pencil size={"1rem"} strokeWidth="2px" />
+            {isAidmanFeed ? (
+                <div className="flex items-center justify-between">
+                    <div className="mb-1 ml-3 flex items-center gap-2 md:ml-0">
+                        {/* Aid-man Details */}
+                        {aidman.image && (
+                            <img
+                                src={`//wsrv.nl/?url=${aidman.image}`}
+                                alt={
+                                    aidman.name
+                                        ? `${aidman.name} profile pic`
+                                        : "profile pic"
+                                }
+                                className="h-[40px] w-[40px] rounded-full border-2"
+                            />
                         )}
-                    </button>
-
-                    <button
-                        disabled={isLoading}
-                        className={`flex h-[2rem] items-center justify-center rounded-full bg-[#ff4444] p-2 transition-all ${
-                            deleteClicked ? "w-[5rem]" : "w-[2rem]"
-                        }`}
-                        onClick={handleDelete}
-                    >
-                        {deleteClicked ? (
-                            isLoading ? (
-                                <small className="font-medium">
-                                    Deleting...
-                                </small>
+                        {aidman.name && (
+                            <span className="font-medium text-[#333]">
+                                {aidman.name}
+                            </span>
+                        )}
+                    </div>
+                    <div className="flex items-center justify-end gap-2 px-3 pb-3 md:px-0">
+                        <button
+                            disabled={isLoading}
+                            className={`flex h-[2rem] items-center justify-center rounded-full p-2 ${
+                                deleteClicked ? "bg-gray-500" : "bg-[#33b5e5]"
+                            }`}
+                            onClick={handleEdit}
+                        >
+                            {deleteClicked ? (
+                                <X
+                                    size={"1rem"}
+                                    strokeWidth="2px"
+                                    color="#fff"
+                                />
                             ) : (
-                                <motion.small
-                                    initial={{ scaleX: 0 }}
-                                    animate={{
-                                        scaleX: 1,
-                                        transformOrigin: "right",
-                                    }}
-                                    transition={{
-                                        bounce: 0,
-                                        ease: "linear",
-                                        duration: 0.125,
-                                    }}
-                                    className="font-medium"
-                                >
-                                    {postDeleted ? "Deleted!" : "Confirm!"}
-                                </motion.small>
-                            )
-                        ) : (
-                            <Trash size={"1rem"} strokeWidth="2px" />
-                        )}
-                    </button>
+                                <Pencil size={"1rem"} strokeWidth="2px" />
+                            )}
+                        </button>
+
+                        <button
+                            disabled={isLoading}
+                            className={`flex h-[2rem] items-center justify-center rounded-full bg-[#ff4444] p-2 transition-all ${
+                                deleteClicked ? "w-[5rem]" : "w-[2rem]"
+                            }`}
+                            onClick={handleDelete}
+                        >
+                            {deleteClicked ? (
+                                isLoading ? (
+                                    <small className="font-medium">
+                                        Deleting...
+                                    </small>
+                                ) : (
+                                    <motion.small
+                                        initial={{ scaleX: 0 }}
+                                        animate={{
+                                            scaleX: 1,
+                                            transformOrigin: "right",
+                                        }}
+                                        transition={{
+                                            bounce: 0,
+                                            ease: "linear",
+                                            duration: 0.125,
+                                        }}
+                                        className="font-medium"
+                                    >
+                                        {postDeleted ? "Deleted!" : "Confirm!"}
+                                    </motion.small>
+                                )
+                            ) : (
+                                <Trash size={"1rem"} strokeWidth="2px" />
+                            )}
+                        </button>
+                    </div>
+                </div>
+            ) : (
+                <div className="mb-1 ml-3 flex items-center gap-2 md:ml-0">
+                    {/* Aid-man Details */}
+                    {aidman.image && (
+                        <img
+                            src={`//wsrv.nl/?url=${aidman.image}`}
+                            alt={
+                                aidman.name
+                                    ? `${aidman.name} profile pic`
+                                    : "profile pic"
+                            }
+                            className="h-[40px] w-[40px] rounded-full border-2"
+                        />
+                    )}
+                    {aidman.name && (
+                        <span className="font-medium text-[#333]">
+                            {aidman.name}
+                        </span>
+                    )}
                 </div>
             )}
-
-            {/* Aid-man Details */}
-            <div className="mb-1 ml-3 flex items-center gap-2 md:ml-0">
-                {aidman.image && (
-                    <img
-                        src={`//wsrv.nl/?url=${aidman.image}`}
-                        alt={
-                            aidman.name
-                                ? `${aidman.name} profile pic`
-                                : "profile pic"
-                        }
-                        className="h-[40px] w-[40px] rounded-full border-2"
-                    />
-                )}
-                {aidman.name && (
-                    <span className="font-medium text-[#333]">
-                        {aidman.name}
-                    </span>
-                )}
-            </div>
 
             {/* image carousel */}
             <Carousel
