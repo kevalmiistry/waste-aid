@@ -3,7 +3,6 @@ import type {
     InferGetServerSidePropsType,
 } from "next"
 import type { FormEventHandler } from "react"
-import { AnimatePresence, motion } from "framer-motion"
 import { createServerSideHelpers } from "@trpc/react-query/server"
 import { getServerAuthSession } from "~/server/auth"
 import { useDonationStore } from "~/stores/donation"
@@ -16,6 +15,7 @@ import { useState } from "react"
 import { Carousel } from "react-responsive-carousel"
 import { saveAs } from "file-saver"
 import { prisma } from "~/server/db"
+import { motion } from "framer-motion"
 import { api } from "~/utils/api"
 import SuperJSON from "superjson"
 import moment from "moment"
@@ -237,24 +237,23 @@ const ViewPost = (
                 </div>
 
                 {/* view full image in overlay */}
-                <AnimatePresence>
-                    {fullViewOpen ? (
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ ease: cubicBezier, duration: 0.3 }}
-                            className="absolute inset-0 z-10 flex items-center justify-center bg-[#000000BB]"
-                            onClick={() => setFullViewOpen(false)}
-                        >
-                            <img
-                                src={PostImages[selectedItem]?.imageURL}
-                                alt={`image ${selectedItem + 1}`}
-                                className="z-11 max-h-[80%] max-w-[80%] object-contain"
-                            />
-                        </motion.div>
-                    ) : null}
-                </AnimatePresence>
+                <Modal
+                    open={fullViewOpen}
+                    onClose={() => setFullViewOpen(false)}
+                    classNames="pr-2 bg-transparent flex items-center justify-center p-0 shadow-none h-fit"
+                    overlayClassName="bg-[#000000BB]"
+                    placeDirectChildren
+                >
+                    <motion.img
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ ease: cubicBezier, duration: 0.3 }}
+                        src={PostImages[selectedItem]?.imageURL}
+                        alt={`image ${selectedItem + 1}`}
+                        className="fixed left-1/2 top-1/2 z-[5] h-auto w-[94vw] -translate-x-1/2 -translate-y-1/2 object-contain md:w-[70vw]"
+                    />
+                </Modal>
 
                 {/* image carousel */}
                 <Carousel
