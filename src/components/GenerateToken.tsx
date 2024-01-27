@@ -87,6 +87,10 @@ const GenerateToken: FC<IGenerateToken> = ({ amountType, uuid }) => {
         )
     }
 
+    if (status === "loading") {
+        return null
+    }
+
     if (status === "unauthenticated") {
         return (
             <div
