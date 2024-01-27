@@ -1,4 +1,5 @@
 import type { FC, FormEventHandler } from "react"
+import { signIn, useSession } from "next-auth/react"
 import { useDonationStore } from "~/stores/donation"
 import { cubicBezier } from "~/utils/constants"
 import { toDataURL } from "qrcode"
@@ -6,6 +7,7 @@ import { useState } from "react"
 import { motion } from "framer-motion"
 import { saveAs } from "file-saver"
 import { api } from "~/utils/api"
+import GoogleIcon from "./GoogleIcon"
 import Modal from "./Modal"
 
 interface IGenerateToken {
@@ -13,6 +15,7 @@ interface IGenerateToken {
     amountType: string
 }
 const GenerateToken: FC<IGenerateToken> = ({ amountType, uuid }) => {
+    const { status } = useSession()
     const { mutate: createDonationMutate, isLoading: creatingDonationLoading } =
         api.donation.createDonation.useMutation()
 
@@ -81,6 +84,24 @@ const GenerateToken: FC<IGenerateToken> = ({ amountType, uuid }) => {
                     handleDonationRender()
                 },
             }
+        )
+    }
+
+    if (status === "unauthenticated") {
+        return (
+            <div
+                className="mb-2 flex flex-col items-end justify-end gap-2"
+                onClick={() => setIsDialogOpen(true)}
+            >
+                <h5 className="text-center">Signin to generate token!</h5>
+                <button
+                    onClick={() => void signIn("google")}
+                    className="btn-secondary flex w-fit gap-1"
+                >
+                    <GoogleIcon />
+                    SignIn
+                </button>
+            </div>
         )
     }
 
