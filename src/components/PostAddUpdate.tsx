@@ -2,16 +2,16 @@ import type { DefaultValues, SubmitHandler } from "react-hook-form"
 import type { FC, Dispatch, SetStateAction } from "react"
 import type { UploadFileResponse } from "uploadthing/client"
 import { useRef, useState } from "react"
-import { useNotifierStore } from "~/stores/notifier"
-import { MultiUploader } from "../MultiUploader"
+import { MultiUploader } from "./MultiUploader"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { DevTool } from "@hookform/devtools"
 import { useForm } from "react-hook-form"
 import { twMerge } from "tailwind-merge"
+import { toast } from "sonner"
 import { api } from "~/utils/api"
 import { X } from "lucide-react"
 import { z } from "zod"
-import RHFSelect from "../RHFSelect/RHFSelect"
+import RHFSelect from "./RHFSelect"
 import moment from "moment"
 
 const amountTypeOptions = [
@@ -39,7 +39,6 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
     refetchPosts = () => null,
     selectedPost,
 }) => {
-    const { notify } = useNotifierStore()
     const uploaderRef = useRef<TMultiUploaderHandle | null>(null)
     const [files, setFiles] = useState<File[]>([])
 
@@ -116,11 +115,8 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
         resolver: zodResolver(zPostSchema),
     })
 
-    const onSubmit: SubmitHandler<zPostTypes> = async (data) => {
+    const onSubmit: SubmitHandler<zPostTypes> = (data) => {
         try {
-            // upload all imgage & get response
-            const uploadedFiles = await uploaderRef.current?.uploadAll()
-
             const payloadData = {
                 title: data.title,
                 description: data.description ?? "",
@@ -147,20 +143,22 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
                 }
                 updatePostMutate(updatePayload, {
                     async onSuccess() {
-                        await refetchPosts()
-                        notify({
-                            show: true,
-                            message: "Post Updated! :D",
-                            status: "success",
-                            duration: 5000,
-                        })
                         reset()
                         setModalOpen(false)
+                        toast.success("Post Updated! :D")
+                        await refetchPosts()
+                    },
+                    onError(error) {
+                        toast.error(error.message)
                     },
                 })
             } else {
                 createPostMutate(payloadData, {
                     async onSuccess(data) {
+                        // upload all imgage & get response
+                        const uploadedFiles =
+                            await uploaderRef.current?.uploadAll()
+
                         if (uploadedFiles && uploadedFiles.length > 0) {
                             const imageURLsPayload = uploadedFiles.map(
                                 (item) => ({
@@ -177,15 +175,13 @@ const PostAddUpdate: FC<IPostAddUpdate> = ({
                                 },
                             })
                         }
-                        await refetchPosts()
-                        notify({
-                            show: true,
-                            message: "New Post Created! :D",
-                            status: "success",
-                            duration: 5000,
-                        })
                         reset()
                         setModalOpen(false)
+                        toast.success("New Post Created! :D")
+                        await refetchPosts()
+                    },
+                    onError(error) {
+                        toast.error(error.message)
                     },
                 })
             }
@@ -587,6 +583,23 @@ const zPostSchema = z
         },
         {
             message: "Please Enter a Valid Amount",
+            path: ["targetAmount"],
+        }
+    )
+    .refine(
+        ({ hasTarget, targetAmount }) => {
+            if (hasTarget === true) {
+                return (
+                    typeof targetAmount === "number" &&
+                    !isNaN(targetAmount) &&
+                    targetAmount > 0 &&
+                    targetAmount < 1000000000
+                )
+            }
+            return true
+        },
+        {
+            message: "The Amount cannot be 1000000000 or more",
             path: ["targetAmount"],
         }
     )

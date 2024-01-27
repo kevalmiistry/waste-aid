@@ -3,8 +3,9 @@ import { Sparkles } from "lucide-react"
 import { motion } from "framer-motion"
 import { api } from "~/utils/api"
 import InfinitePostsFeed from "~/components/InfinitePostsFeed"
-import PostAddUpdate from "~/components/PostAddUpdate/PostAddUpdate"
-import Modal from "~/components/Modal/Modal"
+import PostAddUpdate from "~/components/PostAddUpdate"
+import Modal from "~/components/Modal"
+import Head from "next/head"
 
 interface AidManProps {}
 const AidMan: FC<AidManProps> = () => {
@@ -30,6 +31,10 @@ const AidMan: FC<AidManProps> = () => {
 
     return (
         <>
+            <Head>
+                <title>Waste-Aid | Aid-Man</title>
+                <link rel="icon" href="/favicon.ico" />
+            </Head>
             <div className="flex justify-center pb-4 pt-4">
                 <motion.button
                     initial={{ translateY: "-100%" }}

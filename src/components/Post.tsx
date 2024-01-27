@@ -1,14 +1,14 @@
 import type { FC, Dispatch, SetStateAction } from "react"
 import type { WAPost } from "~/@types"
 import { Expand, Pencil, Trash, Users2, X } from "lucide-react"
-import { useNotifierStore } from "~/stores/notifier"
 import { cubicBezier } from "~/utils/constants"
 import { Carousel } from "react-responsive-carousel"
 import { useState } from "react"
 import { motion } from "framer-motion"
+import { toast } from "sonner"
 import { api } from "~/utils/api"
 import moment from "moment"
-import Modal from "../Modal/Modal"
+import Modal from "./Modal"
 import Link from "next/link"
 import "react-responsive-carousel/lib/styles/carousel.min.css" // requires a loader
 
@@ -31,12 +31,12 @@ const Post: FC<IPostCardProps> = ({
     hasDeadline,
     createdAt,
     uuid,
+    aidman,
     isAidmanFeed = false,
     refetchPosts = () => null,
     setModalOpen = () => null,
     setSelectedPost = () => null,
 }) => {
-    const { notify } = useNotifierStore()
     const { mutate: deletePostMutate, isLoading } =
         api.post.deletePost.useMutation()
 
@@ -52,14 +52,8 @@ const Post: FC<IPostCardProps> = ({
                 {
                     async onSuccess() {
                         setPostDeleted(true)
+                        toast.success("Post Deleted! :D")
                         await refetchPosts()
-
-                        notify({
-                            show: true,
-                            message: "Post Deleted! :D",
-                            status: "success",
-                            duration: 5000,
-                        })
                     },
                 }
             )
@@ -150,6 +144,26 @@ const Post: FC<IPostCardProps> = ({
                     </button>
                 </div>
             )}
+
+            {/* Aid-man Details */}
+            <div className="mb-2 flex items-center gap-2">
+                {aidman.image && (
+                    <img
+                        src={`//wsrv.nl/?url=${aidman.image}`}
+                        alt={
+                            aidman.name
+                                ? `${aidman.name} profile pic`
+                                : "profile pic"
+                        }
+                        className="h-[40px] w-[40px] rounded-full border-2"
+                    />
+                )}
+                {aidman.name && (
+                    <span className="font-medium text-[#333]">
+                        {aidman.name}
+                    </span>
+                )}
+            </div>
 
             {/* image carousel */}
             <Carousel

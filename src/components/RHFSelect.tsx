@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import type { zPostTypes } from "../PostAddUpdate/PostAddUpdate"
+import type { zPostTypes } from "./PostAddUpdate"
 import type { FC } from "react"
 import { Controller, type Control } from "react-hook-form"
 import Select, { type StylesConfig } from "react-select"

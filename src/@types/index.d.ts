@@ -15,12 +15,18 @@ export interface WAPost {
     createdAt: Date
     updatedAt: Date
     am_id: string
+    aidman: WAPostAidMan
     metaData?: Prisma.JsonValue
     status: boolean
 
     donations: WAPostDonations[]
     PostImages: WAPostPostImages[]
     _count: WAPostPostDonationsCount
+}
+
+export interface WAPostAidMan {
+    image: string | null
+    name: string | null
 }
 
 export interface WAPostDonations {
@@ -38,7 +44,10 @@ export interface WAPostPostDonationsCount {
     donations: number
 }
 
-export type WADonationPost = Omit<WAPost, "donations" | "PostImages" | "_count">
+export type WADonationPost = Omit<
+    WAPost,
+    "donations" | "PostImages" | "_count" | "aidman"
+>
 
 export interface WADonation {
     uuid: string

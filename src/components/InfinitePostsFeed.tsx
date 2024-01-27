@@ -4,7 +4,7 @@ import { CheckCircle } from "lucide-react"
 import InfiniteScroll from "react-infinite-scroll-component"
 import PostSkeleton from "./PostSkeleton"
 import Image from "next/image"
-import Post from "./Post/Post"
+import Post from "./Post"
 
 interface IInfinitePostsFeed {
     posts?: WAPost[]

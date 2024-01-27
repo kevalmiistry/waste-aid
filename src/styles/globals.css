@@ -51,6 +51,7 @@ body {
     display: inline-block;
     box-sizing: border-box;
     animation: rotation 750ms linear infinite;
+    position: static !important;
 }
 .loader-dark {
     border-color: #333 transparent;

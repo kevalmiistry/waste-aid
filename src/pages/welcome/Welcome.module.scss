@@ -1,9 +1,10 @@
 .main {
     background-color: #fff;
+
     /* background-image: linear-gradient(90deg, #a0e4b0, #97e898, #96ea79, #9deb54, #a6eb12); */
     // background: rgb(150, 217, 5);
     // background: linear-gradient(137deg, rgba(150, 217, 5, 0.5411414565826331) 0%, rgba(150, 217, 5, 0) 59%, rgba(0, 212, 255, 0) 100%);
-    h1{
+    h1 {
         text-shadow: 5px 5px 0px #333;
         -webkit-text-stroke: 2px #333;
     }
@@ -19,10 +20,59 @@
         filter: blur(100px);
         transform: translateY(-50%) scale(1.2) rotate(180deg);
         animation: circle 7s linear infinite both;
+        user-select: none;
+    }
+
+    .side_shadow_left {
+        position: absolute;
+        width: 500px;
+        height: 500px;
+        left: -200px;
+        top: 20%;
+        transform: translateY(-50%) scale(1.2) rotate(180deg);
+        background-image: linear-gradient(-45deg, #96d905cc 50%, #77e490cc 50%);
+        filter: blur(120px);
+        user-select: none;
+    }
+
+    .side_shadow_right {
+        position: absolute;
+        width: 500px;
+        height: 500px;
+        right: -200px;
+        top: 70%;
+        transform: translateY(-50%) scale(1.2) rotate(180deg);
+        background-image: linear-gradient(-45deg, #96d905cc 50%, #77e490cc 50%);
+        filter: blur(120px);
+        user-select: none;
     }
 
     .earth_img {
         animation: earth_img_animation 20s linear infinite both;
+        user-select: none;
+    }
+}
+
+@media (max-width: 640px) {
+    .main {
+        .earth_bg_effects {
+            width: 350px;
+        }
+
+        .side_shadow_left {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            left: -200px;
+            top: 50%;
+            transform: translateY(-50%) scale(1.2) rotate(180deg);
+            background-image: linear-gradient(-45deg, #96d905 50%, #77e491 50%);
+            filter: blur(120px);
+        }
+
+        .side_shadow_right {
+            display: none;
+        }
     }
 }
 

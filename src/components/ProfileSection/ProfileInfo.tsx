@@ -1,12 +1,10 @@
-import type { Dispatch, FC, SetStateAction } from "react"
-import { useSession } from "next-auth/react"
-import { X } from "lucide-react"
+import type { FC } from "react"
+import { signOut, useSession } from "next-auth/react"
+import { LogOut } from "lucide-react"
 import Skeleton from "react-loading-skeleton"
 
-interface IProfileInfo {
-    setOpenProfile: Dispatch<SetStateAction<boolean>>
-}
-const ProfileInfo: FC<IProfileInfo> = ({ setOpenProfile }) => {
+interface IProfileInfo {}
+const ProfileInfo: FC<IProfileInfo> = () => {
     const { data: session, status } = useSession()
 
     if (status === "loading") {
@@ -14,13 +12,6 @@ const ProfileInfo: FC<IProfileInfo> = ({ setOpenProfile }) => {
             <>
                 <Skeleton circle height={"100px"} width={"100px"} />
                 <Skeleton width={"200px"} className="py-1" />
-
-                <button
-                    className="absolute bottom-5 left-1/2 z-10 -translate-x-1/2 md:hidden"
-                    onClick={() => setOpenProfile(false)}
-                >
-                    <X size={"1.75rem"} color="#333" />
-                </button>
             </>
         )
     }
@@ -31,13 +22,23 @@ const ProfileInfo: FC<IProfileInfo> = ({ setOpenProfile }) => {
                 src={
                     session?.user?.image
                         ? `//wsrv.nl/?url=${session?.user?.image}`
-                        : "https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250"
+                        : "https://w7.pngwing.com/pngs/753/432/png-transparent-user-profile-2018-in-sight-user-conference-expo-business-default-business-angle-service-people-thumbnail.png"
                 }
                 className="h-[100px] w-[100px] rounded-full border-2"
                 alt="profile-img"
             />
-            <p className="text-xl font-medium text-gray-600">
+            <p className="relative flex items-center gap-2 text-xl font-medium text-gray-600">
                 {session?.user?.name}
+                <button
+                    title="Logout"
+                    type="button"
+                    className="absolute -right-8 cursor-pointer rounded-full p-1.5 transition-all hover:bg-gray-200"
+                    onClick={() =>
+                        void signOut({ redirect: true, callbackUrl: "/" })
+                    }
+                >
+                    <LogOut size={"1rem"} strokeWidth={"3px"} />
+                </button>
             </p>
         </>
     )

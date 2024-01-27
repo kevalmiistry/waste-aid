@@ -7,7 +7,7 @@ import {
     useImperativeHandle,
     useState,
 } from "react"
-import type { TMultiUploaderHandle } from "~/components/PostAddUpdate/PostAddUpdate"
+import type { TMultiUploaderHandle } from "~/components/PostAddUpdate"
 import type { FileWithPath } from "@uploadthing/react"
 import { generateClientDropzoneAccept } from "uploadthing/client"
 import { useUploadThing } from "~/utils/uploadthing"

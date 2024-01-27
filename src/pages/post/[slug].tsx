@@ -19,12 +19,12 @@ import { prisma } from "~/server/db"
 import { api } from "~/utils/api"
 import SuperJSON from "superjson"
 import moment from "moment"
-import Modal from "~/components/Modal/Modal"
-import "react-responsive-carousel/lib/styles/carousel.min.css"
+import Modal from "~/components/Modal"
 import Head from "next/head"
+import "react-responsive-carousel/lib/styles/carousel.min.css"
 
 export const getServerSideProps = async (
-    context: GetServerSidePropsContext<{ pid: string }>
+    context: GetServerSidePropsContext<{ slug: string }>
 ) => {
     const session = await getServerAuthSession(context)
 
@@ -38,7 +38,7 @@ export const getServerSideProps = async (
     })
 
     try {
-        const id = context.params?.pid ?? ""
+        const id = context.params?.slug ?? ""
         const data = await helpers.post.getOnePost.fetch({ pid: id })
 
         if (data === null) {
@@ -81,27 +81,6 @@ export const getServerSideProps = async (
 const ViewPost = (
     props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) => {
-    const encodeObjectToUrl = (obj: Record<string, string>) => {
-        return Object.entries(obj)
-            .map(
-                ([key, value]) =>
-                    `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
-            )
-            .join("&")
-    }
-
-    const objForOGImage = {
-        title: props.data.title,
-        description: props.data?.description ?? "",
-        am_name: props.data.aidman.name ?? "",
-        postimg: props.data.PostImages[0]?.imageURL ?? "",
-        ampfp: props.data.aidman.image ?? "",
-        createdAt: props.data.createdAt,
-    }
-
-    const ogImgURL =
-        process.env.NEXTAUTH_URL + "/api/og?" + encodeObjectToUrl(objForOGImage)
-
     const { data } = props
 
     const handleDonationRender = useDonationStore(
@@ -144,6 +123,7 @@ const ViewPost = (
         startDate,
         address,
         uuid,
+        aidman,
     } = data
 
     const saveBase64AsFile = (base64: string, fileName: string): void => {
@@ -201,10 +181,33 @@ const ViewPost = (
         )
     }
 
+    // prepare OG Image URL
+    const encodeObjectToUrl = (obj: Record<string, string>) => {
+        return Object.entries(obj)
+            .map(
+                ([key, value]) =>
+                    `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+            )
+            .join("&")
+    }
+
+    const objForOGImage = {
+        title: title,
+        description: props.data?.description ?? "",
+        am_name: aidman.name ?? "",
+        postimg: PostImages[0]?.imageURL ?? "",
+        ampfp: aidman.image ?? "",
+        createdAt: createdAt,
+    }
+
+    const ogImgURL =
+        process.env.NEXTAUTH_URL + "/api/og?" + encodeObjectToUrl(objForOGImage)
+
     return (
         <>
             <Head>
-                <title>{props.data.title}</title>
+                <title>{title}</title>
+                <meta name="description" content={description ?? ""} />
                 <meta property="og:image" content={ogImgURL} />
                 <meta property="twitter:image" content={ogImgURL} />
             </Head>
@@ -212,6 +215,27 @@ const ViewPost = (
                 <h2 className="mb-2 px-5 text-2xl font-medium text-[#333] md:px-0">
                     Post Details:
                 </h2>
+
+                {/* Aid-man Details */}
+                <div className="mb-2 flex items-center gap-2">
+                    {aidman.image && (
+                        <img
+                            src={`//wsrv.nl/?url=${aidman.image}`}
+                            alt={
+                                aidman.name
+                                    ? `${aidman.name} profile pic`
+                                    : "profile pic"
+                            }
+                            className="h-[40px] w-[40px] rounded-full border-2"
+                        />
+                    )}
+                    {aidman.name && (
+                        <span className="font-medium text-[#333]">
+                            {aidman.name}
+                        </span>
+                    )}
+                </div>
+
                 {/* view full image in overlay */}
                 <AnimatePresence>
                     {fullViewOpen ? (
