@@ -2,21 +2,17 @@ import type {
     GetServerSidePropsContext,
     InferGetServerSidePropsType,
 } from "next"
-import type { FormEventHandler } from "react"
-import { AnimatePresence, motion } from "framer-motion"
 import { createServerSideHelpers } from "@trpc/react-query/server"
 import { getServerAuthSession } from "~/server/auth"
-import { useDonationStore } from "~/stores/donation"
 import { Expand, Users2 } from "lucide-react"
 import { cubicBezier } from "~/utils/constants"
 import { TRPCError } from "@trpc/server"
 import { appRouter } from "~/server/api/root"
-import { toDataURL } from "qrcode"
 import { useState } from "react"
 import { Carousel } from "react-responsive-carousel"
-import { saveAs } from "file-saver"
 import { prisma } from "~/server/db"
-import { api } from "~/utils/api"
+import { motion } from "framer-motion"
+import GenerateToken from "~/components/GenerateToken"
 import SuperJSON from "superjson"
 import moment from "moment"
 import Modal from "~/components/Modal"
@@ -83,22 +79,8 @@ const ViewPost = (
 ) => {
     const { data } = props
 
-    const handleDonationRender = useDonationStore(
-        (state) => state.handleDonationRender
-    )
-
-    const { mutate: createDonationMutate, isLoading: creatingDonationLoading } =
-        api.donation.createDonation.useMutation()
-
     const [selectedItem, setSelectedItem] = useState(0)
     const [fullViewOpen, setFullViewOpen] = useState(false)
-
-    const [isDialogOpen, setIsDialogOpen] = useState(false)
-    const [inputAmount, setInputAmount] = useState<number | undefined>(
-        undefined
-    )
-    const [errorMessage, setErrorMessage] = useState("")
-    const [QRCodeDataURL, setQRCodeDataURL] = useState<string | null>(null)
 
     if (!data) {
         return (
@@ -126,61 +108,6 @@ const ViewPost = (
         aidman,
     } = data
 
-    const saveBase64AsFile = (base64: string, fileName: string): void => {
-        const splitData = base64.split(";base64,")
-        if (splitData.length !== 2) {
-            throw new Error("Invalid base64 string")
-        }
-
-        const data = splitData.pop()!
-        const contentType = base64.match(/:([^;]+);/)?.[1]
-
-        if (!contentType) {
-            throw new Error("Invalid content type in base64 string")
-        }
-
-        const byteCharacters = atob(data)
-        const byteNumbers = new Array(byteCharacters.length)
-
-        for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i)
-        }
-
-        const byteArray = new Uint8Array(byteNumbers)
-        const blob = new Blob([byteArray], { type: contentType })
-
-        saveAs(blob, fileName)
-    }
-
-    const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
-        e.preventDefault()
-
-        if (!inputAmount || inputAmount <= 0) {
-            setErrorMessage("Please enter a valid value")
-            return
-        }
-
-        createDonationMutate(
-            {
-                post_id: uuid,
-                donatedAmout: inputAmount,
-            },
-            {
-                async onSuccess(data) {
-                    const URL = await toDataURL(data.uuid, {
-                        scale: 20,
-                    })
-                    setQRCodeDataURL(URL)
-                    saveBase64AsFile(
-                        URL,
-                        `${inputAmount} ${amountType} donation QR Code`
-                    )
-                    handleDonationRender()
-                },
-            }
-        )
-    }
-
     // prepare OG Image URL
     const encodeObjectToUrl = (obj: Record<string, string>) => {
         return Object.entries(obj)
@@ -206,7 +133,11 @@ const ViewPost = (
     return (
         <>
             <Head>
-                <title>{title}</title>
+                <title>
+                    {aidman.name
+                        ? `${aidman.name}'s Post | Waste-Aid`
+                        : "Waste-Aid"}
+                </title>
                 <meta name="description" content={description ?? ""} />
                 <meta property="og:image" content={ogImgURL} />
                 <meta property="twitter:image" content={ogImgURL} />
@@ -217,7 +148,7 @@ const ViewPost = (
                 </h2>
 
                 {/* Aid-man Details */}
-                <div className="mb-2 flex items-center gap-2">
+                <div className="mb-2 ml-3 flex items-center gap-2 md:ml-0">
                     {aidman.image && (
                         <img
                             src={`//wsrv.nl/?url=${aidman.image}`}
@@ -237,24 +168,23 @@ const ViewPost = (
                 </div>
 
                 {/* view full image in overlay */}
-                <AnimatePresence>
-                    {fullViewOpen ? (
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ ease: cubicBezier, duration: 0.3 }}
-                            className="absolute inset-0 z-10 flex items-center justify-center bg-[#000000BB]"
-                            onClick={() => setFullViewOpen(false)}
-                        >
-                            <img
-                                src={PostImages[selectedItem]?.imageURL}
-                                alt={`image ${selectedItem + 1}`}
-                                className="z-11 max-h-[80%] max-w-[80%] object-contain"
-                            />
-                        </motion.div>
-                    ) : null}
-                </AnimatePresence>
+                <Modal
+                    open={fullViewOpen}
+                    onClose={() => setFullViewOpen(false)}
+                    classNames="pr-2 bg-transparent flex items-center justify-center p-0 shadow-none h-fit"
+                    overlayClassName="bg-[#000000BB]"
+                    placeDirectChildren
+                >
+                    <motion.img
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ ease: cubicBezier, duration: 0.3 }}
+                        src={PostImages[selectedItem]?.imageURL}
+                        alt={`image ${selectedItem + 1}`}
+                        className="fixed left-1/2 top-1/2 z-[5] h-auto w-[94vw] -translate-x-1/2 -translate-y-1/2 object-contain md:w-[70vw]"
+                    />
+                </Modal>
 
                 {/* image carousel */}
                 <Carousel
@@ -374,108 +304,8 @@ const ViewPost = (
                         </small>
                     </div>
 
-                    <div
-                        className="flex justify-end"
-                        onClick={() => setIsDialogOpen(true)}
-                    >
-                        <button className="btn btn-primary">
-                            Generate Token
-                        </button>
-                    </div>
+                    <GenerateToken amountType={amountType} uuid={uuid} />
                 </div>
-
-                <Modal
-                    open={isDialogOpen}
-                    classNames="w-[90%] max-w-[500px] min-h-[40%] h-fit"
-                    onClose={() => setIsDialogOpen(false)}
-                >
-                    <div className="relative text-xl font-medium italic">
-                        {"Let's get to generate your Token :D"}
-                        <div className="absolute -bottom-1 h-[1px] w-full bg-gray-200" />
-                    </div>
-                    {!QRCodeDataURL && (
-                        <form
-                            onSubmit={handleSubmit}
-                            className="mt-5 flex flex-col"
-                        >
-                            <label htmlFor="amount">
-                                Please enter the amount you sending in!{" "}
-                                <span className="font-satoshi font-thin">
-                                    ( in{" "}
-                                    <span className="uppercase">
-                                        {amountType}
-                                    </span>{" "}
-                                    )
-                                </span>
-                            </label>
-                            <input
-                                type="number"
-                                name="amount"
-                                id="amount"
-                                placeholder="Eg. 10000"
-                                className="w-full rounded-lg border-2 px-2 py-1 placeholder:text-sm placeholder:font-light placeholder:italic"
-                                value={inputAmount}
-                                onChange={(e) =>
-                                    setInputAmount(+e.target.value)
-                                }
-                            />
-                            <small className="text-red-500">
-                                {errorMessage}
-                            </small>
-                            <div className="flex justify-center">
-                                <button
-                                    className="btn-primary mt-5 w-min text-sm"
-                                    disabled={creatingDonationLoading}
-                                >
-                                    Generate!
-                                </button>
-                            </div>
-                        </form>
-                    )}
-
-                    {QRCodeDataURL && (
-                        <div className="mt-4 flex flex-col items-center justify-center gap-1 text-[#333]">
-                            <div className="font-light">
-                                Amount:{" "}
-                                <span className="font-satoshi text-lg font-semibold capitalize">
-                                    {inputAmount} {amountType}
-                                </span>
-                            </div>
-                            <motion.img
-                                initial={{ scale: 0.9 }}
-                                animate={{ scale: 1 }}
-                                transition={{ ease: cubicBezier }}
-                                src={QRCodeDataURL}
-                                alt="QR Code"
-                                className="w-[80%] md:w-[50%]"
-                            />
-
-                            <p className="text font-medium">
-                                Woohoo!!! QR code generated🥳
-                            </p>
-                            <p className="text-center text-sm">
-                                Now make sure you save Screenshot or Download
-                                this QR code and attach a print of it with the
-                                parcel you are sending in your collected waste.
-                            </p>
-                            <p className="mt-2 text-center text-sm">
-                                The Receiver will scan this QR code from their
-                                side and you will be notified.
-                            </p>
-                            <button
-                                className="my-2 text-sm text-blue-700 underline"
-                                onClick={() =>
-                                    saveBase64AsFile(
-                                        QRCodeDataURL,
-                                        `${inputAmount} ${amountType} donation QR Code`
-                                    )
-                                }
-                            >
-                                Download
-                            </button>
-                        </div>
-                    )}
-                </Modal>
             </div>
         </>
     )

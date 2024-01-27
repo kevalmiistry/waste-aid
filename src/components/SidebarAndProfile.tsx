@@ -1,11 +1,13 @@
-import { Home, Recycle, ScanLine, UserCircle2, X } from "lucide-react"
-import { useState, type FC, type ReactNode } from "react"
+import type { FC, ReactNode } from "react"
+import { Home, Recycle, ScanLine, X } from "lucide-react"
 import { AnimatePresence } from "framer-motion"
-import { useRouter } from "next/router"
-import { twMerge } from "tailwind-merge"
+import { useSession } from "next-auth/react"
 import { WAFullLogo } from "./WALogos"
-import { Drawer } from "vaul"
+import { useRouter } from "next/router"
+import { useState } from "react"
+import { twMerge } from "tailwind-merge"
 import ProfileSection from "./ProfileSection/ProfileSection"
+import MobileNavbar from "./MobileNavbar"
 import Link from "next/link"
 
 interface ISidebarAndProfile {
@@ -33,6 +35,7 @@ const MENUS = [
 const SidebarAndProfile: FC<ISidebarAndProfile> = ({ children }) => {
     const [openProfile, setOpenProfile] = useState(false)
     const { pathname } = useRouter()
+    const { status } = useSession()
 
     const getActiveLinkClassName = (link: string) =>
         pathname === link ? "bg-slate-100 font-semibold" : ""
@@ -52,20 +55,24 @@ const SidebarAndProfile: FC<ISidebarAndProfile> = ({ children }) => {
                         <WAFullLogo className="mt-2" />
 
                         <ul className="mt-10 flex flex-col items-start gap-2 text-xl font-medium">
-                            {MENUS.map((menu) => (
-                                <li key={menu.link}>
-                                    <Link
-                                        href={menu.link}
-                                        className={twMerge(
-                                            "flex items-center gap-2 rounded-full px-6 py-3 transition-all duration-300 hover:bg-slate-100",
-                                            getActiveLinkClassName(menu.link)
-                                        )}
-                                    >
-                                        {menu.icon}
-                                        {menu.label}
-                                    </Link>
-                                </li>
-                            ))}
+                            {MENUS.filter(() => status === "authenticated").map(
+                                (menu) => (
+                                    <li key={menu.link}>
+                                        <Link
+                                            href={menu.link}
+                                            className={twMerge(
+                                                "flex items-center gap-2 rounded-full px-6 py-3 transition-all duration-300 hover:bg-slate-100",
+                                                getActiveLinkClassName(
+                                                    menu.link
+                                                )
+                                            )}
+                                        >
+                                            {menu.icon}
+                                            {menu.label}
+                                        </Link>
+                                    </li>
+                                )
+                            )}
                         </ul>
                     </div>
                 </div>
@@ -75,37 +82,7 @@ const SidebarAndProfile: FC<ISidebarAndProfile> = ({ children }) => {
                     className="z-[1] flex-[3] pb-16 md:border-l-[2px] md:border-r-[2px] md:pb-0"
                 >
                     <div className="px-0 md:px-4">
-                        <Drawer.Root shouldScaleBackground>
-                            {/* --------------- */}
-                            <div
-                                aria-label="mobile-view-bottom-bar"
-                                className="fixed bottom-0 left-0 right-0 z-[10] flex justify-around border bg-white p-3 md:hidden"
-                            >
-                                <Link href={"/home"}>
-                                    <Home />
-                                </Link>
-                                <Link href={"/aid-man"}>
-                                    <Recycle />
-                                </Link>
-                                <Link href={"/verify-token"}>
-                                    <ScanLine />
-                                </Link>
-                                <Drawer.Trigger>
-                                    <UserCircle2 size={"1.75rem"} />
-                                </Drawer.Trigger>
-                            </div>
-                            {/* --------------- */}
-
-                            <Drawer.Portal>
-                                <Drawer.Overlay className="fixed inset-0 z-[20] bg-black/40" />
-                                <Drawer.Content className="fixed bottom-0 left-0 right-0 z-[20] mt-24 flex h-full max-h-[75%] flex-col rounded-t-[10px] bg-white">
-                                    <div className="mx-auto mt-3 h-1.5 w-12 flex-shrink-0 rounded-full bg-gray-300" />
-
-                                    <ProfileSection />
-                                </Drawer.Content>
-                                <Drawer.Overlay />
-                            </Drawer.Portal>
-                        </Drawer.Root>
+                        <MobileNavbar />
 
                         <AnimatePresence>{children}</AnimatePresence>
                     </div>

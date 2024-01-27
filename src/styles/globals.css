@@ -53,31 +53,31 @@ body {
     animation: rotation 750ms linear infinite;
     position: static !important;
 }
-.loader-dark {
-    border-color: #333 transparent;
+.loader.loader-dark {
+    border-color: #333 transparent !important;
 }
-.loader-light {
-    border-color: #fff transparent;
+.loader.loader-light {
+    border-color: #fff transparent !important;
 }
-.loader-primary {
-    border-color: rgb(150 217 5) transparent;
+.loader.loader-primary {
+    border-color: rgb(150 217 5) transparent !important;
 }
-.loader-sm {
+.loader.loader-sm {
     width: 22px;
     height: 22px;
     border: 3px solid;
 }
-.loader-lg {
+.loader.loader-lg {
     width: 36px;
     height: 36px;
     border-width: 4px;
 }
-.loader-xl {
+.loader.loader-xl {
     width: 45px;
     height: 45px;
     border-width: 5px;
 }
-.loader-2xl {
+.loader.loader-2xl {
     width: 56px;
     height: 56px;
     border-width: 6px;
