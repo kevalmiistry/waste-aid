@@ -63,7 +63,7 @@ export const getServerSideProps = async (
                 data: finalDataProps,
                 isAuthenticated,
                 sharableLink:
-                    process.env.NEXTAUTH_URL + "/post" + finalDataProps.uuid,
+                    process.env.NEXTAUTH_URL + "/post/" + finalDataProps.uuid,
             },
         }
     } catch (error) {
