@@ -25,6 +25,7 @@
         "@trpc/server": "^10.26.0",
         "@uploadthing/react": "^5.6.2",
         "@vercel/og": "^0.6.1",
+        "clipboard-copy": "^4.0.1",
         "file-saver": "^2.0.5",
         "framer-motion": "^10.16.4",
         "lucide-react": "^0.276.0",
