@@ -14,6 +14,7 @@ import { prisma } from "~/server/db"
 import { motion } from "framer-motion"
 import GenerateToken from "~/components/GenerateToken"
 import SuperJSON from "superjson"
+import SharePost from "~/components/SharePost"
 import moment from "moment"
 import Modal from "~/components/Modal"
 import Head from "next/head"
@@ -61,6 +62,8 @@ export const getServerSideProps = async (
                 trpcState: helpers.dehydrate(),
                 data: finalDataProps,
                 isAuthenticated,
+                sharableLink:
+                    process.env.NEXTAUTH_URL + "/post" + finalDataProps.uuid,
             },
         }
     } catch (error) {
@@ -80,7 +83,7 @@ export const getServerSideProps = async (
 const ViewPost = (
     props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) => {
-    const { data, isAuthenticated } = props
+    const { data, isAuthenticated, sharableLink } = props
 
     const [selectedItem, setSelectedItem] = useState(0)
     const [fullViewOpen, setFullViewOpen] = useState(false)
@@ -151,23 +154,26 @@ const ViewPost = (
                 </h2>
 
                 {/* Aid-man Details */}
-                <div className="mb-2 ml-3 flex items-center gap-2 md:ml-0">
-                    {aidman.image && (
-                        <img
-                            src={`//wsrv.nl/?url=${aidman.image}`}
-                            alt={
-                                aidman.name
-                                    ? `${aidman.name} profile pic`
-                                    : "profile pic"
-                            }
-                            className="h-[40px] w-[40px] rounded-full border-2"
-                        />
-                    )}
-                    {aidman.name && (
-                        <span className="font-medium text-[#333]">
-                            {aidman.name}
-                        </span>
-                    )}
+                <div className="mb-2 ml-3 flex items-center justify-between gap-2 pr-2 md:ml-0">
+                    <div className="flex items-center gap-2">
+                        {aidman.image && (
+                            <img
+                                src={`//wsrv.nl/?url=${aidman.image}`}
+                                alt={
+                                    aidman.name
+                                        ? `${aidman.name} profile pic`
+                                        : "profile pic"
+                                }
+                                className="h-[40px] w-[40px] rounded-full border-2"
+                            />
+                        )}
+                        {aidman.name && (
+                            <span className="font-medium text-[#333]">
+                                {aidman.name}
+                            </span>
+                        )}
+                    </div>
+                    <SharePost sharableLink={sharableLink} />
                 </div>
 
                 {/* view full image in overlay */}
