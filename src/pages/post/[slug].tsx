@@ -34,6 +34,8 @@ export const getServerSideProps = async (
     })
 
     try {
+        const isAuthenticated = Boolean(session?.user.id)
+
         const id = context.params?.slug ?? ""
         const data = await helpers.post.getOnePost.fetch({ pid: id })
 
@@ -58,6 +60,7 @@ export const getServerSideProps = async (
             props: {
                 trpcState: helpers.dehydrate(),
                 data: finalDataProps,
+                isAuthenticated,
             },
         }
     } catch (error) {
@@ -77,7 +80,7 @@ export const getServerSideProps = async (
 const ViewPost = (
     props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) => {
-    const { data } = props
+    const { data, isAuthenticated } = props
 
     const [selectedItem, setSelectedItem] = useState(0)
     const [fullViewOpen, setFullViewOpen] = useState(false)
@@ -304,7 +307,11 @@ const ViewPost = (
                         </small>
                     </div>
 
-                    <GenerateToken amountType={amountType} uuid={uuid} />
+                    <GenerateToken
+                        isAuthenticated={isAuthenticated}
+                        amountType={amountType}
+                        uuid={uuid}
+                    />
                 </div>
             </div>
         </>

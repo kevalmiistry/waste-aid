@@ -30,6 +30,7 @@ const Post: FC<IPostCardProps> = ({
     endDate,
     hasDeadline,
     createdAt,
+    donations,
     uuid,
     aidman,
     isAidmanFeed = false,
@@ -260,6 +261,14 @@ const Post: FC<IPostCardProps> = ({
                         <p className="font-light text-[#888]">By</p>
                         <p className="font-satoshi flex items-center gap-1 text-2xl font-medium">
                             {_count.donations} <Users2 />
+                            {donations.map((donation, idx) => (
+                                <img
+                                    key={idx}
+                                    src={donation?.donator?.image ?? ""}
+                                    alt={`donator ${idx}`}
+                                    className="h-5 w-5 rounded-full"
+                                />
+                            ))}
                         </p>
                     </div>
                 </div>

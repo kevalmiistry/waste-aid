@@ -1,10 +1,10 @@
 import type { FC, FormEventHandler } from "react"
-import { signIn, useSession } from "next-auth/react"
 import { useDonationStore } from "~/stores/donation"
 import { cubicBezier } from "~/utils/constants"
 import { toDataURL } from "qrcode"
 import { useState } from "react"
 import { motion } from "framer-motion"
+import { signIn } from "next-auth/react"
 import { saveAs } from "file-saver"
 import { api } from "~/utils/api"
 import GoogleIcon from "./GoogleIcon"
@@ -13,9 +13,13 @@ import Modal from "./Modal"
 interface IGenerateToken {
     uuid: string
     amountType: string
+    isAuthenticated: boolean
 }
-const GenerateToken: FC<IGenerateToken> = ({ amountType, uuid }) => {
-    const { status } = useSession()
+const GenerateToken: FC<IGenerateToken> = ({
+    amountType,
+    uuid,
+    isAuthenticated,
+}) => {
     const { mutate: createDonationMutate, isLoading: creatingDonationLoading } =
         api.donation.createDonation.useMutation()
 
@@ -87,11 +91,7 @@ const GenerateToken: FC<IGenerateToken> = ({ amountType, uuid }) => {
         )
     }
 
-    if (status === "loading") {
-        return null
-    }
-
-    if (status === "unauthenticated") {
+    if (!isAuthenticated) {
         return (
             <div
                 className="mb-2 flex flex-col items-end justify-end gap-2"
